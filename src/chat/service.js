@@ -11,6 +11,10 @@ function ChatService() {
     });
   };
 
+  this.destroy = function() {
+    this.socket.removeAllListeners('message');
+  };
+
   this.sendMessage = function(message) {
     this.socket.emit('message', message);
   };
