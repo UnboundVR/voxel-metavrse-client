@@ -26,6 +26,7 @@
     "browserify": "^13.0.0",
     "browserify-hmr": "^0.3.1",
     "del": "^2.2.0",
+    "dotenv": "^2.0.0",
     "eslint": "^2.4.0",
     "eslint-plugin-vue": "^0.1.0",
     "eventemitter2": "^1.0.0",
@@ -56,6 +57,6 @@
     "serve": "http-server -c 1 -a localhost -p 1337",
     "watch-js": "watchify -vd -p browserify-hmr -e src -o build/metavrse.js",
     "watch-css": "gulp watch-css",
-    "watch": "npm-run-all --parallel watch-js serve"
+    "watch": "npm-run-all --parallel watch-css watch-js serve"
   }
 }
