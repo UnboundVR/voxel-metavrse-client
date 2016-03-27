@@ -14,9 +14,6 @@ var assign = require('lodash.assign');
 var del = require('del');
 var sass = require('gulp-sass');
 
-var tape = require('gulp-tape');
-var tapColorize = require('tap-colorize');
-
 gulp.task('clean', function() {
   return del(['build/metavrse.js']);
 });
@@ -32,13 +29,6 @@ b.transform(strictify);
 b.transform(vueify);
 b.transform(babelify);
 b.on('log', gutil.log);
-
-gulp.task('test', function () {
-  return gulp.src('spec/**/*.js')
-    .pipe(tape({
-      reporter: tapColorize()
-    }));
-});
 
 gulp.task('watch-js', ['clean'], function() {
   var bundle = function() {

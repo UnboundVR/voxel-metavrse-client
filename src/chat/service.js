@@ -5,7 +5,7 @@ import util from 'util';
 function ChatService() {
   this.init = function() {
     var self = this;
-    this.socket = io.connect(location.host + '/chat');
+    this.socket = io.connect(process.env.SERVER_ADDRESS + '/chat');
     this.socket.on('message', message => {
       self.emit('message', message);
     });

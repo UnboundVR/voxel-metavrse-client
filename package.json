@@ -24,8 +24,8 @@
     "babel-preset-stage-2": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "browserify-hmr": "^0.3.1",
     "del": "^2.2.0",
-    "dotenv": "^2.0.0",
     "eslint": "^2.4.0",
     "eslint-plugin-vue": "^0.1.0",
     "eventemitter2": "^1.0.0",
@@ -33,20 +33,29 @@
     "gulp-sass": "^2.2.0",
     "gulp-tape": "0.0.7",
     "gulp-util": "^3.0.7",
+    "localenvify": "^1.0.1",
     "lodash.assign": "^4.0.3",
     "npm-run-all": "^1.6.0",
     "strictify": "^0.2.0",
     "three": "0.56.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
+    "vue-hot-reload-api": "^1.3.2",
     "vueify": "^8.3.6",
     "vueify-insert-css": "^1.0.0",
     "watchify": "^3.7.0"
   },
+  "browserify": {
+    "transform": [
+      "vueify",
+      "babelify",
+      "localenvify"
+    ]
+  },
   "scripts": {
-    "start": "",
-    "watch-js": "./node_modules/.bin/gulp watch-js",
-    "watch-css": "./node_modules/.bin/gulp watch-css",
-    "watch-client": "npm-run-all --parallel watch-js watch-css"
+    "serve": "http-server -c 1 -a localhost -p 1337",
+    "watch-js": "watchify -vd -p browserify-hmr -e src -o build/metavrse.js",
+    "watch-css": "gulp watch-css",
+    "watch": "npm-run-all --parallel watch-js serve"
   }
 }

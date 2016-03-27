@@ -11,7 +11,7 @@ var socket;
 
 export default {
   init() {
-    socket = io.connect(location.host + '/coding');
+    socket = io.connect(process.env.SERVER_ADDRESS + '/coding');
     return new Promise(function(resolve, reject) {
       socket.emit('requestAllCode', auth.getAccessToken(), (err, response) => {
         if(err) {

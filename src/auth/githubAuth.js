@@ -2,7 +2,7 @@ import consts  from '../constants';
 
 export default {
   getLoginUrl() {
-    var request = new Request('/auth/github_client_info', {
+    var request = new Request(process.env.SERVER_ADDRESS + '/auth/github_client_info', {
       method: 'GET'
     });
 
@@ -15,7 +15,7 @@ export default {
       + '&redirect_uri=' + clientInfo.redirectUri); // TODO pass state too
   },
   getAccessToken(code) {
-    var url = '/auth/github_access_token/' + code;
+    var url = process.env.SERVER_ADDRESS + '/auth/github_access_token/' + code;
 
     var request = new Request(url, {
       method: 'GET'

@@ -12,7 +12,7 @@ export default {
     });
   },
   connect() {
-    this.socket = io.connect(location.host + '/voxel');
+    this.socket = io.connect(process.env.SERVER_ADDRESS + '/voxel');
     this.socket.on('disconnect', () => {
       // TODO handle disconnection
     });

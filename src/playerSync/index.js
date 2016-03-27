@@ -9,7 +9,7 @@ export default {
   init() {
     var self = this;
 
-    socket = io.connect(location.host + '/playerSync');
+    socket = io.connect(process.env.SERVER_ADDRESS + '/playerSync');
     socket.on('connect', () => {
       self.playerId = socket.id;
     });

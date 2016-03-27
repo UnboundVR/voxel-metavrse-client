@@ -8,31 +8,30 @@ import chat from './chat';
 import toolbar from './toolbar';
 import ide from './ide';
 import rootVue from './rootVue';
+import dotenv from 'dotenv';
 
-export default function() {
-  auth.init().then(() => {
-    client.init().then(() => {
-      voxelEngine.init(client.engine);
+auth.init().then(() => {
+  client.init().then(() => {
+    voxelEngine.init(client.engine);
 
-      Promise.all([
-        blockPlacement.init(),
-        playerSync.init(),
-        chat.init(),
-        coding.init(),
-        toolbar.init(),
-        ide.init()
-      ]).then(() => {
-        try {
-          voxelEngine.appendToContainer();
-        } catch(err) {
-          console.log('Browser not capable');
-        }
+    Promise.all([
+      blockPlacement.init(),
+      playerSync.init(),
+      chat.init(),
+      coding.init(),
+      toolbar.init(),
+      ide.init()
+    ]).then(() => {
+      try {
+        voxelEngine.appendToContainer();
+      } catch(err) {
+        console.log('Browser not capable');
+      }
 
-        rootVue.init();
-      }).catch((err) => {
-        console.log('Error initializing some modules', err);
-        throw err;
-      });
+      rootVue.init();
+    }).catch((err) => {
+      console.log('Error initializing some modules', err);
+      throw err;
     });
   });
-}
+});
