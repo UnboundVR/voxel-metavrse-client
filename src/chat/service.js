@@ -12,7 +12,7 @@ function ChatService() {
   };
 
   this.destroy = function() {
-    this.socket.removeAllListeners('message');
+    this.socket.destroy();
   };
 
   this.sendMessage = function(message) {

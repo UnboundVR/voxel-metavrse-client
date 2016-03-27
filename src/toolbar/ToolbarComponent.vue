@@ -22,6 +22,9 @@ export default {
   },
   ready() {
     service.hookSelection();
+  },
+  destroyed() {
+    service.unhookSelection();
   }
 };
 </script>

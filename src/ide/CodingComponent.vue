@@ -15,6 +15,10 @@ import editor from './editor';
 import Vue from 'vue';
 
 var codemirror;
+var wrapper;
+var stopPropagation =  e => {
+  e.stopPropagation();
+};
 
 export default {
   name: 'CodingComponent',
@@ -54,10 +58,8 @@ export default {
     codemirror.on('change', editor.onChange);
     codemirror.setOption('theme', 'tomorrow-night-bright');
 
-    var wrapper = codemirror.getWrapperElement();
-    wrapper.addEventListener('keydown', e => {
-      e.stopPropagation();
-    });
+    wrapper = codemirror.getWrapperElement();
+    wrapper.addEventListener('keydown', stopPropagation);
 
     editor.on('open', data => {
       self.open = true;
@@ -77,8 +79,12 @@ export default {
     var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', 'M 12,12 L 22,22 M 22,12 12,22');
     path.setAttribute('stroke', '#fff');
-    svg.appendChild( path );
+    svg.appendChild(path);
     this.$els.close.appendChild(svg);
+  },
+  destroyed() {
+    editor.removeAllListeners('open');
+    wrapper.removeEventListener('keydown', stopPropagation);
   }
 };
 </script>

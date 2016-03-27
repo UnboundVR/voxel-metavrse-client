@@ -3,6 +3,7 @@ import blocks from '../blocks';
 
 var toolbarItems;
 var currentMaterial;
+var selector;
 
 export default {
   init() {
@@ -10,10 +11,13 @@ export default {
     currentMaterial = toolbarItems[0].number;
   },
   hookSelection() {
-    var selector = toolbar();
+    selector = toolbar();
     selector.on('select', function(item) {
       currentMaterial = parseInt(item);
     });
+  },
+  unhookSelection() {
+    selector.removeAllListeners('select');
   },
   getSelected() {
     return currentMaterial;
