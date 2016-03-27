@@ -8,7 +8,6 @@ import chat from './chat';
 import toolbar from './toolbar';
 import ide from './ide';
 import rootVue from './rootVue';
-import dotenv from 'dotenv';
 
 auth.init().then(() => {
   client.init().then(() => {
