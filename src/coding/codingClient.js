@@ -25,11 +25,12 @@ export default {
           expandGists(response, github.getGist).then(result => {
             blocksWithCode = result;
             resolve();
+          }).catch(() => {
+            blocksWithCode = {};
           });
         }
       });
       socket.on('codeChanged', (position, codeObj) => {
-        console.log('codeChanged');
         blocksWithCode[position] = codeObj;
         executor.update(position, codeObj.code);
         voxelEngine.setBlock(position, blocks.types.CODE.number);

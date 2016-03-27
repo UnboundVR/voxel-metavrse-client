@@ -12,7 +12,7 @@ export default {
       consts.github.OAUTH_URL + '/authorize'
       + '?client_id=' + clientInfo.clientId
       + '&scope=' + consts.github.REQUESTED_SCOPE
-      + '&redirect_uri=' + clientInfo.redirectUri); // TODO pass state too
+      + '&redirect_uri=' + location.origin); // TODO pass state too
   },
   getAccessToken(code) {
     var url = process.env.SERVER_ADDRESS + '/auth/github_access_token/' + code;
