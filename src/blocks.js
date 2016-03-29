@@ -21,5 +21,10 @@ module.exports = {
   },
   getBlockInfo(number) {
     return blockTypes[number + 1];
+  },
+  getMaterials() {
+    return Object.keys(blockTypes).map(function(blockType) {
+      return blockTypes[blockType].material;
+    });
   }
 };

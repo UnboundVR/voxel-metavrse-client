@@ -1,4 +1,3 @@
-import rle from './rle';
 import engine from 'voxel-engine';
 import io from 'socket.io-client';
 import blocks from './blocks';
@@ -22,7 +21,6 @@ export default {
     var self = this;
 
     var processChunk = chunk => {
-      chunk.voxels = rle.decode(chunk.voxels);
       self.engine.showChunk(chunk);
     };
 
@@ -30,7 +28,13 @@ export default {
       var settings = data.settings;
       var chunks = data.chunks;
       blocks.init(data.blockTypes);
+
+      settings.controls = {discreteFire: true};
       settings.generateChunks = false;
+      settings.controlsDisabled = false;
+      settings.materials = blocks.getMaterials();
+      settings.texturePath = 'assets/textures/';
+
       self.engine = self.createEngine(settings);
       chunks.forEach(processChunk);
 
@@ -53,7 +57,6 @@ export default {
   },
   createEngine(settings) {
     var self = this;
-    settings.controlsDisabled = false;
     self.engine = engine(settings);
     self.engine.settings = settings;
 
