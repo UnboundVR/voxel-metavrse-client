@@ -2,20 +2,20 @@ import highlight from './blockHighlight';
 import voxelEngine from '../voxelEngine';
 import executor from './macroExecutor';
 import macros from './macros.json';
+import toolbar from '../toolbar';
 
 export default {
   init() {
     highlight.init();
 
     voxelEngine.onFire((target, state) => {
-      var placePosition = highlight.getPlacePosition();
-      var editPosition = highlight.getEditPosition();
+      var position = toolbar.getSelected().isBlock ? highlight.getPlacePosition() : highlight.getEditPosition();
       switch(state.fire) {
         case 1:
-          executor.leftClick(placePosition, editPosition);
+          executor.leftClick(position);
           break;
         case 0:
-          executor.rightClick(placePosition, editPosition);
+          executor.rightClick(position);
           break;
       }
     });
