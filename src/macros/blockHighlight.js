@@ -2,13 +2,17 @@ import highlight from 'voxel-highlight';
 import voxelEngine from '../voxelEngine';
 import events from '../events';
 import consts from '../constants';
+import selector from './selector';
 
 var position;
 
 export default {
   init() {
     var hl = voxelEngine.engine.highlighter = highlight(voxelEngine.engine, {
-      color: 0xff0000
+      color: 0xff0000,
+      adjacentActive() {
+        return selector.getMain().highlightAdjacent;
+      }
     });
 
     hl.on('highlight', function (voxelPos) {

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Interact",
+    "icon": "...",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "..."
+  },
+  {
+    "name": "Place",
+    "icon": "...",
+    "code": "...",
+    "highlightAdjacent": true,
+    "crosshairIcon": "..."
+  },
+  {
+    "name": "Remove",
+    "icon": "...",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "..."
+  },
+  {
+    "name": "Code",
+    "icon": "...",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "..."
+  },
+]

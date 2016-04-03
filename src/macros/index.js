@@ -1,10 +1,12 @@
 import highlight from './blockHighlight';
 import voxelEngine from '../voxelEngine';
 import executor from './macroExecutor';
+import selector from './selector';
 
 export default {
   init() {
     highlight.init();
+    selector.init();
 
     voxelEngine.onFire((target, state) => {
       var position = highlight.getPosition();

@@ -4,12 +4,12 @@ import placement from './blockPlacement';
 
 export default {
   placeBlock(position, block) {
-    if(permissions.canPlace(position)) {
+    if(position && permissions.canPlace(position)) {
       placement.setBlock(position, block);
     }
   },
   removeBlock(position) {
-    if(permissions.canEdit(position)) {
+    if(position && permissions.canEdit(position)) {
       placement.removeBlock(position);
     }
   },
@@ -17,7 +17,7 @@ export default {
     alert('interact not supported yet ' + position);
   },
   codeBlock(position) {
-    if(permissions.canEdit(position)) {
+    if(position && permissions.canEdit(position)) {
       coding.codeBlock(position);
     }
   },
