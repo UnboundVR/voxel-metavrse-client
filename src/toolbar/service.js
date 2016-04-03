@@ -1,28 +1,32 @@
 import toolbar from 'toolbar';
 import blocks from '../blocks';
+import macros from '../macros';
 
-var toolbarItems;
-var currentMaterial;
 var selector;
 
 export default {
   init() {
-    toolbarItems = blocks.getToolbarItems();
-    currentMaterial = toolbarItems[0].number;
+    function buildMacro(block) {
+      return {
+        name: block.name,
+        icon: block.icon,
+        crosshairIcon: 'crosshair',
+        isBlock: true,
+        textureId: block.number
+      };
+    }
+
+    this.items = macros.getMacros().concat(blocks.getToolbarItems().map(buildMacro));
+    this.selectedItem = this.items[0];
   },
   hookSelection() {
     selector = toolbar();
-    selector.on('select', function(item) {
-      currentMaterial = parseInt(item);
+    var self = this;
+    selector.on('select', function(index) {
+      self.selectedItem = self.items[index];
     });
   },
   unhookSelection() {
     selector.removeAllListeners('select');
-  },
-  getSelected() {
-    return currentMaterial;
-  },
-  getToolbarItems() {
-    return toolbarItems;
   }
 };
