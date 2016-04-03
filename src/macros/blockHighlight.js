@@ -3,7 +3,7 @@ import voxelEngine from '../voxelEngine';
 import events from '../events';
 import consts from '../constants';
 
-var blockPosPlace, blockPosEdit;
+var position;
 
 export default {
   init() {
@@ -12,27 +12,24 @@ export default {
     });
 
     hl.on('highlight', function (voxelPos) {
-      blockPosEdit = voxelPos;
+      position = voxelPos;
       events.emit(consts.events.HOVER, {}, {position: voxelPos});
     });
 
     hl.on('remove', function (voxelPos) {
-      blockPosEdit = null;
+      position = null;
       events.emit(consts.events.LEAVE, {}, {position: voxelPos});
     });
 
     hl.on('highlight-adjacent', function (voxelPos) {
-      blockPosPlace = voxelPos;
+      position = voxelPos;
     });
 
     hl.on('remove-adjacent', function () {
-      blockPosPlace = null;
+      position = null;
     });
   },
-  getPlacePosition() {
-    return blockPosPlace;
-  },
-  getEditPosition() {
-    return blockPosEdit;
+  getPosition() {
+    return position;
   }
 };
