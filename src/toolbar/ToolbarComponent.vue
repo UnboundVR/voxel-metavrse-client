@@ -7,6 +7,7 @@
       </li>
     </ul>
   </nav>
+  <div id="crosshair"><img src="assets/img/crosshair.png"/></div>
 </template>
 
 <script>
@@ -35,5 +36,14 @@ export default {
 .bar-tab {
   right: 33% !important;
   left: 33% !important;
+}
+
+#crosshair {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: -16px 0 0 -16px;
+    width: 32px;
+    height: 32px;
 }
 </style>
