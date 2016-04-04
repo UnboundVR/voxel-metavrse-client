@@ -11,7 +11,14 @@ export default {
       crosshairIcon: 'crosshair'
     });
 
-    this.items = itemTypes.concat(blockTypes.map(fromBlock));
+    var interact = {
+      name: 'Interact',
+      icon: 'hand',
+      crosshairIcon: 'hand',
+      adjacentActive: false
+    };
+
+    this.items = [interact].concat(itemTypes).concat(blockTypes.map(fromBlock));
     this.selectedItem = this.items[0];
   },
   hookSelection() {
