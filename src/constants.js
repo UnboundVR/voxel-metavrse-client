@@ -2,6 +2,7 @@ module.exports = {
   events: {
     HOVER: 'Hover',
     LEAVE: 'Leave',
+    INTERACT: 'Interact',
     FULLSCREEN_WINDOW_OPEN: 'FullScreenWindowOpen',
     FULLSCREEN_WINDOW_CLOSE: 'FullScreenWindowClose'
   },

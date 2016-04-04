@@ -1,6 +1,8 @@
 import map from '../map';
 import service from './service';
 import voxelEngine from '../voxelEngine';
+import events from '../events';
+import consts from '../constants';
 
 export default {
   leftClick(position) {
@@ -14,7 +16,11 @@ export default {
     if(item.isBlock) {
       map.placeBlock(position, item.material);
     } else {
-      alert('executing ' + item.name);
+      if(item.name == 'Interact') {
+        events.emit(consts.events.INTERACT, {}, {position: position});
+      } else {
+        alert('executing ' + item.name);
+      }
     }
   },
   rightClick(position) {

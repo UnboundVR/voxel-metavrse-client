@@ -5,7 +5,7 @@ import consts from '../constants';
 import map from '../map';
 
 var blockObjs = {};
-var supportedEvents = [consts.events.HOVER, consts.events.LEAVE];
+var supportedEvents = [consts.events.HOVER, consts.events.LEAVE, consts.events.INTERACT];
 
 supportedEvents.forEach(eventName => {
   events.on(eventName, function(payload, filter) {
