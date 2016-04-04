@@ -1,5 +1,3 @@
-import voxelEngine from '../voxelEngine';
-import blocks from '../blocks';
 import events from '../events';
 import EventEmitter2 from 'eventemitter2';
 import util from 'util';
@@ -51,17 +49,13 @@ var confirm = function(position, action) {
 };
 
 function buildBlockObject(position) {
-  var typeNumber = voxelEngine.getBlock(position);
-  var typeInfo = blocks.getBlockInfo(typeNumber);
-
-  var Block = function(position, blockType) {
+  var Block = function(position) {
     this.position = position;
-    this.blockType = blockType;
     this.map = map;
   };
   util.inherits(Block, EventEmitter2.EventEmitter2);
 
-  var obj = new Block(position, typeInfo);
+  var obj = new Block(position);
   return obj;
 }
 

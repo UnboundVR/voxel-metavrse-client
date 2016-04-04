@@ -2,7 +2,7 @@ import highlight from 'voxel-highlight';
 import voxelEngine from '../voxelEngine';
 import events from '../events';
 import consts from '../constants';
-import toolbar from '../toolbar';
+import service from './service';
 
 var positionPlace, positionEdit;
 
@@ -11,7 +11,7 @@ export default {
     var hl = voxelEngine.engine.highlighter = highlight(voxelEngine.engine, {
       color: 0xff0000,
       adjacentActive() {
-        return toolbar.getSelected().isBlock;
+        return service.selectedItem.adjacentActive;
       }
     });
 

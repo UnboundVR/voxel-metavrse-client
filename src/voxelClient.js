@@ -1,6 +1,5 @@
 import engine from 'voxel-engine';
 import io from 'socket.io-client';
-import blocks from './blocks';
 
 export default {
   init() {
@@ -27,12 +26,15 @@ export default {
     this.socket.on('init', data => {
       var settings = data.settings;
       var chunks = data.chunks;
-      blocks.init(data.blockTypes);
+      var materials = data.materials;
+
+      self.blockTypes = data.blockTypes;
+      self.itemTypes = data.itemTypes;
 
       settings.controls = {discreteFire: true};
       settings.generateChunks = false;
       settings.controlsDisabled = false;
-      settings.materials = blocks.getMaterials();
+      settings.materials = materials;
       settings.texturePath = 'assets/textures/';
 
       self.engine = self.createEngine(settings);

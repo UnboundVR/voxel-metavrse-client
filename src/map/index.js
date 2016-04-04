@@ -20,8 +20,5 @@ export default {
     if(position && permissions.canEdit(position)) {
       coding.codeBlock(position);
     }
-  },
-  getInfo(position) {
-    alert('getInfo not supported yet ' + position);
   }
 };

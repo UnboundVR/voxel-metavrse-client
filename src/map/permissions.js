@@ -1,6 +1,5 @@
 import consts from '../constants';
 import voxelEngine from '../voxelEngine';
-import blocks from '../blocks';
 import coding from '../coding';
 
 function getAdjacent(pos) {
@@ -16,26 +15,8 @@ function getAdjacent(pos) {
   return adj;
 }
 
-function adjacentToTrollBlock(position) {
-  var adj = getAdjacent(position);
-
-  for(var i = 0; i < adj.length; i++) {
-    var pos = adj[i];
-    if(voxelEngine.isOfType(pos, blocks.types.TROLL.number)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 export default {
   canPlace(position) {
-    if(adjacentToTrollBlock(position)) {
-      alert('problem?');
-      return false;
-    }
-
     var adjPositions = getAdjacent(position);
     var canPlace = true;
 
@@ -46,18 +27,7 @@ export default {
     return canPlace;
   },
   canEdit(position) {
-    if(voxelEngine.isOfType(position, blocks.types.TILE.number)) {
-      return false;
-    }
-
-    if(voxelEngine.isOfType(position, blocks.types.TROLL.number)) {
-      alert('the troll must go on');
-      return false;
-    }
-
-    if(voxelEngine.isOfType(position, blocks.types.DOGE.number)) {
-      alert('such indestructible');
-      alert('wow');
+    if(voxelEngine.isOfType(position, 1)) { // TODO un-hardcode this, it basically  makes tiles unbreakable
       return false;
     }
 

@@ -1,11 +1,10 @@
 import coding from '../coding';
 import voxelEngine from '../voxelEngine';
-import blocks from '../blocks';
 
 export default {
   codeBlock(position) {
     coding.editCode(position).then(() => {
-      voxelEngine.setBlock(position, blocks.types.CODE.number);
+      voxelEngine.setBlock(position, 2); // TODO unhardcode, we're setting this to the code block material
     }, err => {
       alert(err);
     });

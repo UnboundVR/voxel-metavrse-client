@@ -1,7 +1,6 @@
 import github from './github';
 import executor from './scriptExecutor';
 import voxelEngine from '../voxelEngine';
-import blocks from '../blocks';
 import expandGists from './expandGists';
 import auth from '../auth';
 import io from 'socket.io-client';
@@ -33,7 +32,7 @@ export default {
       socket.on('codeChanged', (position, codeObj) => {
         blocksWithCode[position] = codeObj;
         executor.update(position, codeObj.code);
-        voxelEngine.setBlock(position, blocks.types.CODE.number);
+        voxelEngine.setBlock(position, 2); // TODO unhardcode, we're setting this to a code block material
       });
       socket.on('codeRemoved', position => {
         delete blocksWithCode[position];
