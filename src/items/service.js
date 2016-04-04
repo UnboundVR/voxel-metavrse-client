@@ -4,6 +4,7 @@ export default {
   init(itemTypes, blockTypes) {
     var fromBlock = block => ({
       isBlock: true,
+      material: block.material,
       name: block.name,
       adjacentActive: true,
       icon: block.icon,
