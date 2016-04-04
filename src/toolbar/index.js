@@ -8,6 +8,6 @@ export default {
     Vue.component('toolbar-component', ToolbarComponent);
   },
   getSelected() {
-    return service.getSelected();
+    return service.selectedItem;
   }
 };

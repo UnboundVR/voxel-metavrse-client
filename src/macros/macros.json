@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Interact",
+    "icon": "hand",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "hand"
+  },
+  {
+    "name": "Remove",
+    "icon": "delete",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "delete"
+  },
+  {
+    "name": "Code",
+    "icon": "code",
+    "code": "...",
+    "highlightAdjacent": false,
+    "crosshairIcon": "code"
+  },
+]

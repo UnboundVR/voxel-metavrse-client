@@ -1,21 +1,20 @@
 import client from './voxelClient';
 import auth from './auth';
 import coding from './coding';
-import blockPlacement from './blockPlacement';
+import macros from './macros';
 import playerSync from './playerSync';
 import voxelEngine from './voxelEngine';
 import chat from './chat';
 import toolbar from './toolbar';
 import ide from './ide';
 import rootVue from './rootVue';
-import dotenv from 'dotenv';
 
 auth.init().then(() => {
   client.init().then(() => {
     voxelEngine.init(client.engine);
 
     Promise.all([
-      blockPlacement.init(),
+      macros.init(),
       playerSync.init(),
       chat.init(),
       coding.init(),

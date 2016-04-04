@@ -4,6 +4,7 @@ import events from '../events';
 import EventEmitter2 from 'eventemitter2';
 import util from 'util';
 import consts from '../constants';
+import map from '../map';
 
 var blockObjs = {};
 var supportedEvents = [consts.events.HOVER, consts.events.LEAVE];
@@ -56,6 +57,7 @@ function buildBlockObject(position) {
   var Block = function(position, blockType) {
     this.position = position;
     this.blockType = blockType;
+    this.map = map;
   };
   util.inherits(Block, EventEmitter2.EventEmitter2);
 
