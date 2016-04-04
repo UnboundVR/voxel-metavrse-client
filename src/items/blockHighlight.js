@@ -2,7 +2,7 @@ import highlight from 'voxel-highlight';
 import voxelEngine from '../voxelEngine';
 import events from '../events';
 import consts from '../constants';
-import executor from './itemExecutor';
+import service from './service';
 
 var positionPlace, positionEdit;
 
@@ -10,7 +10,7 @@ export default {
   init() {
     var hl = voxelEngine.engine.highlighter = highlight(voxelEngine.engine, {
       color: 0xff0000,
-      adjacentActive: executor.isAdjacentActive
+      adjacentActive: service.isAdjacentActive.bind(service)
     });
 
     hl.on('highlight', function (voxelPos) {

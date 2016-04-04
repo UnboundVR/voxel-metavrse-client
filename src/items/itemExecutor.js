@@ -1,12 +1,11 @@
 import map from '../map';
 import service from './service';
-import voxelEngine from '../voxelEngine';
 import events from '../events';
 import consts from '../constants';
 
 export default {
   leftClick(position) {
-    if(voxelEngine.engine.controls.state.crouch) {
+    if(service.isDeleteMode()) {
       map.removeBlock(position);
       return;
     }
@@ -24,11 +23,8 @@ export default {
     }
   },
   rightClick(position) {
-    if(!this.isAdjacentActive()) {
+    if(!service.isAdjacentActive()) {
       map.codeBlock(position);
     }
-  },
-  isAdjacentActive() {
-    return !voxelEngine.engine.controls.state.crouch && service.selectedItem.adjacentActive;
   }
 };

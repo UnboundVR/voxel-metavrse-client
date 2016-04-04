@@ -14,7 +14,7 @@ export default {
     Vue.component('toolbar-component', ToolbarComponent);
 
     voxelEngine.onFire((target, state) => {
-      var position = executor.isAdjacentActive() ? highlight.getPlacePosition() : highlight.getEditPosition();
+      var position = service.isAdjacentActive() ? highlight.getPlacePosition() : highlight.getEditPosition();
       switch(state.fire) {
         case 1:
           executor.leftClick(position);

@@ -7,17 +7,23 @@
       </li>
     </ul>
   </nav>
-  <div id="crosshair"><img v-bind:src="'assets/img/crosshairs/' + selectedItem.crosshairIcon + '.png'"/></div>
+  <div id="crosshair"><img v-bind:src="'assets/img/crosshairs/' + crosshairIcon + '.png'"/></div>
 </template>
 
 <script>
 
 import service from './service';
+import voxelEngine from '../voxelEngine';
 
 export default {
   name: 'ToolbarComponent',
   data(){
     return service;
+  },
+  computed: {
+    crosshairIcon() {
+      return voxelEngine.engine.controls.state.crouch ? 'delete' : this.selectedItem.crosshairIcon; // TODO fix using vue mechanism so it gets updated correctly
+    }
   },
   ready() {
     service.hookSelection();

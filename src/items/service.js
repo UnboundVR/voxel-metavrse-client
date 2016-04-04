@@ -1,4 +1,5 @@
 import toolbar from 'toolbar';
+import voxelEngine from '../voxelEngine';
 
 export default {
   init(itemTypes, blockTypes) {
@@ -30,5 +31,11 @@ export default {
   },
   unhookSelection() {
     this.selector.removeAllListeners('select');
+  },
+  isAdjacentActive() {
+    return !voxelEngine.engine.controls.state.crouch && this.selectedItem.adjacentActive;
+  },
+  isDeleteMode() {
+    return voxelEngine.engine.controls.state.crouch;
   }
 };
