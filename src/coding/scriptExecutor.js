@@ -5,7 +5,13 @@ import consts from '../constants';
 import map from '../map';
 
 var blockObjs = {};
-var supportedEvents = [consts.events.HOVER, consts.events.LEAVE, consts.events.INTERACT];
+var supportedEvents = [
+  consts.events.HOVER,
+  consts.events.LEAVE,
+  consts.events.INTERACT,
+  consts.events.PLACE_ADJACENT,
+  consts.events.REMOVE_ADJACENT
+];
 
 supportedEvents.forEach(eventName => {
   events.on(eventName, function(payload, filter) {
@@ -34,18 +40,6 @@ var remove = function(position) {
     unsubscribeToEvents(obj);
     delete blockObjs[position];
   }
-};
-
-var confirm = function(position, action) {
-  var obj = blockObjs[position];
-  if(!obj) {
-    return true;
-  }
-
-  var confirmFuncName = 'can' + action;
-  var confirmFunc = obj[confirmFuncName];
-
-  return !confirmFunc || confirmFunc();
 };
 
 function buildBlockObject(position) {
@@ -80,8 +74,7 @@ function unsubscribeToEvents(obj) {
 }
 
 export default {
-  create: create,
-  update: update,
-  remove: remove,
-  confirm: confirm
+  create,
+  update,
+  remove
 };

@@ -1,6 +1,8 @@
 import permissions from './permissions';
 import coding from './blockCoding';
 import placement from './blockPlacement';
+import events from '../events';
+import consts from '../constants';
 
 export default {
   placeBlock(position, block) {
@@ -14,7 +16,7 @@ export default {
     }
   },
   interact(position) {
-    alert('interact not supported yet ' + position);
+    events.emit(consts.events.INTERACT, {}, {position: position});
   },
   codeBlock(position) {
     if(position && permissions.canEdit(position)) {

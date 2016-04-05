@@ -13,7 +13,6 @@ export default {
     });
   },
   editCode: launchIde,
-  confirm: executor.confirm,
   removeCode(position) {
     if(client.hasCode(position)) {
       client.removeCode(position);

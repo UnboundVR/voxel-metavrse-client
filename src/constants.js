@@ -3,12 +3,10 @@ module.exports = {
     HOVER: 'Hover',
     LEAVE: 'Leave',
     INTERACT: 'Interact',
+    PLACE_ADJACENT: 'PlaceAdjacent',
+    REMOVE_ADJACENT: 'RemoveAdjacent',
     FULLSCREEN_WINDOW_OPEN: 'FullScreenWindowOpen',
     FULLSCREEN_WINDOW_CLOSE: 'FullScreenWindowClose'
-  },
-  confirmableFunctions: {
-    PLACE_ADJACENT: 'PlaceAdjacent',
-    EDIT: 'Edit'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',
