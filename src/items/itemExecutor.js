@@ -5,7 +5,7 @@ import consts from '../constants';
 
 export default {
   leftClick(position) {
-    if(service.isDeleteMode()) {
+    if(service.deleteMode) {
       map.removeBlock(position);
       return;
     }

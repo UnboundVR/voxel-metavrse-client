@@ -33,6 +33,21 @@ export default {
       settings.controlsDisabled = false;
       settings.materials = marketplace.materials;
       settings.texturePath = 'assets/textures/';
+      settings.keybindings = {
+        'W': 'forward',
+        'A': 'left',
+        'S': 'backward',
+        'D': 'right',
+        '<up>': 'forward',
+        '<left>': 'left',
+        '<down>': 'backward',
+        '<right>': 'right',
+        '<mouse 1>': 'fire',
+        '<mouse 3>': 'firealt',
+        '<space>': 'jump',
+        '<shift>': 'crouch',
+        '<control>': 'alt'
+      };
 
       self.engine = self.createEngine(settings);
       chunks.forEach(processChunk);

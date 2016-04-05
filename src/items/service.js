@@ -4,7 +4,9 @@ import marketplace from '../marketplace';
 
 export default {
   init() {
-    var fromBlock = block => ({
+    let self = this;
+
+    let fromBlock = block => ({
       isBlock: true,
       material: block.material,
       name: block.name,
@@ -13,7 +15,7 @@ export default {
       crosshairIcon: 'crosshair'
     });
 
-    var interact = {
+    let interact = {
       name: 'Interact',
       icon: 'hand',
       crosshairIcon: 'hand',
@@ -22,6 +24,13 @@ export default {
 
     this.items = [interact].concat(marketplace.itemTypes).concat(marketplace.blockTypes.map(fromBlock));
     this.selectedItem = this.items[0];
+    this.deleteMode = false;
+
+    voxelEngine.engine.controls.on('data', () => {
+      if(voxelEngine.engine.controls.state.crouch != self.deleteMode) {
+        self.deleteMode = voxelEngine.engine.controls.state.crouch;
+      }
+    });
   },
   hookSelection() {
     this.selector = toolbar();
@@ -35,8 +44,5 @@ export default {
   },
   isAdjacentActive() {
     return !voxelEngine.engine.controls.state.crouch && this.selectedItem.adjacentActive;
-  },
-  isDeleteMode() {
-    return voxelEngine.engine.controls.state.crouch;
   }
 };

@@ -13,7 +13,6 @@
 <script>
 
 import service from './service';
-import voxelEngine from '../voxelEngine';
 
 export default {
   name: 'ToolbarComponent',
@@ -22,7 +21,7 @@ export default {
   },
   computed: {
     crosshairIcon() {
-      return voxelEngine.engine.controls.state.crouch ? 'delete' : this.selectedItem.crosshairIcon; // TODO fix using vue mechanism so it gets updated correctly
+      return this.deleteMode ? 'delete' : this.selectedItem.crosshairIcon;
     }
   },
   ready() {
