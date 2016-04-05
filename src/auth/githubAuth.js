@@ -2,22 +2,20 @@ import consts  from '../constants';
 
 export default {
   getLoginUrl() {
-    var request = new Request(process.env.SERVER_ADDRESS + '/auth/github_client_info', {
+    let request = new Request(process.env.SERVER_ADDRESS + '/auth/github_client_info', {
       method: 'GET'
     });
 
-    return fetch(request).then(response => {
-      return response.json();
-    }).then(clientInfo =>
+    return fetch(request).then(response => response.json()).then(clientInfo =>
       consts.github.OAUTH_URL + '/authorize'
       + '?client_id=' + clientInfo.clientId
       + '&scope=' + consts.github.REQUESTED_SCOPE
       + '&redirect_uri=' + location.origin); // TODO pass state too
   },
   getAccessToken(code) {
-    var url = process.env.SERVER_ADDRESS + '/auth/github_access_token/' + code;
+    let url = process.env.SERVER_ADDRESS + '/auth/github_access_token/' + code;
 
-    var request = new Request(url, {
+    let request = new Request(url, {
       method: 'GET'
     });
 
@@ -38,7 +36,7 @@ export default {
     });
   },
   getLoggedUserInfo(githubAccessToken) {
-    var request = new Request(consts.github.API_URL + '/user', {
+    let request = new Request(consts.github.API_URL + '/user', {
       method: 'GET',
       headers: {
         'Authorization': 'token ' + githubAccessToken

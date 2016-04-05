@@ -4,11 +4,10 @@ import service from './service';
 import highlight from './blockHighlight';
 import voxelEngine from '../voxelEngine';
 import executor from './itemExecutor';
-import voxelClient from '../voxelClient';
 
 export default {
   init() {
-    service.init(voxelClient.itemTypes, voxelClient.blockTypes);
+    service.init();
     highlight.init();
 
     Vue.component('toolbar-component', ToolbarComponent);

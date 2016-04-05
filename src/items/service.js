@@ -1,8 +1,9 @@
 import toolbar from 'toolbar';
 import voxelEngine from '../voxelEngine';
+import marketplace from '../marketplace';
 
 export default {
-  init(itemTypes, blockTypes) {
+  init() {
     var fromBlock = block => ({
       isBlock: true,
       material: block.material,
@@ -19,7 +20,7 @@ export default {
       adjacentActive: false
     };
 
-    this.items = [interact].concat(itemTypes).concat(blockTypes.map(fromBlock));
+    this.items = [interact].concat(marketplace.itemTypes).concat(marketplace.blockTypes.map(fromBlock));
     this.selectedItem = this.items[0];
   },
   hookSelection() {

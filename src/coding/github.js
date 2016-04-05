@@ -4,7 +4,7 @@ var SINGLE_FILENAME = 'single_file';
 
 export default {
   getGist(id) {
-    var request = new Request(consts.github.API_URL + '/gists/' + id, {
+    let request = new Request(consts.github.API_URL + '/gists/' + id, {
       method: 'GET'
     });
 

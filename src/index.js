@@ -6,29 +6,30 @@ import voxelEngine from './voxelEngine';
 import chat from './chat';
 import items from './items';
 import ide from './ide';
+import marketplace from './marketplace';
 import rootVue from './rootVue';
 
+// TODO handle errors gracefully
 auth.init().then(() => {
-  client.init().then(() => {
-    voxelEngine.init(client.engine);
+  return marketplace.init();
+}).then(() => {
+  return client.init();
+}).then(() => {
+  voxelEngine.init(client.engine);
 
-    Promise.all([
-      playerSync.init(),
-      chat.init(),
-      coding.init(),
-      items.init(),
-      ide.init()
-    ]).then(() => {
-      try {
-        voxelEngine.appendToContainer();
-      } catch(err) {
-        console.log('Browser not capable');
-      }
+  return Promise.all([
+    playerSync.init(),
+    chat.init(),
+    coding.init(),
+    items.init(),
+    ide.init()
+  ]);
+}).then(() => {
+  try {
+    voxelEngine.appendToContainer();
+  } catch(err) {
+    console.log('Browser not capable');
+  }
 
-      rootVue.init();
-    }).catch((err) => {
-      console.log('Error initializing some modules', err);
-      throw err;
-    });
-  });
+  rootVue.init();
 });
