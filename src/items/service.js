@@ -22,7 +22,7 @@ export default {
       adjacentActive: false
     };
 
-    this.items = [interact].concat(marketplace.itemTypes).concat(marketplace.blockTypes.map(fromBlock));
+    this.items = [interact].concat(marketplace.getItemTypes()).concat(marketplace.getBlockTypes().map(fromBlock));
     this.selectedItem = this.items[0];
     this.deleteMode = false;
 

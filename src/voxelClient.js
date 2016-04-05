@@ -31,7 +31,7 @@ export default {
       settings.controls = {discreteFire: true};
       settings.generateChunks = false;
       settings.controlsDisabled = false;
-      settings.materials = marketplace.materials;
+      settings.materials = marketplace.getMaterials();
       settings.texturePath = 'assets/textures/';
       settings.keybindings = {
         'W': 'forward',

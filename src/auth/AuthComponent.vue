@@ -7,6 +7,7 @@
           <ul>
             <li class="label"><a href="#">{{ name }}</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
+            <li><a href="#" @click="marketplace">Marketplace</a></li>
           </ul>
         </li>
       </ul>
@@ -20,6 +21,7 @@
 <script>
 
 import service from './service';
+import marketplace from '../marketplace';
 
 export default {
   name: 'AuthComponent',
@@ -27,12 +29,13 @@ export default {
     return {
       loggedIn: service.isLoggedIn(),
       name: service.getName(),
-      avatarUrl: service.getAvatarUrl() + '&s=48',
+      avatarUrl: service.getAvatarUrl() + '&s=48'
     };
   },
   methods: {
     login: service.login,
-    logout: service.logout
+    logout: service.logout,
+    marketplace: marketplace.open
   }
 };
 </script>
