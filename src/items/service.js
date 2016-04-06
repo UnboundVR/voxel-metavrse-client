@@ -24,14 +24,24 @@ export default {
       adjacentActive: false
     };
 
-    this.items = [interact].concat(marketplace.getItemTypes()).concat(marketplace.getBlockTypes().map(fromBlock));
-    this.selectedItem = this.items[0];
-    this.deleteMode = false;
+    let toolbarItems = marketplace.getToolbarItems();
+    let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
+    let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
-    voxelEngine.engine.controls.on('data', () => {
-      if(voxelEngine.engine.controls.state.crouch != self.deleteMode) {
-        self.deleteMode = voxelEngine.engine.controls.state.crouch;
-      }
+    return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds)]).then(() => {
+      var itemTypes = itemTypeIds.map(id => marketplace.getItemTypeById(id));
+      var blockTypes = blockTypeIds.map(id => marketplace.getBlockTypeById(id));
+
+      this.items = [interact].concat(itemTypes).concat(blockTypes.map(fromBlock));
+      this.selectedItem = this.items[0];
+
+      this.deleteMode = false;
+
+      voxelEngine.engine.controls.on('data', () => {
+        if(voxelEngine.engine.controls.state.crouch != self.deleteMode) {
+          self.deleteMode = voxelEngine.engine.controls.state.crouch;
+        }
+      });
     });
   },
   hookSelection() {

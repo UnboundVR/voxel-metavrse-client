@@ -5,5 +5,6 @@ export default {
   init: controller.init.bind(controller),
   removeCode: controller.removeCode.bind(controller),
   storeCode: controller.storeCode.bind(controller),
-  editCode: launchIde
+  editCode: launchIde,
+  registerBlockType: controller.registerBlockType.bind(controller)
 };

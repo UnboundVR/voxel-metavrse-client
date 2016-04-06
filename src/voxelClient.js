@@ -24,34 +24,47 @@ export default {
     var self = this;
 
     var extractChunkVoxels = chunk => {
-      var voxels = {};
+      let voxels = {};
 
+      let blockTypeIds = {};
       Object.keys(chunk.voxels).forEach(pos => {
         let block = chunk.voxels[pos];
-        if(block) {
-          var blockType = marketplace.getblockTypeById(block);
-          voxels[pos] = (block == 1) ? 1 : blockType.material;
-          if(block != 1 && blockType.code) {
-            var d = chunk.dims[0];
-            var z = Math.floor(pos / (d * d));
-            var y = Math.floor((pos - d * d * z) / d);
-            var x = Math.floor(pos - d * d * z - d * y);
-
-            x += chunk.position[0] * d;
-            y += chunk.position[1] * d;
-            z += chunk.position[2] * d;
-
-            coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
-          }
+        if(block > 1) {
+          blockTypeIds[block] = true;
         }
       });
 
-      return voxels;
+      return marketplace.loadBlockTypes(Object.keys(blockTypeIds)).then((newTypes) => {
+        newTypes.filter(type => type.code).forEach(coding.registerBlockType);
+        Object.keys(chunk.voxels).forEach(pos => {
+          let block = chunk.voxels[pos];
+          if(block) {
+            var blockType = marketplace.getBlockTypeById(block);
+            voxels[pos] = (block == 1) ? 1 : blockType.material;
+            if(block != 1 && blockType.code) {
+              var d = chunk.dims[0];
+              var z = Math.floor(pos / (d * d));
+              var y = Math.floor((pos - d * d * z) / d);
+              var x = Math.floor(pos - d * d * z - d * y);
+
+              x += chunk.position[0] * d;
+              y += chunk.position[1] * d;
+              z += chunk.position[2] * d;
+
+              coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
+            }
+          }
+        });
+
+        return voxels;
+      });
     };
 
     var processChunk = chunk => {
-      chunk.voxels = extractChunkVoxels(chunk);
-      self.engine.showChunk(chunk);
+      extractChunkVoxels(chunk).then(voxels => {
+        chunk.voxels = voxels;
+        self.engine.showChunk(chunk);
+      });
     };
 
     this.socket.on('init', data => {
@@ -98,7 +111,18 @@ export default {
     });
 
     this.socket.on('set', (pos, val) => {
-      map.placeBlock(pos, val);
+      if(marketplace.getBlockTypeById(val)) {
+        map.placeBlock(pos, val);
+      } else {
+        marketplace.loadBlockTypes([val]).then((newTypes) => {
+          var newType = newTypes[0];
+          if(newType.code) {
+            coding.registerBlockType(newType);
+            coding.storeCode(pos, newType.id);
+          }
+          map.placeBlock(pos, val);
+        });
+      }
     });
   },
   createEngine(settings) {

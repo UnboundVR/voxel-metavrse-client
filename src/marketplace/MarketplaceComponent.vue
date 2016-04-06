@@ -4,7 +4,7 @@
 
     <h2>Items</h2>
     <ul>
-      <li v-for="item in itemTypes" class="item">
+      <li v-for="item in allItemTypes" class="item">
         <img class="icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
         <div>{{ item.name }}</div>
       </li>
@@ -12,7 +12,7 @@
 
     <h2>Blocks</h2>
     <ul>
-      <li v-for="block in blockTypes" class="item">
+      <li v-for="block in allBlockTypes" class="item">
         <img class="icon" v-bind:src="'assets/img/icons/' + block.icon + '.png'">
         <div>{{ block.name }}</div>
       </li>
@@ -20,7 +20,7 @@
 
     <h2>Materials</h2>
     <ul>
-      <li v-for="material in materials" class="item">
+      <li v-for="material in allMaterials" class="item">
         <img v-if="typeof material == 'string'" class="icon" v-bind:src="'assets/textures/' + material + '.png'">
         <img v-else v-for="texture in material" class="icon" v-bind:src="'assets/textures/' + texture + '.png'">
         <div>{{ material }}</div>

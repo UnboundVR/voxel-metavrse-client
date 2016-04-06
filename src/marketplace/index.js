@@ -8,25 +8,39 @@ export default {
     return controller.init();
   },
   getMaterials() {
-    return controller.materials;
+    return controller.allMaterials;
   },
   getItemTypes() {
-    return controller.itemTypes;
+    return controller.loadedItemTypes;
   },
   getBlockTypes() {
-    return controller.blockTypes;
+    return controller.loadedBlockTypes;
   },
-  getblockTypeById(id) {
-    let block = null;
-    controller.blockTypes.forEach(type => {
+  getToolbarItems() {
+    return controller.toolbarItems;
+  },
+  getBlockTypeById(id) {
+    let blockType = null;
+    controller.loadedBlockTypes.forEach(type => {
       if(type.id == id) {
-        block = type;
+        blockType = type;
       }
     });
-    return block;
+    return blockType;
+  },
+  getItemTypeById(id) {
+    let itemType = null;
+    controller.loadedItemTypes.forEach(type => {
+      if(type.id == id) {
+        itemType = type;
+      }
+    });
+    return itemType;
   },
   addBlockType: controller.addBlockType.bind(controller),
+  loadItemTypes: controller.loadItemTypes.bind(controller),
+  loadBlockTypes: controller.loadBlockTypes.bind(controller),
   open() {
-    controller.open();
+    controller.bringAllItems().then(() => controller.open());
   }
 };

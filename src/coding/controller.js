@@ -54,6 +54,7 @@ export default {
   getCode(position) {
     return codeObjects[blocksWithCode[position]];
   },
+  registerBlockType,
   hasCode(position) {
     return !!blocksWithCode[position];
   },

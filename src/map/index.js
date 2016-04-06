@@ -8,7 +8,7 @@ import marketplace from '../marketplace';
 export default {
   placeBlock(position, block) {
     if(position && permissions.canPlace(position)) {
-      placement.setBlock(position, marketplace.getblockTypeById(block));
+      placement.setBlock(position, marketplace.getBlockTypeById(block));
     }
   },
   removeBlock(position) {

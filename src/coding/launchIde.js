@@ -2,7 +2,6 @@ import ide from '../ide';
 import controller from './controller';
 import auth from '../auth';
 import executor from './scriptExecutor';
-import voxelEngine from '../voxelEngine';
 
 var openNew = function(position) {
   var code = 'console.log(\'hello w0rld from '+ position +'\')\n'; // TODO bring from server or something
@@ -10,7 +9,6 @@ var openNew = function(position) {
   return ide.open({position, code}).then(value => {
     return controller.createNewPrototype(position, value).then(codeObj => {
       alert('New code was created correctly with ID: ' + codeObj.id);
-      voxelEngine.setBlock(position, 2); // TODO don't do this anymore
     }, err => {
       alert('Error storing code: ' + err);
     });
@@ -26,7 +24,6 @@ var openExisting = function(position, codeObj) {
     return controller.modifyPrototype(position, value).then(() => {
       alert('Existing code was updated correctly');
       executor.update(position, value);
-      voxelEngine.setBlock(position, 2); // TODO don't do this anymore
     });
   });
 };
