@@ -4,7 +4,8 @@ import marketplace from '../marketplace';
 import EventEmitter2 from 'eventemitter2';
 import executor from './scriptExecutor';
 import util from 'util';
-
+import voxelClient from '../voxelClient';
+import voxelEngine from '../voxelEngine';
 import extend from 'extend';
 
 var prototypes = {};
@@ -39,13 +40,15 @@ function resolveCode(blockTypes) {
   }
 }
 
+function registerBlockType(blockType) {
+  prototypes[blockType.id] = buildPrototype(blockType);
+  codeObjects[blockType.id] = blockType.code;
+}
+
 export default {
   init() {
     return resolveCode(marketplace.getBlockTypes().filter(blockType => !!blockType.code)).then(blockTypes => {
-      blockTypes.forEach(blockType => {
-        prototypes[blockType.id] = buildPrototype(blockType);
-        codeObjects[blockType.id] = blockType.code;
-      });
+      blockTypes.forEach(registerBlockType);
     });
   },
   getCode(position) {
@@ -62,10 +65,30 @@ export default {
     delete blocksWithCode[position];
     executor.remove(position);
   },
-  modifyPrototype(id, code) {
+  modifyPrototype(position, code) {
     alert('not supported yet');
   },
-  createNewPrototype(code) {
-    alert('not supported yet');
+  createNewPrototype(position, code) {
+    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType?token=' + auth.getAccessToken(), {
+      method: 'POST',
+      body: JSON.stringify({
+        code: code,
+        material: voxelEngine.getBlock(position)
+      })
+    });
+
+    let self = this;
+    return fetch(request).then(response => response.json()).then(blockType => {
+      blockType.code = {
+        id: blockType.code,
+        code: code
+      };
+      marketplace.addBlockType(blockType);
+      voxelClient.setBlock(position, blockType.id);
+      registerBlockType(blockType);
+      self.storeCode(position, blockType.id);
+
+      return blockType.code;
+    });
   }
 };

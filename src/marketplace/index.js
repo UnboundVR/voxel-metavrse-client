@@ -25,6 +25,7 @@ export default {
     });
     return block;
   },
+  addBlockType: controller.addBlockType.bind(controller),
   open() {
     controller.open();
   }

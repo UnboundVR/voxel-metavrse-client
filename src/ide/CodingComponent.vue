@@ -2,8 +2,8 @@
   <div v-show="open" id="scripting">
     <div class="scripting-header">
       <span>Editing the code at {{position}}</span> <span v-if="id">({{id}})</span> <span v-else>(new)</span>
-      <button @click="save">Save existing</button>
-      <button @click="saveAs">Save as new</button>
+      <button v-if="id" @click="save">Save</button>
+      <button @click="saveAs">Save as...</button>
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
     <div class="scripting-content" v-el:content></div>

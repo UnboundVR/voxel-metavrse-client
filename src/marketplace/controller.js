@@ -24,5 +24,8 @@ export default {
       self.itemTypes = response.itemTypes;
       self.blockTypes = response.blockTypes;
     });
+  },
+  addBlockType(blockType) {
+    this.blockTypes.push(blockType);
   }
 };

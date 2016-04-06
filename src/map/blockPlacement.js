@@ -28,8 +28,8 @@ export default {
     });
   },
   setBlock(position, blockType) {
-    voxelEngine.setBlock(position, parseInt(blockType.material));
-    voxelClient.setBlock(position, parseInt(blockType.id));
+    voxelEngine.setBlock(position, blockType.material);
+    voxelClient.setBlock(position, blockType.id);
     coding.removeCode(position);
 
     if(blockType.code) {
