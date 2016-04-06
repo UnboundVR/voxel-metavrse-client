@@ -15,10 +15,19 @@ var doClose = function() {
 };
 
 var save = function(value) {
-  onSave(value);
+  console.log('saving...');
+  onSave(value, false);
   doClose();
   onSave = undefined;
 };
+
+var saveAs = function(value) {
+  console.log('saving as...');
+  onSave(value, true);
+  doClose();
+  onSave = undefined;
+};
+
 
 var close = function() {
   if(!dirty || confirm('Exit without saving?')) {
@@ -38,6 +47,7 @@ var open = function(data) {
 
 function Editor() {
   this.save = save.bind(this);
+  this.saveAs = saveAs.bind(this);
   this.close = close.bind(this);
   this.open = open.bind(this);
   this.onChange = function() {

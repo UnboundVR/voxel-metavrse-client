@@ -13,12 +13,13 @@ import rootVue from './rootVue';
 auth.init().then(() => {
   return marketplace.init();
 }).then(() => {
+  return coding.init();
+}).then(() => {
   return client.init();
 }).then(() => {
   return Promise.all([
     playerSync.init(),
     chat.init(),
-    coding.init(),
     items.init(),
     ide.init()
   ]);

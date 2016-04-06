@@ -19,23 +19,21 @@ function getAdjacent(pos) {
 
 export default {
   removeBlock(position) {
-    coding.removeCode(position);
     voxelEngine.clearBlock(position);
     voxelClient.clearBlock(position);
+    coding.removeCode(position);
 
     getAdjacent(position).forEach(pos => {
       events.emit(consts.events.REMOVE_ADJACENT, {}, {position: pos});
     });
   },
   setBlock(position, blockType) {
+    voxelEngine.setBlock(position, parseInt(blockType.material));
+    voxelClient.setBlock(position, parseInt(blockType.id));
     coding.removeCode(position);
-    voxelEngine.createBlock(position, blockType.material);
-    voxelClient.setBlock(position, blockType.id);
+
     if(blockType.code) {
-      coding.loadCode([{
-        position,
-        codeObj: blockType.code
-      }]);
+      coding.storeCode(position, blockType.id);
     }
 
     getAdjacent(position).forEach(pos => {

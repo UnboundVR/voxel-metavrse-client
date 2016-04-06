@@ -1,5 +1,4 @@
 import events from '../events';
-import EventEmitter2 from 'eventemitter2';
 import util from 'util';
 import consts from '../constants';
 import map from '../map';
@@ -22,9 +21,8 @@ supportedEvents.forEach(eventName => {
   });
 });
 
-var create = function(position, code) {
-  var obj = buildBlockObject(position);
-  (new Function(code).bind(obj))();
+var create = function(position, prototype) {
+  var obj = buildBlockObject(position, prototype);
   blockObjs[position] = obj;
   subscribeToEvents(obj);
 };
@@ -37,19 +35,22 @@ var update = function(position, code) {
 var remove = function(position) {
   var obj = blockObjs[position];
   if(obj) {
+    // TODO send event to block telling its's dead
     unsubscribeToEvents(obj);
     delete blockObjs[position];
   }
 };
 
-function buildBlockObject(position) {
+function buildBlockObject(position, prototype) {
   var Block = function(position) {
     this.position = position;
     this.map = map;
+    prototype.call(this);
   };
-  util.inherits(Block, EventEmitter2.EventEmitter2);
+  util.inherits(Block, prototype);
 
   var obj = new Block(position);
+  console.log(obj)
   return obj;
 }
 

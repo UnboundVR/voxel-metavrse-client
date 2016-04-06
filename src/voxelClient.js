@@ -23,8 +23,7 @@ export default {
   bindEvents() {
     var self = this;
 
-    var extractChunk = chunk => {
-      var code = [];
+    var extractChunkVoxels = chunk => {
       var voxels = {};
 
       Object.keys(chunk.voxels).forEach(pos => {
@@ -42,24 +41,16 @@ export default {
             y += chunk.position[1] * d;
             z += chunk.position[2] * d;
 
-            code.push({
-              position: [x, y, z], // FIXME this only works for cubic voxels (i.e. all dims are the same)
-              codeObj: blockType.code
-            });
+            coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
           }
         }
       });
 
-      return {
-        voxels,
-        code
-      };
+      return voxels;
     };
 
     var processChunk = chunk => {
-      let processedChunk = extractChunk(chunk);
-      chunk.voxels = processedChunk.voxels;
-      coding.loadCode(processedChunk.code);
+      chunk.voxels = extractChunkVoxels(chunk);
       self.engine.showChunk(chunk);
     };
 
