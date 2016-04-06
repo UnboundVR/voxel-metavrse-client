@@ -31,6 +31,12 @@ export default {
     coding.removeCode(position);
     voxelEngine.createBlock(position, blockType.material);
     voxelClient.setBlock(position, blockType.id);
+    if(blockType.code) {
+      coding.loadCode([{
+        position,
+        codeObj: blockType.code
+      }]);
+    }
 
     getAdjacent(position).forEach(pos => {
       events.emit(consts.events.PLACE_ADJACENT, {}, {position: pos});

@@ -13,7 +13,8 @@ export default {
     if(item.isBlock) {
       map.placeBlock(position, {
         material: parseInt(item.material),
-        id: parseInt(item.id)
+        id: parseInt(item.id),
+        code: item.code
       });
     } else {
       if(item.name == 'Interact') {

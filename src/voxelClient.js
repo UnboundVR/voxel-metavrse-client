@@ -37,6 +37,10 @@ export default {
             var y = Math.floor((pos - d * d * z) / d);
             var x = Math.floor(pos - d * d * z - d * y);
 
+            x += chunk.position[0] * d;
+            y += chunk.position[1] * d;
+            z += chunk.position[2] * d;
+
             code.push({
               position: [x, y, z], // FIXME this only works for cubic voxels (i.e. all dims are the same)
               codeObj: blockTypes[block].code

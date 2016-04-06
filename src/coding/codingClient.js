@@ -48,20 +48,20 @@ export default {
       return blockObjs;
     });
   },
-  // storeCode(position, code) {
-  //   return new Promise(function(resolve, reject) {
-  //     socket.emit('codeChanged', position, code, auth.getAccessToken(), (err, codeObj) => {
-  //       if(err) {
-  //         reject(err);
-  //       } else {
-  //         blocksWithCode[position] = codeObj;
-  //         resolve(codeObj);
-  //       }
-  //     });
-  //   });
-  // },
-  // removeCode(position) {
-  //   delete blocksWithCode[position];
-  //   socket.emit('codeRemoved', position);
-  // }
+  storeCode(position, code) {
+    return new Promise(function(resolve, reject) {
+      socket.emit('codeChanged', position, code, auth.getAccessToken(), (err, codeObj) => {
+        if(err) {
+          reject(err);
+        } else {
+          blocksWithCode[position] = codeObj;
+          resolve(codeObj);
+        }
+      });
+    });
+  },
+  removeCode(position) {
+    delete blocksWithCode[position];
+    socket.emit('codeRemoved', position);
+  }
 };

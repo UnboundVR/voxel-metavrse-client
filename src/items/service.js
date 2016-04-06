@@ -11,6 +11,7 @@ export default {
       material: block.material,
       id: block.id,
       name: block.name,
+      code: block.code,
       adjacentActive: true,
       icon: block.icon,
       crosshairIcon: 'crosshair'
