@@ -3,11 +3,12 @@ import coding from './blockCoding';
 import placement from './blockPlacement';
 import events from '../events';
 import consts from '../constants';
+import marketplace from '../marketplace';
 
 export default {
   placeBlock(position, block) {
     if(position && permissions.canPlace(position)) {
-      placement.setBlock(position, block);
+      placement.setBlock(position, marketplace.getblockTypeById(block));
     }
   },
   removeBlock(position) {

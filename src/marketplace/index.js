@@ -16,12 +16,14 @@ export default {
   getBlockTypes() {
     return controller.blockTypes;
   },
-  blockTypesById() {
-    let result = {};
+  getblockTypeById(id) {
+    let block = null;
     controller.blockTypes.forEach(type => {
-      result[type.id] = type;
+      if(type.id == id) {
+        block = type;
+      }
     });
-    return result;
+    return block;
   },
   open() {
     controller.open();

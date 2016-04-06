@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import marketplace from './marketplace';
 import coding from './coding';
 import voxelEngine from './voxelEngine';
+import map from './map';
 
 export default {
   init() {
@@ -25,13 +26,13 @@ export default {
     var extractChunk = chunk => {
       var code = [];
       var voxels = {};
-      var blockTypes = marketplace.blockTypesById();
 
       Object.keys(chunk.voxels).forEach(pos => {
         let block = chunk.voxels[pos];
         if(block) {
-          voxels[pos] = (block == 1) ? 1 : blockTypes[block].material;
-          if(block != 1 && blockTypes[block].code) {
+          var blockType = marketplace.getblockTypeById(block);
+          voxels[pos] = (block == 1) ? 1 : blockType.material;
+          if(block != 1 && blockType.code) {
             var d = chunk.dims[0];
             var z = Math.floor(pos / (d * d));
             var y = Math.floor((pos - d * d * z) / d);
@@ -43,7 +44,7 @@ export default {
 
             code.push({
               position: [x, y, z], // FIXME this only works for cubic voxels (i.e. all dims are the same)
-              codeObj: blockTypes[block].code
+              codeObj: blockType.code
             });
           }
         }
@@ -106,7 +107,7 @@ export default {
     });
 
     this.socket.on('set', (pos, val) => {
-      self.engine.setBlock(pos, val);
+      map.placeBlock(pos, val);
     });
   },
   createEngine(settings) {
