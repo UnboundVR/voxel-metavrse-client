@@ -29,8 +29,8 @@ export default {
   },
   setBlock(position, blockType) {
     coding.removeCode(position);
-    voxelEngine.createBlock(position, blockType);
-    voxelClient.setBlock(position, blockType);
+    voxelEngine.createBlock(position, blockType.material);
+    voxelClient.setBlock(position, blockType.id);
 
     getAdjacent(position).forEach(pos => {
       events.emit(consts.events.PLACE_ADJACENT, {}, {position: pos});

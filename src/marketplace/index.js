@@ -5,7 +5,7 @@ import Vue from 'vue';
 export default {
   init() {
     Vue.component('marketplace-component', MarketplaceComponent);
-    controller.init();
+    return controller.init();
   },
   getMaterials() {
     return controller.materials;
@@ -15,6 +15,13 @@ export default {
   },
   getBlockTypes() {
     return controller.blockTypes;
+  },
+  blockTypesById() {
+    let result = {};
+    controller.blockTypes.forEach(type => {
+      result[type.id] = type;
+    });
+    return result;
   },
   open() {
     controller.open();

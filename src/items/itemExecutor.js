@@ -11,7 +11,10 @@ export default {
     var item = service.selectedItem;
 
     if(item.isBlock) {
-      map.placeBlock(position, item.material);
+      map.placeBlock(position, {
+        material: parseInt(item.material),
+        id: parseInt(item.id)
+      });
     } else {
       if(item.name == 'Interact') {
         map.interact(position);

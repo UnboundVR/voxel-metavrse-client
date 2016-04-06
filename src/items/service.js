@@ -9,6 +9,7 @@ export default {
     let fromBlock = block => ({
       isBlock: true,
       material: block.material,
+      id: block.id,
       name: block.name,
       adjacentActive: true,
       icon: block.icon,

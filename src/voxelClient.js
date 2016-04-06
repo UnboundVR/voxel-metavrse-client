@@ -1,6 +1,8 @@
 import engine from 'voxel-engine';
 import io from 'socket.io-client';
 import marketplace from './marketplace';
+import coding from './coding';
+import voxelEngine from './voxelEngine';
 
 export default {
   init() {
@@ -20,7 +22,39 @@ export default {
   bindEvents() {
     var self = this;
 
+    var extractChunk = chunk => {
+      var code = [];
+      var voxels = {};
+      var blockTypes = marketplace.blockTypesById();
+
+      Object.keys(chunk.voxels).forEach(pos => {
+        let block = chunk.voxels[pos];
+        if(block) {
+          voxels[pos] = (block == 1) ? 1 : blockTypes[block].material;
+          if(block != 1 && blockTypes[block].code) {
+            var d = chunk.dims[0];
+            var z = Math.floor(pos / (d * d));
+            var y = Math.floor((pos - d * d * z) / d);
+            var x = Math.floor(pos - d * d * z - d * y);
+
+            code.push({
+              position: [x, y, z], // FIXME this only works for cubic voxels (i.e. all dims are the same)
+              codeObj: blockTypes[block].code
+            });
+          }
+        }
+      });
+
+      return {
+        voxels,
+        code
+      };
+    };
+
     var processChunk = chunk => {
+      let processedChunk = extractChunk(chunk);
+      chunk.voxels = processedChunk.voxels;
+      coding.loadCode(processedChunk.code);
       self.engine.showChunk(chunk);
     };
 
@@ -50,6 +84,8 @@ export default {
       };
 
       self.engine = self.createEngine(settings);
+      voxelEngine.init(self.engine);
+
       chunks.forEach(processChunk);
 
       self.engine.voxels.on('missingChunk', chunkPosition => {

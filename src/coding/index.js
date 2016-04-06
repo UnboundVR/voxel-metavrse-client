@@ -1,16 +1,11 @@
 import client  from './codingClient';
 import executor  from './scriptExecutor';
-import voxelEngine  from '../voxelEngine';
 import launchIde from './launchIde';
+import voxelEngine from '../voxelEngine';
 
 export default {
   init() {
-    client.init().then(() => {
-      client.getBlocksWithCode().forEach(block => {
-        executor.create(block.position, block.codeObj.code);
-        voxelEngine.setBlock(block.position, 2);
-      });
-    });
+    client.init();
   },
   editCode: launchIde,
   removeCode(position) {
@@ -18,5 +13,13 @@ export default {
       client.removeCode(position);
       executor.remove(position);
     }
+  },
+  loadCode(blocks) {
+    client.loadCode(blocks).then(blockObjs => {
+      blockObjs.forEach(blockObj => {
+        executor.create(blockObj.position, blockObj.codeObj.code);
+        voxelEngine.setBlock(blockObj.position, 2);
+      });
+    });
   }
 };

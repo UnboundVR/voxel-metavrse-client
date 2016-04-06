@@ -15,8 +15,6 @@ auth.init().then(() => {
 }).then(() => {
   return client.init();
 }).then(() => {
-  voxelEngine.init(client.engine);
-
   return Promise.all([
     playerSync.init(),
     chat.init(),

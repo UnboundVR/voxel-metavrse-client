@@ -1,6 +1,7 @@
 const MARKETPLACE = 'marketplace';
 import events from '../events';
 import consts from '../constants';
+import auth from '../auth/service'; // FIXME this is here to avoid a circular dependency. Things are coupled because the dropdown in auth component.
 
 export default {
   isOpen: false,
@@ -13,7 +14,7 @@ export default {
     events.emit(consts.events.FULLSCREEN_WINDOW_CLOSE, {name: MARKETPLACE});
   },
   init() {
-    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/init', {
+    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/init?token=' + auth.getAccessToken(), {
       method: 'GET'
     });
 
