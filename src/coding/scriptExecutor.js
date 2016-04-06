@@ -1,5 +1,4 @@
 import events from '../events';
-import util from 'util';
 import consts from '../constants';
 import map from '../map';
 
@@ -35,8 +34,10 @@ var update = function(position, code) {
 var remove = function(position) {
   var obj = blockObjs[position];
   if(obj) {
-    // TODO send event to block telling its's dead
     unsubscribeToEvents(obj);
+    if(obj.onDestroy) {
+      obj.onDestroy();
+    }
     delete blockObjs[position];
   }
 };
@@ -45,12 +46,15 @@ function buildBlockObject(position, prototype) {
   var Block = function(position) {
     this.position = position;
     this.map = map;
-    prototype.call(this);
   };
-  util.inherits(Block, prototype);
 
+  Block.prototype = prototype;
   var obj = new Block(position);
-  console.log(obj)
+
+  if(obj.init) {
+    obj.init();
+  }
+
   return obj;
 }
 

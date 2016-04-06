@@ -12,14 +12,15 @@ var codeObjects = {};
 var blocksWithCode = {};
 
 function buildPrototype(blockType) {
-  var BlockPrototype = function() {
-    EventEmitter2.EventEmitter2.call(this);
-    this.blockType = blockType;
-    (new Function(blockType.code.code).bind(this))();
+  var BlockPrototype = function(type) {
+    this.blockType = type;
   };
   util.inherits(BlockPrototype, EventEmitter2.EventEmitter2);
 
-  return BlockPrototype;
+  var proto = new BlockPrototype(blockType);
+  (new Function(blockType.code.code).bind(proto))();
+
+  return proto;
 }
 
 function resolveCode(blockTypes) {
