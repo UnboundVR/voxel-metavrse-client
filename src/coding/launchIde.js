@@ -3,7 +3,7 @@ import controller from './controller';
 import auth from '../auth';
 
 var openNew = function(position) {
-  var code = 'console.log(\'hello w0rld from '+ position +'\')\n'; // TODO bring from server or something
+  var code = 'this.interact = function() {\n  console.log(\'hello w0rld from '+ position + '\');\n};\n'; // TODO bring from server or something
 
   return ide.open({position, code}).then(data => {
     return controller.createNewPrototype(position, data.value, data.name).then(codeObj => {
