@@ -1,8 +1,8 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <span>Editing the code at {{position}}</span> <span v-if="id">({{id}})</span> <span v-else>(new)</span>
-      <button v-if="id" @click="save">Save</button>
+      <span>Editing the code at {{position}}</span> <span v-if="blockType">({{blockType.name}}, {{blockType.code.id}})</span> <span v-else>(new)</span>
+      <button v-if="blockType" @click="save">Save</button>
       <button @click="saveAs">Save as...</button>
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       position: '',
-      id: '',
+      blockType: null,
       open: false
     };
   },
@@ -69,10 +69,10 @@ export default {
     editor.on('open', data => {
       self.open = true;
       self.position = data.position.join('|');
-      self.id = data.id;
+      self.blockType = data.blockType;
 
       Vue.nextTick(() => {
-        codemirror.setValue(data.code);
+        codemirror.setValue(data.blockType ? data.blockType.code.code : data.code);
         editor.markClean();
         codemirror.focus();
       });

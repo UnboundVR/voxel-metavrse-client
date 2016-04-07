@@ -1,28 +1,13 @@
 import auth from '../auth';
 import github from './github';
 import marketplace from '../marketplace';
-import EventEmitter2 from 'eventemitter2';
 import executor from './scriptExecutor';
-import util from 'util';
 import voxelClient from '../voxelClient';
 import voxelEngine from '../voxelEngine';
+import prototypes from './prototypes';
 import extend from 'extend';
 
-var prototypes = {};
-var codeObjects = {};
 var blocksWithCode = {};
-
-function buildPrototype(blockType) {
-  var BlockPrototype = function(type) {
-    this.blockType = type;
-  };
-  util.inherits(BlockPrototype, EventEmitter2.EventEmitter2);
-
-  var proto = new BlockPrototype(blockType);
-  (new Function(blockType.code.code).bind(proto))();
-
-  return proto;
-}
 
 function resolveCode(blockTypes) {
   if(auth.isLogged()) {
@@ -40,27 +25,21 @@ function resolveCode(blockTypes) {
   }
 }
 
-function registerBlockType(blockType) {
-  prototypes[blockType.id] = buildPrototype(blockType);
-  codeObjects[blockType.id] = blockType.code;
-}
-
 export default {
   init() {
     return resolveCode(marketplace.getBlockTypes().filter(blockType => !!blockType.code)).then(blockTypes => {
-      blockTypes.forEach(registerBlockType);
+      blockTypes.forEach(prototypes.registerBlockType);
     });
   },
   getCode(position) {
-    return codeObjects[blocksWithCode[position]];
+    return marketplace.getBlockTypeById(blocksWithCode[position]);
   },
-  registerBlockType,
   hasCode(position) {
     return !!blocksWithCode[position];
   },
   storeCode(position, id) {
     blocksWithCode[position] = id;
-    executor.create(position, prototypes[id]);
+    executor.create(position, prototypes.getPrototype(id));
   },
   removeCode(position) {
     delete blocksWithCode[position];
@@ -85,9 +64,9 @@ export default {
         code: code
       };
       marketplace.addBlockType(blockType);
-      voxelClient.setBlock(position, blockType.id);
-      registerBlockType(blockType);
+      prototypes.registerBlockType(blockType);
       self.storeCode(position, blockType.id);
+      voxelClient.setBlock(position, blockType.id);
 
       return blockType.code;
     });

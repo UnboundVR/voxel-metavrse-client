@@ -1,7 +1,6 @@
 import ide from '../ide';
 import controller from './controller';
 import auth from '../auth';
-import executor from './scriptExecutor';
 
 var openNew = function(position) {
   var code = 'console.log(\'hello w0rld from '+ position +'\')\n'; // TODO bring from server or something
@@ -15,15 +14,19 @@ var openNew = function(position) {
   });
 };
 
-var openExisting = function(position, codeObj) {
-  return ide.open({position, code: codeObj.code, id: codeObj.id}).then((value, isNew) => {
+var openExisting = function(position, blockType) {
+  return ide.open({position, blockType}).then((value, isNew) => {
     if(isNew) {
-      return alert('Not supported yet');
-      // TODO support
+      return controller.forkPrototype(position, value).then((codeObj) => {
+        alert('Existing code was forked with ID: ' + codeObj.id);
+      }, err => {
+        alert('Error storing code: ' + err);
+      });
     }
     return controller.modifyPrototype(position, value).then(() => {
       alert('Existing code was updated correctly');
-      executor.update(position, value);
+    }, err => {
+      alert('Error storing code: ' + err);
     });
   });
 };

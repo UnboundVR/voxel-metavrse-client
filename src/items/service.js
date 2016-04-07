@@ -1,6 +1,7 @@
 import toolbar from 'toolbar';
 import voxelEngine from '../voxelEngine';
 import marketplace from '../marketplace';
+import coding from '../coding';
 
 export default {
   init() {
@@ -28,7 +29,11 @@ export default {
     let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
     let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
-    return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds)]).then(() => {
+    return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds).then(newBlocks => {
+      newBlocks.filter(block => block.code).forEach(block => {
+        coding.registerBlockType(block);
+      });
+    })]).then(() => {
       var itemTypes = itemTypeIds.map(id => marketplace.getItemTypeById(id));
       var blockTypes = blockTypeIds.map(id => marketplace.getBlockTypeById(id));
 

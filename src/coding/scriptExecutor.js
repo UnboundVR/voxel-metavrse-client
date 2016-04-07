@@ -26,11 +26,6 @@ var create = function(position, prototype) {
   subscribeToEvents(obj);
 };
 
-var update = function(position, code) {
-  remove(position);
-  create(position, code);
-};
-
 var remove = function(position) {
   var obj = blockObjs[position];
   if(obj) {
@@ -80,6 +75,5 @@ function unsubscribeToEvents(obj) {
 
 export default {
   create,
-  update,
   remove
 };
