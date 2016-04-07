@@ -48,8 +48,25 @@ export default {
   modifyPrototype(position, code) {
     alert('not supported yet');
   },
-  forkPrototype(position, code, name) {
-    alert('not supported yet');
+  forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
+    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId + '/fork?token=' + auth.getAccessToken(), {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        name,
+        material: voxelEngine.getBlock(position)
+      })
+    });
+
+    let self = this;
+    return fetch(request).then(response => response.json()).then(blockType => {
+      marketplace.addBlockType(blockType);
+      prototypes.registerBlockType(blockType);
+      self.storeCode(position, blockType.id);
+      voxelClient.setBlock(position, blockType.id);
+
+      return blockType.code;
+    });
   },
   createNewPrototype(position, code, name) {
     let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType?token=' + auth.getAccessToken(), {
@@ -63,10 +80,6 @@ export default {
 
     let self = this;
     return fetch(request).then(response => response.json()).then(blockType => {
-      blockType.code = {
-        id: blockType.code,
-        code: code
-      };
       marketplace.addBlockType(blockType);
       prototypes.registerBlockType(blockType);
       self.storeCode(position, blockType.id);
