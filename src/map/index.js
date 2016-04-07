@@ -13,7 +13,7 @@ export default {
   },
   removeBlock(position, dontBroadcast) {
     if(position && permissions.canEdit(position)) {
-      placement.removeBlock(position);
+      placement.removeBlock(position, dontBroadcast);
     }
   },
   interact(position) {
