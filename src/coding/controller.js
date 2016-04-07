@@ -48,11 +48,15 @@ export default {
   modifyPrototype(position, code) {
     alert('not supported yet');
   },
-  createNewPrototype(position, code) {
+  forkPrototype(position, code, name) {
+    alert('not supported yet');
+  },
+  createNewPrototype(position, code, name) {
     let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType?token=' + auth.getAccessToken(), {
       method: 'POST',
       body: JSON.stringify({
-        code: code,
+        code,
+        name,
         material: voxelEngine.getBlock(position)
       })
     });

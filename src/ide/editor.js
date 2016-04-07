@@ -15,15 +15,16 @@ var doClose = function() {
 };
 
 var save = function(value) {
-  console.log('saving...');
-  onSave(value, false);
+  onSave({value});
   doClose();
   onSave = undefined;
 };
 
-var saveAs = function(value) {
-  console.log('saving as...');
-  onSave(value, true);
+var saveAs = function(value, name) {
+  if(!name) {
+    name = 'Unnamed';
+  }
+  onSave({value, name});
   doClose();
   onSave = undefined;
 };

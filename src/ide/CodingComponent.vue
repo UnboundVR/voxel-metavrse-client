@@ -37,7 +37,7 @@ export default {
     },
     saveAs() {
       this.open = false;
-      editor.saveAs(codemirror.getValue());
+      editor.saveAs(codemirror.getValue(), prompt('Enter the name of the new block'));
     },
     close() {
       this.open = false;

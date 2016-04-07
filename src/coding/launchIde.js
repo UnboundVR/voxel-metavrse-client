@@ -5,8 +5,8 @@ import auth from '../auth';
 var openNew = function(position) {
   var code = 'console.log(\'hello w0rld from '+ position +'\')\n'; // TODO bring from server or something
 
-  return ide.open({position, code}).then(value => {
-    return controller.createNewPrototype(position, value).then(codeObj => {
+  return ide.open({position, code}).then(data => {
+    return controller.createNewPrototype(position, data.value, data.name).then(codeObj => {
       alert('New code was created correctly with ID: ' + codeObj.id);
     }, err => {
       alert('Error storing code: ' + err);
@@ -15,15 +15,15 @@ var openNew = function(position) {
 };
 
 var openExisting = function(position, blockType) {
-  return ide.open({position, blockType}).then((value, isNew) => {
-    if(isNew) {
-      return controller.forkPrototype(position, value).then((codeObj) => {
+  return ide.open({position, blockType}).then(data => {
+    if(data.name) {
+      return controller.forkPrototype(position, data.value, data.name).then((codeObj) => {
         alert('Existing code was forked with ID: ' + codeObj.id);
       }, err => {
         alert('Error storing code: ' + err);
       });
     }
-    return controller.modifyPrototype(position, value).then(() => {
+    return controller.modifyPrototype(position, data.value).then(() => {
       alert('Existing code was updated correctly');
     }, err => {
       alert('Error storing code: ' + err);
