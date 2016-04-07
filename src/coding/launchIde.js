@@ -23,7 +23,7 @@ var openExisting = function(position, blockType) {
         alert('Error storing code: ' + err);
       });
     }
-    return controller.modifyPrototype(position, data.value).then(() => {
+    return controller.modifyPrototype(position, data.value, blockType.code.id).then(() => {
       alert('Existing code was updated correctly');
     }, err => {
       alert('Error storing code: ' + err);

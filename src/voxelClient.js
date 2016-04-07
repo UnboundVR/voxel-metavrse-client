@@ -60,7 +60,19 @@ export default {
       });
     };
 
+    function rlDecode(input) {
+      let output = [];
+      input.forEach(item => {
+        for (var i = 0; i < item[0]; i++) {
+          output.push(item[1]);
+        }
+      });
+
+      return output;
+    }
+
     var processChunk = chunk => {
+      chunk.voxels = rlDecode(chunk.voxels);
       return extractChunkVoxels(chunk).then(voxels => {
         chunk.voxels = voxels;
         self.engine.showChunk(chunk);
@@ -110,17 +122,21 @@ export default {
 
     });
 
-    this.socket.on('set', (pos, val) => {
-      if(marketplace.getBlockTypeById(val)) {
-        map.placeBlock(pos, val);
+    this.socket.on('set', (pos, val, typeUpdated) => {
+      if(val == 0) {
+        return map.removeBlock(pos, true);
+      }
+
+      if(!typeUpdated && marketplace.getBlockTypeById(val)) {
+        map.placeBlock(pos, val, true);
       } else {
-        marketplace.loadBlockTypes([val]).then((newTypes) => {
+        marketplace.loadBlockTypes([val], typeUpdated).then((newTypes) => {
           var newType = newTypes[0];
           if(newType.code) {
             coding.registerBlockType(newType);
             coding.storeCode(pos, newType.id);
           }
-          map.placeBlock(pos, val);
+          map.placeBlock(pos, val, true);
         });
       }
     });
@@ -132,8 +148,8 @@ export default {
 
     return self.engine;
   },
-  setBlock(position, type) {
-    this.socket.emit('set', position, type);
+  setBlock(position, type, typeUpdated) {
+    this.socket.emit('set', position, type, typeUpdated);
   },
   clearBlock(position) {
     this.setBlock(position, 0);

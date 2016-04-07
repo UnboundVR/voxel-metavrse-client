@@ -3,9 +3,9 @@ import events from '../events';
 import consts from '../constants';
 import auth from '../auth/service'; // FIXME this is here to avoid a circular dependency. Things are coupled due to the dropdown in auth component.
 
-function loadTypes(loadedTypes, type, ids) {
+function loadTypes(loadedTypes, type, ids, force) {
   var loadedIds = loadedTypes.map(type => type.id);
-  var pendingIds = ids.filter(id => !loadedIds.includes(id));
+  var pendingIds = force ? ids : ids.filter(id => !loadedIds.includes(id));
 
   if(!pendingIds.length) {
     return Promise.resolve([]);
@@ -59,11 +59,11 @@ export default {
       });
     });
   },
-  loadItemTypes(ids) {
-    return loadTypes(this.loadedItemTypes, 'itemTypes', ids);
+  loadItemTypes(ids, force) {
+    return loadTypes(this.loadedItemTypes, 'itemTypes', ids, force);
   },
-  loadBlockTypes(ids) {
-    return loadTypes(this.loadedBlockTypes, 'blockTypes', ids);
+  loadBlockTypes(ids, force) {
+    return loadTypes(this.loadedBlockTypes, 'blockTypes', ids, force);
   },
   addBlockType(blockType) {
     this.loadedBlockTypes.push(blockType);

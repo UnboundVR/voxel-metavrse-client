@@ -45,8 +45,24 @@ export default {
     delete blocksWithCode[position];
     executor.remove(position);
   },
-  modifyPrototype(position, code) {
-    alert('not supported yet');
+  modifyPrototype(position, code, codeId) {
+    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId + '?token=' + auth.getAccessToken(), {
+      method: 'PUT',
+      body: JSON.stringify({
+        code,
+        id: codeId
+      })
+    });
+
+    let self = this;
+    return fetch(request).then(response => response.json()).then(() => {
+      let blockType = self.getCode(position);
+      blockType.code.code = code;
+      prototypes.registerBlockType(blockType);
+      voxelClient.setBlock(position, blockType.id, true);
+      executor.remove(position);
+      executor.create(position, prototypes.getPrototype(blockType.id));
+    });
   },
   forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
     let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId + '/fork?token=' + auth.getAccessToken(), {

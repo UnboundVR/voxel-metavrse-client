@@ -6,12 +6,12 @@ import consts from '../constants';
 import marketplace from '../marketplace';
 
 export default {
-  placeBlock(position, block) {
+  placeBlock(position, block, dontBroadcast) {
     if(position && permissions.canPlace(position)) {
-      placement.setBlock(position, marketplace.getBlockTypeById(block));
+      placement.setBlock(position, marketplace.getBlockTypeById(block), dontBroadcast);
     }
   },
-  removeBlock(position) {
+  removeBlock(position, dontBroadcast) {
     if(position && permissions.canEdit(position)) {
       placement.removeBlock(position);
     }
