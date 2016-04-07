@@ -1,9 +1,19 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <span>Editing the code at {{position}}</span> <span v-if="blockType">({{blockType.name}}, {{blockType.code.id}})</span> <span v-else>(new)</span>
-      <button v-if="blockType" @click="save">Save</button>
-      <button @click="saveAs">Save as...</button>
+      <h1>Editing the code at {{position}}</h1>
+      <div v-if="blockType">
+        Block type: {{blockType.name}} <img class="block-icon" :src="'assets/img/icons/' + blockType.icon + '.png'"></src>
+      </div>
+      <div v-if="blockType">
+        <div class="author-info">
+          Author: {{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src>
+        </div>
+        <a target="_blank" :href="blockType.code.url">Go to gist</a>
+        <button v-if="mine" @click="save">Save</button>
+        <button @click="saveAs">Fork...</button>
+      </div>
+      <button v-else @click="saveAs">Save as...</button>
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
     <div class="scripting-content" v-el:content></div>
@@ -13,6 +23,7 @@
 <script>
 
 import editor from './editor';
+import auth from '../auth';
 import Vue from 'vue';
 
 var codemirror;
@@ -27,7 +38,8 @@ export default {
     return {
       position: '',
       blockType: null,
-      open: false
+      open: false,
+      mine: false
     };
   },
   methods: {
@@ -36,8 +48,13 @@ export default {
       editor.save(codemirror.getValue());
     },
     saveAs() {
+      var name = prompt('Enter the name of the new block');
+      if(!name) {
+        return;
+      }
+
       this.open = false;
-      editor.saveAs(codemirror.getValue(), prompt('Enter the name of the new block'));
+      editor.saveAs(codemirror.getValue(), name);
     },
     close() {
       this.open = false;
@@ -70,6 +87,7 @@ export default {
       self.open = true;
       self.position = data.position.join('|');
       self.blockType = data.blockType;
+      self.mine = data.blockType && data.blockType.code.author.id == auth.getUserId();
 
       Vue.nextTick(() => {
         codemirror.setValue(data.blockType ? data.blockType.code.code : data.code);
@@ -94,7 +112,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #scripting {
   display: block;
   position: absolute;
@@ -109,6 +127,22 @@ export default {
     width: 100%;
     background: #000;
     color: #fff;
+
+    .block-icon {
+      border-radius: 25px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .author-info {
+      display: block;
+
+      .author-avatar {
+        border-radius: 25px;
+        width: 32px;
+        height: 32px;
+      }
+    }
   }
 
     .closeButton {

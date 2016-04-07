@@ -61,7 +61,7 @@ export default {
     };
 
     var processChunk = chunk => {
-      extractChunkVoxels(chunk).then(voxels => {
+      return extractChunkVoxels(chunk).then(voxels => {
         chunk.voxels = voxels;
         self.engine.showChunk(chunk);
       });
@@ -95,19 +95,19 @@ export default {
       self.engine = self.createEngine(settings);
       voxelEngine.init(self.engine);
 
-      chunks.forEach(processChunk);
-
-      self.engine.voxels.on('missingChunk', chunkPosition => {
-        self.socket.emit('requestChunk', chunkPosition, (err, chunk) => {
-          if(err) {
-            alert('Error getting chunk: ', err);
-          } else {
-            processChunk(chunk);
-          }
+      Promise.all(chunks.map(processChunk)).then(() => {
+        self.onReady();
+        self.engine.voxels.on('missingChunk', chunkPosition => {
+          self.socket.emit('requestChunk', chunkPosition, (err, chunk) => {
+            if(err) {
+              alert('Error getting chunk: ', err);
+            } else {
+              processChunk(chunk);
+            }
+          });
         });
       });
 
-      self.onReady();
     });
 
     this.socket.on('set', (pos, val) => {

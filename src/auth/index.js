@@ -4,6 +4,7 @@ import service from './service';
 
 export default {
   getName: service.getName,
+  getUserId: service.getUserId,
   getAccessToken: service.getAccessToken,
   isLogged: service.isLoggedIn,
   init() {

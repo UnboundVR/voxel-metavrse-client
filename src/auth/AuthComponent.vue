@@ -3,7 +3,7 @@
     <nav id="auth-component-menu" class="css_menu">
       <ul v-if="loggedIn">
         <li>
-          <img id="auth-component-avatar" :src="avatarUrl" alt="" />
+          <img id="auth-component-avatar" :src="avatarUrl" />
           <ul>
             <li class="label"><a href="#">{{ name }}</a></li>
             <li><a href="#" @click="marketplace">Marketplace</a></li>
