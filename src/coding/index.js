@@ -7,5 +7,6 @@ export default {
   removeCode: controller.removeCode.bind(controller),
   storeCode: controller.storeCode.bind(controller),
   editCode: launchIde,
-  registerBlockType: prototypes.registerBlockType.bind(prototypes)
+  loadPrototype: prototypes.loadPrototype.bind(prototypes),
+  addBlockTypeCode: controller.addBlockTypeCode.bind(controller)
 };

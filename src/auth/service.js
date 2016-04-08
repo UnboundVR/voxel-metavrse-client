@@ -59,5 +59,13 @@ export default {
   },
   isLoggedIn() {
     return !!accessToken;
+  },
+  getAuthHeaders() {
+    var headers = {};
+    if(accessToken) {
+      headers['Authorization'] = accessToken;
+    }
+
+    return new Headers(headers);
   }
 };

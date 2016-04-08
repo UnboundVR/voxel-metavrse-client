@@ -6,6 +6,7 @@ export default {
   getName: service.getName,
   getUserId: service.getUserId,
   getAccessToken: service.getAccessToken,
+  getAuthHeaders: service.getAuthHeaders,
   isLogged: service.isLoggedIn,
   init() {
     Vue.component('auth-component', AuthComponent);

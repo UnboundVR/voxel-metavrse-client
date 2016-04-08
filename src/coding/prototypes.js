@@ -15,7 +15,7 @@ function buildPrototype(blockType) {
   return proto;
 }
 
-function registerBlockType(blockType) {
+function loadPrototype(blockType) {
   prototypes[blockType.id] = buildPrototype(blockType);
 }
 
@@ -24,6 +24,6 @@ function getPrototype(id) {
 }
 
 export default {
-  registerBlockType,
+  loadPrototype,
   getPrototype
 };

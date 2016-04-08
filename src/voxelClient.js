@@ -35,28 +35,29 @@ export default {
       });
 
       return marketplace.loadBlockTypes(Object.keys(blockTypeIds)).then((newTypes) => {
-        newTypes.filter(type => type.code).forEach(coding.registerBlockType);
-        Object.keys(chunk.voxels).forEach(pos => {
-          let block = chunk.voxels[pos];
-          if(block) {
-            var blockType = marketplace.getBlockTypeById(block);
-            voxels[pos] = (block == 1) ? 1 : blockType.material;
-            if(block != 1 && blockType.code) {
-              var d = chunk.dims[0];
-              var z = Math.floor(pos / (d * d));
-              var y = Math.floor((pos - d * d * z) / d);
-              var x = Math.floor(pos - d * d * z - d * y);
+        return Promise.all(newTypes.filter(type => type.code).map(coding.addBlockTypeCode)).then(() => {
+          Object.keys(chunk.voxels).forEach(pos => {
+            let block = chunk.voxels[pos];
+            if(block) {
+              var blockType = marketplace.getBlockTypeById(block);
+              voxels[pos] = (block == 1) ? 1 : blockType.material;
+              if(block != 1 && blockType.code) {
+                var d = chunk.dims[0];
+                var z = Math.floor(pos / (d * d));
+                var y = Math.floor((pos - d * d * z) / d);
+                var x = Math.floor(pos - d * d * z - d * y);
 
-              x += chunk.position[0] * d;
-              y += chunk.position[1] * d;
-              z += chunk.position[2] * d;
+                x += chunk.position[0] * d;
+                y += chunk.position[1] * d;
+                z += chunk.position[2] * d;
 
-              coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
+                coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
+              }
             }
-          }
-        });
+          });
 
-        return voxels;
+          return voxels;
+        });
       });
     };
 
@@ -133,8 +134,9 @@ export default {
         marketplace.loadBlockTypes([val], typeUpdated).then((newTypes) => {
           var newType = newTypes[0];
           if(newType.code) {
-            coding.registerBlockType(newType);
-            coding.storeCode(pos, newType.id);
+            coding.addBlockTypeCode(newType).then(() => {
+              coding.storeCode(pos, newType.id);
+            });
           }
           map.placeBlock(pos, val, true);
         });

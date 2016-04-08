@@ -11,8 +11,9 @@ function loadTypes(loadedTypes, type, ids, force) {
     return Promise.resolve([]);
   }
 
-  return fetch(process.env.SERVER_ADDRESS + '/marketplace/'+ type +'?token=' + auth.getAccessToken() + '&ids=' + pendingIds, {
-    method: 'GET'
+  return fetch(process.env.SERVER_ADDRESS + '/marketplace/'+ type + '?ids=' + pendingIds, {
+    method: 'GET',
+    headers: auth.getAuthHeaders()
   }).then(response => response.json()).then(response => {
     response.forEach(item => {
       loadedTypes.push(item);
@@ -39,8 +40,9 @@ export default {
     self.allItemTypes = [];
     self.allBlockTypes = [];
 
-    return fetch(process.env.SERVER_ADDRESS + '/marketplace/init?token=' + auth.getAccessToken(), {
-      method: 'GET'
+    return fetch(process.env.SERVER_ADDRESS + '/marketplace/init', {
+      method: 'GET',
+      headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(response => {
       self.allMaterials = response.materials;
       self.toolbarItems = response.toolbar;
@@ -48,8 +50,9 @@ export default {
   },
   bringAllItems() {
     var self = this;
-    return fetch(process.env.SERVER_ADDRESS + '/marketplace/all?token=' + auth.getAccessToken(), {
-      method: 'GET'
+    return fetch(process.env.SERVER_ADDRESS + '/marketplace/all', {
+      method: 'GET',
+      headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(res => {
       res.blockTypes.forEach(type => {
         self.allBlockTypes.push(type);

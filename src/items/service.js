@@ -30,9 +30,9 @@ export default {
     let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
     return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds).then(newBlocks => {
-      newBlocks.filter(block => block.code).forEach(block => {
-        coding.registerBlockType(block);
-      });
+      return Promise.all(newBlocks.filter(block => block.code).map(block => {
+        coding.addBlockTypeCode(block);
+      }));
     })]).then(() => {
       var itemTypes = itemTypeIds.map(id => marketplace.getItemTypeById(id));
       var blockTypes = blockTypeIds.map(id => marketplace.getBlockTypeById(id));
