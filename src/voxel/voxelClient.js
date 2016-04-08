@@ -5,6 +5,7 @@ import types from './blockTypes';
 import compression from './compression';
 import clientSettings from './settings.json';
 import extend from 'extend';
+import Promise from 'bluebird';
 
 export default {
   init() {
@@ -81,7 +82,7 @@ export default {
       self.engine = engine(settings);
       self.engine.settings = settings;
 
-      Promise.all(data.chunks.map(processChunk)).then(() => {
+      Promise.each(data.chunks, processChunk).then(() => {
         self.onReady(self.engine);
 
         self.engine.voxels.on('missingChunk', chunkPosition => {

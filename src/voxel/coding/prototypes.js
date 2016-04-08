@@ -16,6 +16,10 @@ function buildPrototype(blockType) {
 }
 
 function load(blockType) {
+  var oldPrototype = prototypes[blockType.id];
+  if(oldPrototype && oldPrototype.onUnload) {
+    oldPrototype.onUnload();
+  }
   prototypes[blockType.id] = buildPrototype(blockType);
 }
 
