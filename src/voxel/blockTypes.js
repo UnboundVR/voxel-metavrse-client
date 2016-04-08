@@ -16,12 +16,14 @@ export default {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(response => {
-      return Promise.all(response.map(item => {
-        types[item.id] = item;
-        if(item.code) {
-          return coding.registerBlockType(item);
-        }
-      }));
+
+      response.forEach(type => {
+        types[type.id] = type;
+      });
+
+      var newItems = response.filter(type => type.code && pendingIds.includes(type.id));
+      var registerPromises = newItems.map(coding.registerBlockType);
+      return Promise.all(registerPromises);
     });
   },
   load(id, force) {

@@ -20,7 +20,7 @@ export default {
     }).then(response => response.json()).then(response => {
       return Promise.all(response.map(item => {
         types[item.id] = item;
-        if(item.code) {
+        if(item.code && pendingIds.includes(item.id)) {
           return coding.registerItemType(item);
         }
       }));

@@ -45,7 +45,7 @@ export default {
         return [x, y, z];
       }
 
-      return types.loadMany(Object.keys(blockTypeIds)).then(() => {
+      return types.loadMany(Object.keys(blockTypeIds).map(parseInt)).then(() => {
         Object.keys(chunk.voxels).forEach(pos => {
           let block = chunk.voxels[pos];
           if(block) {
