@@ -1,7 +1,7 @@
 import permissions from './permissions';
-import coding from './blockCoding';
 import placement from './blockPlacement';
 import events from '../events';
+import coding from '../coding';
 import consts from '../constants';
 import marketplace from '../marketplace';
 
@@ -21,7 +21,9 @@ export default {
   },
   codeBlock(position) {
     if(position && permissions.canEdit(position)) {
-      coding.codeBlock(position);
+      coding.editCode(position).catch(err => {
+        alert(err);
+      });
     }
   }
 };

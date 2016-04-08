@@ -25,6 +25,20 @@ function resolveCode(blockType) {
   }
 }
 
+function processNewBlockType(position, blockType) {
+  marketplace.addBlockType(blockType);
+  prototypes.loadPrototype(blockType);
+  storeCode(position, blockType.id);
+  voxelClient.setBlock(position, blockType.id);
+
+  return blockType.code;
+}
+
+function storeCode(position, id) {
+  blocksWithCode[position] = id;
+  executor.create(position, prototypes.getPrototype(id));
+}
+
 export default {
   addBlockTypeCode(blockType) {
     return resolveCode(blockType).then(prototypes.loadPrototype);
@@ -40,10 +54,7 @@ export default {
   hasCode(position) {
     return !!blocksWithCode[position];
   },
-  storeCode(position, id) {
-    blocksWithCode[position] = id;
-    executor.create(position, prototypes.getPrototype(id));
-  },
+  storeCode,
   removeCode(position) {
     delete blocksWithCode[position];
     executor.remove(position);
@@ -69,7 +80,7 @@ export default {
     });
   },
   forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
-    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId, {
+    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId + '/fork', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -79,15 +90,7 @@ export default {
       headers: auth.getAuthHeaders()
     });
 
-    let self = this;
-    return fetch(request).then(response => response.json()).then(blockType => {
-      marketplace.addBlockType(blockType);
-      prototypes.loadPrototype(blockType);
-      self.storeCode(position, blockType.id);
-      voxelClient.setBlock(position, blockType.id);
-
-      return blockType.code;
-    });
+    return fetch(request).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   },
   createNewPrototype(position, code, name) {
     let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType', {
@@ -100,14 +103,6 @@ export default {
       headers: auth.getAuthHeaders()
     });
 
-    let self = this;
-    return fetch(request).then(response => response.json()).then(blockType => {
-      marketplace.addBlockType(blockType);
-      prototypes.loadPrototype(blockType);
-      self.storeCode(position, blockType.id);
-      voxelClient.setBlock(position, blockType.id);
-
-      return blockType.code;
-    });
+    return fetch(request).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   }
 };
