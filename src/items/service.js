@@ -6,6 +6,7 @@ import items from './itemTypes';
 
 export default {
   init() {
+    this.userLogged = auth.isLogged();
 
     let interact = {
       name: 'Interact',
@@ -79,6 +80,5 @@ export default {
   },
   isAdjacentActive() {
     return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
-  },
-  userLogged: auth.isLogged()
+  }
 };
