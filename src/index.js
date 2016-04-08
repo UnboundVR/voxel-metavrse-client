@@ -1,34 +1,34 @@
-import client from './voxelClient';
+import voxel from './voxel';
 import auth from './auth';
-import coding from './coding';
 import playerSync from './playerSync';
-import voxelEngine from './voxelEngine';
 import chat from './chat';
 import items from './items';
 import ide from './ide';
 import marketplace from './marketplace';
 import rootVue from './rootVue';
 
+function appendToContainer(engine) {
+  if (engine.notCapable()) {
+    throw new Error('Browser not capable');
+  }
+
+  var container = document.getElementById('container');
+  engine.appendTo(container);
+}
+
 // TODO handle errors gracefully
 auth.init().then(() => {
-  return marketplace.init();
-}).then(() => {
-  return coding.init();
-}).then(() => {
-  return client.init();
+  return voxel.init();
 }).then(() => {
   return Promise.all([
     playerSync.init(),
     chat.init(),
     items.init(),
-    ide.init()
+    ide.init(),
+    marketplace.init()
   ]);
 }).then(() => {
-  try {
-    voxelEngine.appendToContainer();
-  } catch(err) {
-    console.log('Browser not capable');
-  }
+  appendToContainer(voxel.engine);
 
   rootVue.init();
 });

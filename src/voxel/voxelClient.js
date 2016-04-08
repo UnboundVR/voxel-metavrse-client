@@ -1,13 +1,11 @@
 import engine from 'voxel-engine';
 import io from 'socket.io-client';
-import marketplace from './marketplace';
 import coding from './coding';
-import voxelEngine from './voxelEngine';
-import map from './map';
+import types from './blockTypes';
 
 export default {
   init() {
-    var self = this;
+    let self = this;
     this.connect();
     return new Promise(resolve => {
       self.onReady = resolve;
@@ -21,9 +19,9 @@ export default {
     this.bindEvents();
   },
   bindEvents() {
-    var self = this;
+    let self = this;
 
-    var extractChunkVoxels = chunk => {
+    function extractChunkVoxels(chunk) {
       let voxels = {};
 
       let blockTypeIds = {};
@@ -34,32 +32,35 @@ export default {
         }
       });
 
-      return marketplace.loadBlockTypes(Object.keys(blockTypeIds)).then((newTypes) => {
-        return Promise.all(newTypes.filter(type => type.code).map(coding.addBlockTypeCode)).then(() => {
-          Object.keys(chunk.voxels).forEach(pos => {
-            let block = chunk.voxels[pos];
-            if(block) {
-              var blockType = marketplace.getBlockTypeById(block);
-              voxels[pos] = (block == 1) ? 1 : blockType.material;
-              if(block != 1 && blockType.code) {
-                var d = chunk.dims[0];
-                var z = Math.floor(pos / (d * d));
-                var y = Math.floor((pos - d * d * z) / d);
-                var x = Math.floor(pos - d * d * z - d * y);
+      function getCoords(pos, dims) { // FIXME this only works for cubic chunks (i.e. all dims are the same)
+        let d = dims[0];
+        let z = Math.floor(pos / (d * d));
+        let y = Math.floor((pos - d * d * z) / d);
+        let x = Math.floor(pos - d * d * z - d * y);
 
-                x += chunk.position[0] * d;
-                y += chunk.position[1] * d;
-                z += chunk.position[2] * d;
+        x += chunk.position[0] * d;
+        y += chunk.position[1] * d;
+        z += chunk.position[2] * d;
 
-                coding.storeCode([x, y, z], blockType.id); // FIXME this only works for cubic chunks (i.e. all dims are the same)
-              }
+        return [x, y, z];
+      }
+
+      return types.loadMany(Object.keys(blockTypeIds)).then(() => {
+        Object.keys(chunk.voxels).forEach(pos => {
+          let block = chunk.voxels[pos];
+          if(block) {
+            var blockType = types.getById(block);
+            voxels[pos] = (block == 1) ? 1 : blockType.material;
+            if(block != 1 && blockType.code) {
+              let coords = getCoords(pos, chunk.dims);
+              coding.storeCode(coords, blockType.id);
             }
-          });
-
-          return voxels;
+          }
         });
+
+        return voxels;
       });
-    };
+    }
 
     function rlDecode(input) {
       let output = [];
@@ -72,22 +73,23 @@ export default {
       return output;
     }
 
-    var processChunk = chunk => {
+    function processChunk(chunk) {
       chunk.voxels = rlDecode(chunk.voxels);
       return extractChunkVoxels(chunk).then(voxels => {
         chunk.voxels = voxels;
         self.engine.showChunk(chunk);
       });
-    };
+    }
 
     this.socket.on('init', data => {
-      var settings = data.settings;
-      var chunks = data.chunks;
+      let settings = data.settings;
+      let chunks = data.chunks;
+      let materials = data.materials;
 
       settings.controls = {discreteFire: true};
       settings.generateChunks = false;
       settings.controlsDisabled = false;
-      settings.materials = marketplace.getMaterials();
+      settings.materials = materials;
       settings.texturePath = 'assets/textures/';
       settings.keybindings = {
         'W': 'forward',
@@ -106,10 +108,10 @@ export default {
       };
 
       self.engine = self.createEngine(settings);
-      voxelEngine.init(self.engine);
 
       Promise.all(chunks.map(processChunk)).then(() => {
-        self.onReady();
+        self.onReady(self.engine);
+
         self.engine.voxels.on('missingChunk', chunkPosition => {
           self.socket.emit('requestChunk', chunkPosition, (err, chunk) => {
             if(err) {
@@ -123,28 +125,25 @@ export default {
 
     });
 
-    this.socket.on('set', (pos, val, typeUpdated) => {
+    this.socket.on('set', (pos, val, forceUpdateType) => {
       if(val == 0) {
-        return map.removeBlock(pos, true);
+        coding.removeCode(pos);
+        self.engine.setBlock(pos, 0); // TODO raise REMOVE_ADJACENT event too
+        return;
       }
 
-      if(!typeUpdated && marketplace.getBlockTypeById(val)) {
-        map.placeBlock(pos, val, true);
-      } else {
-        marketplace.loadBlockTypes([val], typeUpdated).then((newTypes) => {
-          var newType = newTypes[0];
-          if(newType.code) {
-            coding.addBlockTypeCode(newType).then(() => {
-              coding.storeCode(pos, newType.id);
-            });
-          }
-          map.placeBlock(pos, val, true);
-        });
-      }
+      types.load(val, forceUpdateType).then(() => {
+        var type = types.getById(val);
+        if(type.code) {
+          coding.storeCode(pos, type.id);
+        }
+
+        self.engine.setBlock(pos, type.material); // TODO raise PLACE_ADJACENT event too
+      });
     });
   },
   createEngine(settings) {
-    var self = this;
+    let self = this;
     self.engine = engine(settings);
     self.engine.settings = settings;
 

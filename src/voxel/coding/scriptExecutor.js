@@ -1,6 +1,6 @@
-import events from '../events';
-import consts from '../constants';
-import map from '../map';
+import events from '../../events';
+import consts from '../../constants';
+import map from '../../map';
 
 var blockObjs = {};
 var supportedEvents = [
@@ -73,7 +73,13 @@ function unsubscribeToEvents(obj) {
   });
 }
 
+function update(position, prototype) {
+  remove(position);
+  create(position, prototype);
+}
+
 export default {
   create,
-  remove
+  remove,
+  update
 };

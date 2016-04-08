@@ -1,9 +1,9 @@
-import ide from '../ide';
+import ide from '../../ide';
 import controller from './controller';
-import auth from '../auth';
+import auth from '../../auth';
 
 var openNew = function(position) {
-  var code = 'this.interact = function() {\n  console.log(\'hello w0rld from '+ position + '\');\n};\n'; // TODO bring from server or something
+  var code = 'this.onInteract = function() {\n  console.log(\'hello w0rld from '+ position + '\');\n};\n'; // TODO bring from server or something
 
   return ide.open({position, code}).then(data => {
     return controller.createNewPrototype(position, data.value, data.name).then(codeObj => {

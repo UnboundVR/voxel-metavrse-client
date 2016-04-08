@@ -1,51 +1,55 @@
 import toolbar from 'toolbar';
-import voxelEngine from '../voxelEngine';
-import marketplace from '../marketplace';
-import coding from '../coding';
+import voxel from '../voxel';
+import auth from '../auth';
+import blocks from '../voxel';
+import items from './itemTypes';
 
 export default {
   init() {
     let self = this;
 
-    let fromBlock = block => ({
-      isBlock: true,
-      material: block.material,
-      id: block.id,
-      name: block.name,
-      code: block.code,
-      adjacentActive: true,
-      icon: block.icon,
-      crosshairIcon: 'crosshair'
-    });
+    return fetch(process.env.SERVER_ADDRESS + '/marketplace/toolbar', {
+      method: 'GET',
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json()).then(toolbarItems => {
 
-    let interact = {
-      name: 'Interact',
-      icon: 'hand',
-      crosshairIcon: 'hand',
-      adjacentActive: false
-    };
+      let fromBlock = block => ({
+        isBlock: true,
+        material: block.material,
+        id: block.id,
+        name: block.name,
+        code: block.code,
+        adjacentActive: true,
+        icon: block.icon,
+        crosshairIcon: 'crosshair'
+      });
 
-    let toolbarItems = marketplace.getToolbarItems();
-    let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
-    let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
+      let interact = {
+        name: 'Interact',
+        icon: 'hand',
+        crosshairIcon: 'hand',
+        adjacentActive: false
+      };
 
-    return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds).then(newBlocks => {
-      return Promise.all(newBlocks.filter(block => block.code).map(block => {
-        return coding.addBlockTypeCode(block);
-      }));
-    })]).then(() => {
-      var itemTypes = itemTypeIds.map(id => marketplace.getItemTypeById(id));
-      var blockTypes = blockTypeIds.map(id => marketplace.getBlockTypeById(id));
+      let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
+      let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
-      this.items = [interact].concat(itemTypes).concat(blockTypes.map(fromBlock));
-      this.selectedItem = this.items[0];
+      return Promise.all([items.loadMany(itemTypeIds), blocks.loadMany(blockTypeIds)]).then(() => {
+        self.items = [interact].concat(toolbarItems.map(item => {
+          if(item.type == 'item') {
+            return items.getById(item.id);
+          } else {
+            return fromBlock(blocks.getById(item.id));
+          }
+        }));
+        self.selectedItem = this.items[0];
+        self.deleteMode = false;
 
-      this.deleteMode = false;
-
-      voxelEngine.engine.controls.on('data', () => {
-        if(voxelEngine.engine.controls.state.crouch != self.deleteMode) {
-          self.deleteMode = voxelEngine.engine.controls.state.crouch;
-        }
+        voxel.engine.controls.on('data', () => {
+          if(voxel.engine.controls.state.crouch != self.deleteMode) {
+            self.deleteMode = voxel.engine.controls.state.crouch;
+          }
+        });
       });
     });
   },
@@ -60,6 +64,6 @@ export default {
     this.selector.removeAllListeners('select');
   },
   isAdjacentActive() {
-    return !voxelEngine.engine.controls.state.crouch && this.selectedItem.adjacentActive;
+    return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
   }
 };

@@ -1,7 +1,7 @@
 import player from 'voxel-player';
 import fly from 'voxel-fly';
 import walk from 'voxel-walk';
-import voxelEngine from '../voxelEngine';
+import voxel from '../voxel';
 
 export default function(settings) {
   // TODO instead of doing this, we should probably show/hide the whole object, or place the camera further away (so we can use a mirror for example)
@@ -35,20 +35,19 @@ export default function(settings) {
     }
   }
 
-  var engine = voxelEngine.engine;
   var avatarVisible;
 
-  var createPlayer = player(engine);
+  var createPlayer = player(voxel.engine);
   var avatar = createPlayer('assets/avatars/player.png');
   avatar.possess();
   var initialPos = settings.initialPosition;
   avatar.position.set(initialPos[0],initialPos[1],initialPos[2]);
 
-  var makeFly = fly(voxelEngine.engine);
-  var target = engine.controls.target();
-  engine.flyer = makeFly(target);
+  var makeFly = fly(voxel.engine);
+  var target = voxel.engine.controls.target();
+  voxel.engine.flyer = makeFly(target);
   setAvatarVisibility(false);
 
   window.addEventListener('keydown', onKeyDown);
-  engine.on('tick', onTick);
+  voxel.engine.on('tick', onTick);
 }

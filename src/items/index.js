@@ -2,7 +2,7 @@ import ToolbarComponent from './ToolbarComponent.vue';
 import Vue from 'vue';
 import service from './service';
 import highlight from './blockHighlight';
-import voxelEngine from '../voxelEngine';
+import voxel from '../voxel';
 import executor from './itemExecutor';
 
 export default {
@@ -12,7 +12,7 @@ export default {
 
       Vue.component('toolbar-component', ToolbarComponent);
 
-      voxelEngine.onFire((target, state) => {
+      voxel.engine.on('fire', (target, state) => {
         var position = service.isAdjacentActive() ? highlight.getPlacePosition() : highlight.getEditPosition();
         switch(state.fire) {
           case 1:

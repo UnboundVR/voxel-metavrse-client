@@ -1,17 +1,12 @@
-import auth from '../auth';
-import github from './github';
-import marketplace from '../marketplace';
+import auth from '../../auth';
+import github from '../../github';
 import executor from './scriptExecutor';
-import voxelClient from '../voxelClient';
-import voxelEngine from '../voxelEngine';
 import prototypes from './prototypes';
+import types from '../blockTypes';
 import extend from 'extend';
+import voxelClient from '../voxelClient';
 
 var blocksWithCode = {};
-
-function resolveCodeMany(blockTypes) {
-  return Promise.all(blockTypes.map(resolveCode));
-}
 
 function resolveCode(blockType) {
   if(auth.isLogged()) {
@@ -26,8 +21,8 @@ function resolveCode(blockType) {
 }
 
 function processNewBlockType(position, blockType) {
-  marketplace.addBlockType(blockType);
-  prototypes.loadPrototype(blockType);
+  types.add(blockType);
+  prototypes.load(blockType);
   storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);
 
@@ -36,20 +31,15 @@ function processNewBlockType(position, blockType) {
 
 function storeCode(position, id) {
   blocksWithCode[position] = id;
-  executor.create(position, prototypes.getPrototype(id));
+  executor.create(position, prototypes.get(id));
 }
 
 export default {
-  addBlockTypeCode(blockType) {
-    return resolveCode(blockType).then(prototypes.loadPrototype);
-  },
-  init() {
-    return resolveCodeMany(marketplace.getBlockTypes().filter(blockType => !!blockType.code)).then(blockTypes => {
-      blockTypes.forEach(prototypes.loadPrototype);
-    });
+  registerBlockType(blockType) {
+    return resolveCode(blockType).then(prototypes.load);
   },
   getCode(position) {
-    return marketplace.getBlockTypeById(blocksWithCode[position]);
+    return types.getById(blocksWithCode[position]);
   },
   hasCode(position) {
     return !!blocksWithCode[position];
@@ -73,10 +63,9 @@ export default {
     return fetch(request).then(response => response.json()).then(() => {
       let blockType = self.getCode(position);
       blockType.code.code = code;
-      prototypes.loadPrototype(blockType);
+      prototypes.load(blockType);
       voxelClient.setBlock(position, blockType.id, true);
-      executor.remove(position);
-      executor.create(position, prototypes.getPrototype(blockType.id));
+      executor.update(position, prototypes.get(blockType.id));
     });
   },
   forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
@@ -85,7 +74,7 @@ export default {
       body: JSON.stringify({
         code,
         name,
-        material: voxelEngine.getBlock(position)
+        material: this.voxelEngine.getBlock(position)
       }),
       headers: auth.getAuthHeaders()
     });
@@ -98,7 +87,7 @@ export default {
       body: JSON.stringify({
         code,
         name,
-        material: voxelEngine.getBlock(position)
+        material: this.voxelEngine.getBlock(position)
       }),
       headers: auth.getAuthHeaders()
     });

@@ -19,15 +19,6 @@
         </li>
       </ul>
 
-      <h2>Materials</h2>
-      <ul>
-        <li v-for="material in allMaterials" class="item">
-          <img v-if="typeof material == 'string'" class="icon" :src="'assets/textures/' + material + '.png'">
-          <img v-else v-for="texture in material" class="icon" :src="'assets/textures/' + texture + '.png'">
-          <div>{{ material }}</div>
-        </li>
-      </ul>
-
       <div v-el:close class="closeButton" @click="closeMarketplace"></div>
     </div>
   </div>

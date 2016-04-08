@@ -1,19 +1,20 @@
 import permissions from './permissions';
-import placement from './blockPlacement';
 import events from '../events';
-import coding from '../coding';
+import voxel from '../voxel';
 import consts from '../constants';
-import marketplace from '../marketplace';
+import placement from './blockPlacement';
 
 export default {
-  placeBlock(position, block, dontBroadcast) {
+  placeBlock(position, block) {
     if(position && permissions.canPlace(position)) {
-      placement.setBlock(position, marketplace.getBlockTypeById(block), dontBroadcast);
+      voxel.load(block).then(() => {
+        placement.setBlock(position, voxel.getById(block));
+      });
     }
   },
-  removeBlock(position, dontBroadcast) {
+  removeBlock(position) {
     if(position && permissions.canEdit(position)) {
-      placement.removeBlock(position, dontBroadcast);
+      placement.removeBlock(position);
     }
   },
   interact(position) {
@@ -21,7 +22,7 @@ export default {
   },
   codeBlock(position) {
     if(position && permissions.canEdit(position)) {
-      coding.editCode(position).catch(err => {
+      voxel.editCode(position).catch(err => {
         alert(err);
       });
     }

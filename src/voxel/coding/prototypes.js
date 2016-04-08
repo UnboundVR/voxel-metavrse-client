@@ -15,15 +15,15 @@ function buildPrototype(blockType) {
   return proto;
 }
 
-function loadPrototype(blockType) {
+function load(blockType) {
   prototypes[blockType.id] = buildPrototype(blockType);
 }
 
-function getPrototype(id) {
+function get(id) {
   return prototypes[id];
 }
 
 export default {
-  loadPrototype,
-  getPrototype
+  load,
+  get
 };
