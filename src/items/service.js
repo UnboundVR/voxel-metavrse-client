@@ -31,7 +31,7 @@ export default {
 
     return Promise.all([marketplace.loadItemTypes(itemTypeIds), marketplace.loadBlockTypes(blockTypeIds).then(newBlocks => {
       return Promise.all(newBlocks.filter(block => block.code).map(block => {
-        coding.addBlockTypeCode(block);
+        return coding.addBlockTypeCode(block);
       }));
     })]).then(() => {
       var itemTypes = itemTypeIds.map(id => marketplace.getItemTypeById(id));
