@@ -1,7 +1,7 @@
 const MARKETPLACE = 'marketplace';
 import events from '../events';
 import consts from '../constants';
-import auth from '../auth/service'; // FIXME this is here to avoid a circular dependency. Things are coupled due to the dropdown in auth component.
+import auth from '../auth';
 
 export default {
   allBlockTypes: [],

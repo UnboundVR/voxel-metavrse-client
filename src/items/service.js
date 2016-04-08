@@ -6,8 +6,23 @@ import items from './itemTypes';
 
 export default {
   init() {
-    let self = this;
 
+    let interact = {
+      name: 'Interact',
+      icon: 'hand',
+      crosshairIcon: 'hand',
+      adjacentActive: false
+    };
+
+    this.selectedItem = interact;
+    this.deleteMode = false;
+
+    if(!this.userLogged) {
+      this.items = [];
+      return Promise.resolve();
+    }
+
+    let self = this;
     return fetch(process.env.SERVER_ADDRESS + '/marketplace/toolbar', {
       method: 'GET',
       headers: auth.getAuthHeaders()
@@ -24,13 +39,6 @@ export default {
         crosshairIcon: 'crosshair'
       });
 
-      let interact = {
-        name: 'Interact',
-        icon: 'hand',
-        crosshairIcon: 'hand',
-        adjacentActive: false
-      };
-
       let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
       let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
@@ -42,8 +50,6 @@ export default {
             return fromBlock(blocks.getById(item.id));
           }
         }));
-        self.selectedItem = this.items[0];
-        self.deleteMode = false;
 
         voxel.engine.controls.on('data', () => {
           if(voxel.engine.controls.state.crouch != self.deleteMode) {
@@ -54,6 +60,10 @@ export default {
     });
   },
   hookSelection() {
+    if(!this.userLogged) {
+      return;
+    }
+
     this.selector = toolbar();
     var self = this;
     this.selector.on('select', function(index) {
@@ -61,9 +71,14 @@ export default {
     });
   },
   unhookSelection() {
+    if(!this.userLogged) {
+      return;
+    }
+
     this.selector.removeAllListeners('select');
   },
   isAdjacentActive() {
     return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
-  }
+  },
+  userLogged: auth.isLogged()
 };

@@ -1,5 +1,5 @@
 <template>
-  <nav id="toolbar-component" class="bar-tab">
+  <nav v-show="userLogged" id="toolbar-component" class="bar-tab">
     <ul class="tab-inner">
       <li v-for="item in items" class="tab-item" v-bind:class="{'active': $index === 0}">
         <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
