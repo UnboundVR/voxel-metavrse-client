@@ -1,33 +1,35 @@
 <template>
   <div v-show="isOpen" id="marketplace">
-    <h1>Marketplace</h1>
+    <div id="content">
+      <h1>Marketplace</h1>
 
-    <h2>Items</h2>
-    <ul>
-      <li v-for="item in allItemTypes" class="item">
-        <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-        <div>{{ item.name }}</div>
-      </li>
-    </ul>
+      <h2>Items</h2>
+      <ul>
+        <li v-for="item in allItemTypes" class="item">
+          <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
+          <div>{{ item.name }}</div>
+        </li>
+      </ul>
 
-    <h2>Blocks</h2>
-    <ul>
-      <li v-for="block in allBlockTypes" class="item">
-        <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
-        <div>{{ block.name }}</div>
-      </li>
-    </ul>
+      <h2>Blocks</h2>
+      <ul>
+        <li v-for="block in allBlockTypes" class="item">
+          <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
+          <div>{{ block.name }}</div>
+        </li>
+      </ul>
 
-    <h2>Materials</h2>
-    <ul>
-      <li v-for="material in allMaterials" class="item">
-        <img v-if="typeof material == 'string'" class="icon" :src="'assets/textures/' + material + '.png'">
-        <img v-else v-for="texture in material" class="icon" :src="'assets/textures/' + texture + '.png'">
-        <div>{{ material }}</div>
-      </li>
-    </ul>
+      <h2>Materials</h2>
+      <ul>
+        <li v-for="material in allMaterials" class="item">
+          <img v-if="typeof material == 'string'" class="icon" :src="'assets/textures/' + material + '.png'">
+          <img v-else v-for="texture in material" class="icon" :src="'assets/textures/' + texture + '.png'">
+          <div>{{ material }}</div>
+        </li>
+      </ul>
 
-    <div v-el:close class="closeButton" @click="closeMarketplace"></div>
+      <div v-el:close class="closeButton" @click="closeMarketplace"></div>
+    </div>
   </div>
 </template>
 
@@ -71,6 +73,10 @@ export default {
     color: #ffffff;
     background-color: #000000;
 
+    #content {
+      margin: 20px;
+    }
+
     .closeButton {
       position: absolute;
       top: 3px;
@@ -84,8 +90,8 @@ export default {
       text-align: center;
 
       .icon {
-        width: 32px;
-        height: 32px;
+        width: 64px;
+        height: 64px;
       }
     }
   }

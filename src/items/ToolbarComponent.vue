@@ -3,7 +3,7 @@
     <ul class="tab-inner">
       <li v-for="item in items" class="tab-item" v-bind:class="{'active': $index === 0}">
         <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
-        <div class="tab-label" data-id="{{$index}}">{{ item.name }} ({{ $index+1 }})</div>
+        <div class="tab-label" data-id="{{$index}}">{{ item.name }}</div>
       </li>
     </ul>
   </nav>

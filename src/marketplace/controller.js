@@ -54,6 +54,8 @@ export default {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(res => {
+      self.allBlockTypes.splice(0, self.allBlockTypes.length);
+      self.allItemTypes.splice(0, self.allItemTypes.length);
       res.blockTypes.forEach(type => {
         self.allBlockTypes.push(type);
       });
