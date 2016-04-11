@@ -41,9 +41,11 @@ export default {
     });
   },
   addToToolbar(item) {
-    console.log('adding', item);
+    this.toolbarItems.push(item);
   },
   removeFromToolbar(item) {
-    console.log('removing', item);
+    var toolbarItem = this.toolbarItems.filter(i => i.id == item.id)[0];
+    var index = this.toolbarItems.indexOf(toolbarItem);
+    this.toolbarItems.splice(index, 1);
   }
 };

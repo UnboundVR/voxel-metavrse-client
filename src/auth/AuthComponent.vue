@@ -6,7 +6,7 @@
           <img id="auth-component-avatar" :src="avatarUrl" />
           <ul>
             <li class="label"><a href="#">{{ name }}</a></li>
-            <li><a href="#" @click="marketplace">Marketplace</a></li>
+            <li><a href="#" @click="marketplace">Inventory</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>

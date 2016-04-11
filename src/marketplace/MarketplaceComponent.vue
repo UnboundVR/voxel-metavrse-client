@@ -5,7 +5,7 @@
 
       <h2>Items</h2>
       <ul>
-        <li v-for="item in allItemTypes" class="item" @click="addToToolbar(item)">
+        <li v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar(item)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
           <span>{{ item.name }}</span>
         </li>
@@ -13,7 +13,7 @@
 
       <h2>Blocks</h2>
       <ul>
-        <li v-for="block in allBlockTypes" class="item" @click="addToToolbar(block)">
+        <li v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar(block)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
           <span>{{ block.name }}</span>
         </li>
@@ -43,6 +43,9 @@ export default {
   methods: {
     closeMarketplace() {
       controller.close();
+    },
+    inToolbar(item) {
+      return this.toolbarItems.map(item => item.id).includes(item.id);
     }
   },
   ready() {
