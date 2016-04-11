@@ -1,22 +1,29 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1>Editing the code at {{position}}</h1>
-      <div v-if="blockType">
-        Block type: {{blockType.name}} <img class="block-icon" :src="'assets/img/icons/' + blockType.icon + '.png'"></src>
-      </div>
-      <div v-if="blockType">
-        <div class="author-info">
-          Author: {{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src>
-        </div>
-        <a target="_blank" :href="blockType.code.url">Go to gist</a>
-        <button v-if="mine" @click="save">Save</button>
-        <button @click="saveAs">Fork...</button>
-      </div>
-      <button v-else @click="saveAs">Save as...</button>
+      <h1 v-if="blockType">Editing the code of {{blockType.name}} block <span v-if="position">at ({{position}})</span> <img class="block-icon" :src="'assets/img/icons/' + blockType.icon + '.png'"></src></h1>
+      <h1 v-else>Editing the code of new block at ({{position}})</h1>
+
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
-    <div class="scripting-content" v-el:content></div>
+    <div class="scripting-content" v-el:content>
+      <div class="scripting-sidebar">
+        <div class="sidebar-content">
+          <div class="actions">
+            <button v-if="blockType && mine" @click="save">Save</button>
+            <button v-if="blockType" @click="saveAs">Fork...</button>
+            <button v-if="!blockType" @click="saveAs">Save as...</button>
+          </div>
+
+          <div v-if="blockType">
+            <div class="author-info">
+              Author: {{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src>
+            </div>
+            <a target="_blank" :href="blockType.code.url">Go to gist</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -120,30 +127,20 @@ export default {
   width: 100%;
   height: 100%;
   opacity: 0.9;
-}
 
   .scripting-header {
     padding: 7px;
     width: 100%;
     background: #000;
     color: #fff;
+    border-bottom: 1px solid #111;
 
     .block-icon {
       border-radius: 25px;
       width: 32px;
       height: 32px;
+      vertical-align: middle;
     }
-
-    .author-info {
-      display: block;
-
-      .author-avatar {
-        border-radius: 25px;
-        width: 32px;
-        height: 32px;
-      }
-    }
-  }
 
     .closeButton {
       position: absolute;
@@ -151,13 +148,43 @@ export default {
       right: 1px;
       cursor: pointer;
     }
+  }
 
   .scripting-content {
     width: 100%;
     height: 100%;
+
+    .CodeMirror {
+      height: 100% !important;
+      width: 80%;
+    }
+
+    .scripting-sidebar {
+      width: 20%;
+      height: 100%;
+      float: right;
+      background: #000;
+      color: #fff;
+      box-shadow: 1px 0 0 #111 inset;
+
+      .sidebar-content {
+        position: inherit;
+        padding-left: 15px;
+        padding-top: 15px;
+
+        .author-info {
+          display: block;
+
+          .author-avatar {
+            border-radius: 25px;
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
   }
 
-  .CodeMirror {
-    height: 100% !important;
-  }
+}
 </style>
