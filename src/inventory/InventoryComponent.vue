@@ -7,7 +7,7 @@
       <ul>
         <li v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-          <span>{{ item.name }}</span>
+          <div>{{ item.name }}</div>
         </li>
       </ul>
 
@@ -15,7 +15,7 @@
       <ul>
         <li v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
-          <span>{{ block.name }}</span>
+          <div>{{ block.name }}</div>
         </li>
       </ul>
 
@@ -26,8 +26,8 @@
             <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
             <div v-else class="nothing"></div>
 
-            <span v-if="item.name">{{ item.name }}</span>
-            <span v-else>Nothing</span>
+            <div v-if="item.name">{{ item.name }}</div>
+            <div v-else>Nothing</div>
           </div>
           <span>({{ $index + 1 }})</span>
         </li>
