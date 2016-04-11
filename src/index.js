@@ -4,7 +4,7 @@ import playerSync from './playerSync';
 import chat from './chat';
 import items from './items';
 import ide from './ide';
-import marketplace from './marketplace';
+import inventory from './inventory';
 import rootVue from './rootVue';
 
 function appendToContainer(engine) {
@@ -25,7 +25,7 @@ auth.init().then(() => {
     chat.init(),
     items.init(),
     ide.init(),
-    marketplace.init()
+    inventory.init()
   ]);
 }).then(() => {
   appendToContainer(voxel.engine);

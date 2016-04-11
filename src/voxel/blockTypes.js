@@ -11,7 +11,7 @@ export default {
       return Promise.resolve([]);
     }
 
-    return fetch(process.env.SERVER_ADDRESS + '/marketplace/blockTypes?ids=' + pendingIds, {
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockTypes?ids=' + pendingIds, {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(response => {

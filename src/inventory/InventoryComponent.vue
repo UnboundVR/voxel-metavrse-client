@@ -1,11 +1,11 @@
 <template>
-  <div v-show="isOpen" id="marketplace">
+  <div v-show="isOpen" id="inventory">
     <div id="content">
-      <h1>Marketplace</h1>
+      <h1>Inventory</h1>
 
       <h2>Items</h2>
       <ul>
-        <li v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar(item)">
+        <li v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
           <span>{{ item.name }}</span>
         </li>
@@ -13,7 +13,7 @@
 
       <h2>Blocks</h2>
       <ul>
-        <li v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar(block)">
+        <li v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
           <span>{{ block.name }}</span>
         </li>
@@ -21,13 +21,16 @@
 
       <h2>Toolbar</h2>
       <ul>
-        <li v-for="item in toolbarItems" class="item" @click="removeFromToolbar(item)">
-          <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-          <span>{{ item.name }}</span>
+        <li v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
+          <div v-if="item.name">
+            <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
+            <span>{{ item.name }}</span>
+          </div>
+          <span>({{ $index + 1 }})</span>
         </li>
       </ul>
 
-      <div v-el:close class="closeButton" @click="closeMarketplace"></div>
+      <div v-el:close class="closeButton" @click="closeInventory"></div>
     </div>
   </div>
 </template>
@@ -36,12 +39,12 @@
 import controller from './controller';
 
 export default {
-  name: 'MarketplaceComponent',
+  name: 'InventoryComponent',
   data() {
     return controller;
   },
   methods: {
-    closeMarketplace() {
+    closeInventory() {
       controller.close();
     },
     inToolbar(item) {
@@ -65,7 +68,7 @@ export default {
 </script>
 
 <style lang="scss">
-  #marketplace {
+  #inventory {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -90,7 +93,7 @@ export default {
       margin: 10px;
       padding: 5px;
       width: 90px;
-      height: 90px;
+      height: 100px;
       text-align: center;
       cursor: pointer;
       outline: 1px dashed #ccc;

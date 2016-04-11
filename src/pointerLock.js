@@ -1,5 +1,5 @@
 import voxel from './voxel';
-var pointerLock = require('pointer-lock');
+import pointerLock from 'pointer-lock';
 
 export default {
   request() {

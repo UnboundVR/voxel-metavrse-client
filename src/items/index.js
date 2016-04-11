@@ -21,5 +21,7 @@ export default {
       });
     });
   },
-  getToolbarItems: toolbar.getItems.bind(toolbar)
+  getToolbarItems: toolbar.getItems.bind(toolbar),
+  setToolbarItem: toolbar.setItem.bind(toolbar),
+  removeToolbarItem: toolbar.removeItem.bind(toolbar)
 };

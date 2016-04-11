@@ -50,17 +50,15 @@ export default {
     executor.remove(position);
   },
   modifyPrototype(position, code, codeId) {
-    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId, {
+    let self = this;
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + codeId, {
       method: 'PUT',
       body: JSON.stringify({
         code,
         id: codeId
       }),
       headers: auth.getAuthHeaders()
-    });
-
-    let self = this;
-    return fetch(request).then(response => response.json()).then(() => {
+    }).then(response => response.json()).then(() => {
       let blockType = self.getCode(position);
       blockType.code.code = code;
       prototypes.load(blockType);
@@ -69,7 +67,7 @@ export default {
     });
   },
   forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
-    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType/' + codeId + '/fork', {
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + codeId + '/fork', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -77,12 +75,10 @@ export default {
         material: this.voxelEngine.getBlock(position)
       }),
       headers: auth.getAuthHeaders()
-    });
-
-    return fetch(request).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
+    }).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   },
   createNewPrototype(position, code, name) {
-    let request = new Request(process.env.SERVER_ADDRESS + '/marketplace/blockType', {
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -90,8 +86,6 @@ export default {
         material: this.voxelEngine.getBlock(position)
       }),
       headers: auth.getAuthHeaders()
-    });
-
-    return fetch(request).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
+    }).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   }
 };

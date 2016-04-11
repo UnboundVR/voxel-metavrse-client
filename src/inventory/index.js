@@ -1,10 +1,10 @@
 import controller from './controller';
-import MarketplaceComponent from './MarketplaceComponent.vue';
+import InventoryComponent from './InventoryComponent.vue';
 import Vue from 'vue';
 
 export default {
   init() {
-    Vue.component('marketplace-component', MarketplaceComponent);
+    Vue.component('inventory-component', InventoryComponent);
   },
   open() {
     controller.bringAllItems().then(() => controller.open());

@@ -6,7 +6,7 @@
           <img id="auth-component-avatar" :src="avatarUrl" />
           <ul>
             <li class="label"><a href="#">{{ name }}</a></li>
-            <li><a href="#" @click="marketplace">Inventory</a></li>
+            <li><a href="#" @click="inventory">Inventory</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
@@ -21,7 +21,7 @@
 <script>
 
 import service from './service';
-import marketplace from '../marketplace';
+import inventory from '../inventory';
 
 export default {
   name: 'AuthComponent',
@@ -35,7 +35,7 @@ export default {
   methods: {
     login: service.login,
     logout: service.logout,
-    marketplace: marketplace.open
+    inventory: inventory.open
   }
 };
 </script>

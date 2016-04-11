@@ -12,9 +12,11 @@ export default {
     return service.selectedItem;
   },
   getItems() {
-    return service.items.filter(item => item.id);
+    return service.items;
   },
   isAdjacentActive: service.isAdjacentActive.bind(service),
+  setItem: service.setItem.bind(service),
+  removeItem: service.removeItem.bind(service),
   isDeleteMode() {
     return service.deleteMode;
   }

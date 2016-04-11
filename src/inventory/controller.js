@@ -1,4 +1,4 @@
-const MARKETPLACE = 'marketplace';
+const MARKETPLACE = 'inventory';
 import events from '../events';
 import consts from '../constants';
 import auth from '../auth';
@@ -25,7 +25,7 @@ export default {
       self.toolbarItems.push(item);
     });
 
-    return fetch(process.env.SERVER_ADDRESS + '/marketplace/all', {
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/all', {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(res => {
@@ -40,12 +40,24 @@ export default {
       });
     });
   },
-  addToToolbar(item) {
-    this.toolbarItems.push(item);
+  addToToolbar(type, id) {
+    var position = parseInt(prompt('Enter position (2-9)'));
+    if(position > 9 || position < 2) {
+      return alert('wrong position');
+    }
+    position--;
+
+    items.setToolbarItem(position - 1, {type, id}).then(() => {
+      this.toolbarItems.$set(position, items.getToolbarItems()[position]);
+    });
   },
-  removeFromToolbar(item) {
-    var toolbarItem = this.toolbarItems.filter(i => i.id == item.id)[0];
-    var index = this.toolbarItems.indexOf(toolbarItem);
-    this.toolbarItems.splice(index, 1);
+  removeFromToolbar(position) {
+    if(position == 0) {
+      return alert('Cannot remove interact from first position');
+    }
+
+    items.removeToolbarItem(position - 1).then(() => {
+      this.toolbarItems.$set(position, items.getToolbarItems()[position]);
+    });
   }
 };

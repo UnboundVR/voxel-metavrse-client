@@ -1,9 +1,14 @@
 <template>
   <nav v-show="userLogged" id="toolbar-component" class="bar-tab">
     <ul class="tab-inner">
-      <li v-for="item in items" class="tab-item" v-bind:class="{'active': $index === 0}">
-        <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
-        <div class="tab-label" data-id="{{$index}}">{{ item.name }}</div>
+      <li v-for="item in items" track-by="$index" class="tab-item" v-bind:class="{'active': $index === 0}">
+        <div v-if="item.name">
+          <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
+          <div class="tab-label" data-id="{{$index}}">{{ item.name }}</div>
+        </div>
+        <div v-else>
+          <div class="tab-label" data-id="{{$index}}">Nothing ({{ $index+1 }})</div>
+        </div>
       </li>
     </ul>
   </nav>

@@ -13,10 +13,10 @@ export default {
     if(item.isBlock) {
       map.placeBlock(position, item.id);
     } else {
-      if(item.name == 'Interact') {
-        map.interact(position);
-      } else {
+      if(item && !item.isInteract) {
         alert('executing ' + item.name);
+      } else {
+        map.interact(position);
       }
     }
   },
