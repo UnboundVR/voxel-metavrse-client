@@ -1,14 +1,14 @@
 import map from '../map';
-import service from './service';
+import toolbar from './toolbar';
 
 export default {
   leftClick(position) {
-    if(service.deleteMode) {
+    if(toolbar.isDeleteMode()) {
       map.removeBlock(position);
       return;
     }
 
-    var item = service.selectedItem;
+    var item = toolbar.getSelected();
 
     if(item.isBlock) {
       map.placeBlock(position, item.id);
@@ -21,7 +21,7 @@ export default {
     }
   },
   rightClick(position) {
-    if(!service.isAdjacentActive()) {
+    if(!toolbar.isAdjacentActive()) {
       map.codeBlock(position);
     }
   }

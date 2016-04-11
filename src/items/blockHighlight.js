@@ -2,7 +2,7 @@ import highlight from 'voxel-highlight';
 import voxel from '../voxel';
 import events from '../events';
 import consts from '../constants';
-import service from './service';
+import toolbar from './toolbar';
 
 var positionPlace, positionEdit;
 
@@ -10,7 +10,7 @@ export default {
   init() {
     var hl = highlight(voxel.engine, {
       color: 0xff0000,
-      adjacentActive: service.isAdjacentActive.bind(service)
+      adjacentActive: toolbar.isAdjacentActive.bind(toolbar)
     });
 
     hl.on('highlight', function (voxelPos) {

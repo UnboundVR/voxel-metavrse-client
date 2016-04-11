@@ -1,8 +1,7 @@
 import toolbar from 'toolbar';
-import voxel from '../voxel';
-import auth from '../auth';
-import blocks from '../voxel';
-import items from './itemTypes';
+import auth from '../../auth';
+import voxel from '../../voxel';
+import items from '../itemTypes';
 
 export default {
   init() {
@@ -28,7 +27,6 @@ export default {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(toolbarItems => {
-
       let fromBlock = block => ({
         isBlock: true,
         material: block.material,
@@ -43,12 +41,12 @@ export default {
       let itemTypeIds = toolbarItems.filter(item => item.type == 'item').map(item => item.id);
       let blockTypeIds = toolbarItems.filter(item => item.type == 'block').map(item => item.id);
 
-      return Promise.all([items.loadMany(itemTypeIds), blocks.loadMany(blockTypeIds)]).then(() => {
+      return Promise.all([items.loadMany(itemTypeIds), voxel.loadMany(blockTypeIds)]).then(() => {
         self.items = [interact].concat(toolbarItems.map(item => {
           if(item.type == 'item') {
             return items.getById(item.id);
           } else {
-            return fromBlock(blocks.getById(item.id));
+            return fromBlock(voxel.getById(item.id));
           }
         }));
 

@@ -10,7 +10,7 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
-            <button v-if="blockType && mine" @click="save">Save</button>
+            <button v-if="blockType && mine" @click="save">Save all</button>
             <button v-if="blockType" @click="saveAs">Fork...</button>
             <button v-if="!blockType" @click="saveAs">Save as...</button>
           </div>

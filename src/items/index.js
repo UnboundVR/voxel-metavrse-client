@@ -1,19 +1,15 @@
-import ToolbarComponent from './ToolbarComponent.vue';
-import Vue from 'vue';
-import service from './service';
+import toolbar from './toolbar';
 import highlight from './blockHighlight';
 import voxel from '../voxel';
 import executor from './itemExecutor';
 
 export default {
   init() {
-    return service.init().then(() => {
+    return toolbar.init().then(() => {
       highlight.init();
 
-      Vue.component('toolbar-component', ToolbarComponent);
-
       voxel.engine.on('fire', (target, state) => {
-        var position = service.isAdjacentActive() ? highlight.getPlacePosition() : highlight.getEditPosition();
+        var position = toolbar.isAdjacentActive() ? highlight.getPlacePosition() : highlight.getEditPosition();
         switch(state.fire) {
           case 1:
             executor.leftClick(position);
@@ -25,7 +21,5 @@ export default {
       });
     });
   },
-  getSelected() {
-    return service.selectedItem;
-  }
+  getToolbarItems: toolbar.getItems.bind(toolbar)
 };

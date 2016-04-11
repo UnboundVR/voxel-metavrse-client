@@ -5,17 +5,25 @@
 
       <h2>Items</h2>
       <ul>
-        <li v-for="item in allItemTypes" class="item">
+        <li v-for="item in allItemTypes" class="item" @click="addToToolbar(item)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-          <div>{{ item.name }}</div>
+          <span>{{ item.name }}</span>
         </li>
       </ul>
 
       <h2>Blocks</h2>
       <ul>
-        <li v-for="block in allBlockTypes" class="item">
+        <li v-for="block in allBlockTypes" class="item" @click="addToToolbar(block)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
-          <div>{{ block.name }}</div>
+          <span>{{ block.name }}</span>
+        </li>
+      </ul>
+
+      <h2>Toolbar</h2>
+      <ul>
+        <li v-for="item in toolbarItems" class="item" @click="removeFromToolbar(item)">
+          <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
+          <span>{{ item.name }}</span>
         </li>
       </ul>
 
@@ -60,12 +68,11 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0.9;
     color: #ffffff;
-    background-color: #000000;
+    background-color: rgba(0, 0, 0, 0.9);
 
     #content {
-      margin: 20px;
+      margin: 15px;
     }
 
     .closeButton {
@@ -78,7 +85,12 @@ export default {
     .item {
       display: inline-block;
       margin: 10px;
+      padding: 5px;
+      width: 90px;
+      height: 90px;
       text-align: center;
+      cursor: pointer;
+      outline: 1px dashed #ccc;
 
       .icon {
         width: 64px;

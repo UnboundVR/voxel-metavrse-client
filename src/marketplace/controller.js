@@ -2,10 +2,12 @@ const MARKETPLACE = 'marketplace';
 import events from '../events';
 import consts from '../constants';
 import auth from '../auth';
+import items from '../items';
 
 export default {
   allBlockTypes: [],
   allItemTypes: [],
+  toolbarItems: [],
   isOpen: false,
   open() {
     this.isOpen = true;
@@ -17,6 +19,12 @@ export default {
   },
   bringAllItems() {
     var self = this;
+
+    this.toolbarItems.splice(0, this.toolbarItems.length);
+    items.getToolbarItems().forEach(item => {
+      self.toolbarItems.push(item);
+    });
+
     return fetch(process.env.SERVER_ADDRESS + '/marketplace/all', {
       method: 'GET',
       headers: auth.getAuthHeaders()
@@ -31,5 +39,11 @@ export default {
         self.allItemTypes.push(type);
       });
     });
+  },
+  addToToolbar(item) {
+    console.log('adding', item);
+  },
+  removeFromToolbar(item) {
+    console.log('removing', item);
   }
 };
