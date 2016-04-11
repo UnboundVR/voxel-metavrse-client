@@ -22,9 +22,12 @@
       <h2>Toolbar</h2>
       <ul>
         <li v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
-          <div v-if="item.name">
-            <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-            <span>{{ item.name }}</span>
+          <div>
+            <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
+            <div v-else class="nothing"></div>
+
+            <span v-if="item.name">{{ item.name }}</span>
+            <span v-else>Nothing</span>
           </div>
           <span>({{ $index + 1 }})</span>
         </li>
@@ -101,6 +104,11 @@ export default {
       .icon {
         width: 64px;
         height: 64px;
+      }
+
+      .nothing {
+        width: 64px;
+        height: 69px;
       }
     }
   }
