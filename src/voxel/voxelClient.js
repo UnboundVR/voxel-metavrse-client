@@ -97,14 +97,14 @@ export default {
       });
     });
 
-    this.socket.on('set', (pos, val, forceUpdateType) => {
+    this.socket.on('set', (pos, val) => {
       if(val == 0) {
         coding.removeCode(pos);
         self.engine.setBlock(pos, 0); // TODO raise REMOVE_ADJACENT event too
         return;
       }
 
-      types.load(val, forceUpdateType).then(() => {
+      types.load(val).then(() => {
         var type = types.getById(val);
         if(type.code) {
           coding.storeCode(pos, type.id);
@@ -114,8 +114,8 @@ export default {
       });
     });
   },
-  setBlock(position, type, typeUpdated) {
-    this.socket.emit('set', position, type, typeUpdated);
+  setBlock(position, type) {
+    this.socket.emit('set', position, type);
   },
   clearBlock(position) {
     this.setBlock(position, 0);

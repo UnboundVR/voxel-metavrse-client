@@ -13,13 +13,23 @@
             <button v-if="blockType && mine" @click="save">Save all</button>
             <button v-if="blockType" @click="saveAs">Fork...</button>
             <button v-if="!blockType" @click="saveAs">Save as...</button>
+            <a v-if="blockType" target="_blank" :href="blockType.code.url">Go to gist</a>
           </div>
 
           <div v-if="blockType">
             <div class="author-info">
-              Author: {{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src>
+              <h2>Author</h2>
+              <div>{{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src></div>
             </div>
-            <a target="_blank" :href="blockType.code.url">Go to gist</a>
+            <div class="gist-info">
+              <h2>Gist info</h2>
+              <ul>
+                <li>ID: {{blockType.code.id}}</li>
+                <li>Revision: {{blockType.code.revision.id}}</li>
+                <li>Revision date: {{blockType.code.revision.date | moment "DD/MM/YYYY h:mm:ss A"}}</li>
+                <li v-if="outdated"><span class="outdated">Forks/updates at {{blockType.code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -48,6 +58,11 @@ export default {
       open: false,
       mine: false
     };
+  },
+  computed: {
+    outdated() {
+      return this.blockType.code.revision.date != this.blockType.code.lastUpdateDate;
+    }
   },
   methods: {
     save() {
@@ -128,6 +143,33 @@ export default {
   height: 100%;
   opacity: 0.9;
 
+  .actions {
+    margin-bottom: 10px;
+
+    button,a {
+      color: #fff;
+      background-color: #6496c8;
+      text-shadow: -1px 1px #417cb8;
+      border: none;
+      border: solid 5px #6496c8;
+      text-decoration: none; font: menu;
+      display: inline-block;
+      padding: 2px 5px;
+    }
+
+    button:hover,a:hover {
+      background-color: #346392;
+      text-shadow: -1px 1px #27496d;
+      border-color: #346392;
+    }
+
+    button:active,a:active {
+      background-color: #27496d;
+      text-shadow: -1px 1px #193047;
+      border-color: #27496d;
+    }
+  }
+
   .scripting-header {
     padding: 7px;
     width: 100%;
@@ -174,12 +216,29 @@ export default {
 
         .author-info {
           display: block;
+          margin-bottom: 10px;
 
           .author-avatar {
             border-radius: 25px;
             width: 32px;
             height: 32px;
             vertical-align: middle;
+          }
+        }
+
+        .gist-info {
+          margin-bottom: 10px;
+
+          li {
+            list-style: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .outdated {
+            font-style: italic;
+            font-weight: bold;
           }
         }
       }

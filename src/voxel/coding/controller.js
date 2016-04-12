@@ -49,25 +49,17 @@ export default {
     delete blocksWithCode[position];
     executor.remove(position);
   },
-  modifyPrototype(position, code, codeId) {
-    let self = this;
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + codeId, {
+  modifyPrototype(position, code) {
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + blocksWithCode[position], {
       method: 'PUT',
       body: JSON.stringify({
-        code,
-        id: codeId
+        code
       }),
       headers: auth.getAuthHeaders()
-    }).then(response => response.json()).then(() => {
-      let blockType = self.getCode(position);
-      blockType.code.code = code;
-      prototypes.load(blockType);
-      voxelClient.setBlock(position, blockType.id, true);
-      executor.update(position, prototypes.get(blockType.id));
-    });
+    }).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   },
-  forkPrototype(position, code, name, codeId) { // FIXME this shares lots of code with the method above!
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + codeId + '/fork', {
+  forkPrototype(position, code, name) { // FIXME this shares lots of code with the method above!
+    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + blocksWithCode[position] + '/fork', {
       method: 'POST',
       body: JSON.stringify({
         code,

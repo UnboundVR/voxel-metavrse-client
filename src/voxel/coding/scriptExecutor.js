@@ -21,6 +21,8 @@ supportedEvents.forEach(eventName => {
 });
 
 var create = function(position, prototype) {
+  remove(position);
+  
   var obj = buildBlockObject(position, prototype);
   blockObjs[position] = obj;
   subscribeToEvents(obj);
@@ -73,13 +75,7 @@ function unsubscribeToEvents(obj) {
   });
 }
 
-function update(position, prototype) {
-  remove(position);
-  create(position, prototype);
-}
-
 export default {
   create,
-  remove,
-  update
+  remove
 };

@@ -17,17 +17,18 @@ var openNew = function(position) {
 var openExisting = function(position, blockType) {
   return ide.open({position, blockType}).then(data => {
     if(data.name) {
-      return controller.forkPrototype(position, data.value, data.name, blockType.code.id).then((codeObj) => {
+      return controller.forkPrototype(position, data.value, data.name).then((codeObj) => {
         alert('Existing code was forked with ID: ' + codeObj.id);
       }, err => {
         alert('Error storing code: ' + err);
       });
+    } else {
+      return controller.modifyPrototype(position, data.value).then(() => {
+        alert('Existing code was updated correctly');
+      }, err => {
+        alert('Error storing code: ' + err);
+      });
     }
-    return controller.modifyPrototype(position, data.value, blockType.code.id).then(() => {
-      alert('Existing code was updated correctly');
-    }, err => {
-      alert('Error storing code: ' + err);
-    });
   });
 };
 
