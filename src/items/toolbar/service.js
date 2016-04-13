@@ -2,6 +2,7 @@ import toolbar from 'toolbar';
 import auth from '../../auth';
 import voxel from '../../voxel';
 import items from '../itemTypes';
+import consts from '../../constants';
 
 const nothing = {
   crosshairIcon: 'hand',
@@ -43,7 +44,7 @@ export default {
     }
 
     let self = this;
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/toolbar', {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar', {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(toolbarItems => {
@@ -94,7 +95,7 @@ export default {
   },
   setItem(position, item) {
     var self = this;
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/toolbar/' + position, {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar/' + position, {
       method: 'PUT',
       headers: auth.getAuthHeaders(),
       body: JSON.stringify(item)
@@ -112,7 +113,7 @@ export default {
   },
   removeItem(position) {
     var self = this;
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/toolbar/' + position, {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar/' + position, {
       method: 'DELETE',
       headers: auth.getAuthHeaders()
     }).then(() => {

@@ -1,4 +1,7 @@
 module.exports = {
+  SERVER_ADDRESS() {
+    return window.SERVER_ADDRESS || process.env.SERVER_ADDRESS;
+  },
   events: {
     HOVER: 'Hover',
     LEAVE: 'Leave',

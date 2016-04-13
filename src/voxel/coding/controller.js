@@ -5,6 +5,7 @@ import prototypes from './prototypes';
 import types from '../blockTypes';
 import extend from 'extend';
 import voxelClient from '../voxelClient';
+import consts from '../../constants';
 
 var blocksWithCode = {};
 
@@ -50,7 +51,7 @@ export default {
     executor.remove(position);
   },
   modifyPrototype(position, code) {
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + blocksWithCode[position], {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/blockType/' + blocksWithCode[position], {
       method: 'PUT',
       body: JSON.stringify({
         code
@@ -59,7 +60,7 @@ export default {
     }).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   },
   forkPrototype(position, code, name) { // FIXME this shares lots of code with the method above!
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType/' + blocksWithCode[position] + '/fork', {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/blockType/' + blocksWithCode[position] + '/fork', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -70,7 +71,7 @@ export default {
     }).then(response => response.json()).then(blockType => processNewBlockType(position, blockType));
   },
   createNewPrototype(position, code, name) {
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/blockType', {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/blockType', {
       method: 'POST',
       body: JSON.stringify({
         code,

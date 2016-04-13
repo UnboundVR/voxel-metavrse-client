@@ -6,6 +6,13 @@ import items from './items';
 import ide from './ide';
 import inventory from './inventory';
 import rootVue from './rootVue';
+import querystring from 'querystring';
+
+var qs = querystring.parse(location.search.substring(1));
+if(qs.server) {
+  window.SERVER_ADDRESS = qs.server;
+  console.log('Using server', window.SERVER_ADDRESS);
+}
 
 function appendToContainer(engine) {
   if (engine.notCapable()) {

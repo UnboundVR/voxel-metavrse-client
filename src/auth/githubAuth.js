@@ -2,7 +2,7 @@ import consts  from '../constants';
 
 export default {
   getLoginUrl() {
-    return fetch(process.env.SERVER_ADDRESS + '/auth/github_client_info', {
+    return fetch(consts.SERVER_ADDRESS() + '/auth/github_client_info', {
       method: 'GET'
     }).then(response => response.json()).then(clientInfo =>
       consts.github.OAUTH_URL + '/authorize'
@@ -11,7 +11,7 @@ export default {
       + '&redirect_uri=' + location.origin); // TODO pass state too
   },
   getAccessToken(code) {
-    let url = process.env.SERVER_ADDRESS + '/auth/github_access_token/' + code;
+    let url = consts.SERVER_ADDRESS() + '/auth/github_access_token/' + code;
 
     return fetch(url, {
       method: 'GET'

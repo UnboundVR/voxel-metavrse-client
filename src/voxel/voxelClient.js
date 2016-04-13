@@ -6,6 +6,7 @@ import compression from './compression';
 import clientSettings from './settings.json';
 import extend from 'extend';
 import Promise from 'bluebird';
+import consts from '../constants';
 
 export default {
   init() {
@@ -16,7 +17,7 @@ export default {
     });
   },
   connect() {
-    this.socket = io.connect(process.env.SERVER_ADDRESS + '/voxel');
+    this.socket = io.connect(consts.SERVER_ADDRESS() + '/voxel');
     this.socket.on('disconnect', () => {
       // TODO handle disconnection
     });

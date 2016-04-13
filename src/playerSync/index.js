@@ -2,6 +2,7 @@ import setupAvatar from './avatar';
 import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
+import consts from '../constants';
 
 var socket;
 
@@ -9,7 +10,7 @@ export default {
   init() {
     var self = this;
 
-    socket = io.connect(process.env.SERVER_ADDRESS + '/playerSync');
+    socket = io.connect(consts.SERVER_ADDRESS() + '/playerSync');
     socket.on('connect', () => {
       self.playerId = socket.id;
     });

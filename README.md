@@ -18,9 +18,7 @@ Then run the watch (to auto-rebuild sass and js on each change):
 npm run watch-client
 ```
 
-Then point your browser to `http://localhost:<the port you chose above>` and have fun!
-
-*Note: If you're using the Unbound VR Github App, you must use the port `1337`.*
+Then point your browser to `http://localhost:1337` and have fun!
 
 ## Controls
 - When you start, click on the page to lock cursor. Press `<ESC>` to unlock cursor.

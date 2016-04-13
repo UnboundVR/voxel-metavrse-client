@@ -2,6 +2,7 @@
 
 import auth from '../auth';
 import coding from './coding';
+import consts from '../constants';
 
 var types = {};
 
@@ -14,7 +15,7 @@ export default {
       return Promise.resolve([]);
     }
 
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/itemTypes?ids=' + pendingIds, {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/itemTypes?ids=' + pendingIds, {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(response => {

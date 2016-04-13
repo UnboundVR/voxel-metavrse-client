@@ -25,7 +25,7 @@ export default {
       self.toolbarItems.push(item);
     });
 
-    return fetch(process.env.SERVER_ADDRESS + '/inventory/all', {
+    return fetch(consts.SERVER_ADDRESS() + '/inventory/all', {
       method: 'GET',
       headers: auth.getAuthHeaders()
     }).then(response => response.json()).then(res => {
