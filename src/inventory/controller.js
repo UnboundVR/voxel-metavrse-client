@@ -42,8 +42,8 @@ export default {
   },
   addToToolbar(type, id) {
     var position = parseInt(prompt('Enter position (2-9)'));
-    if(position > 9 || position < 2) {
-      return alert('wrong position');
+    if(Number.isNaN(position) || position > 9 || position < 2) {
+      return alert('Invalid position');
     }
     position--;
 
