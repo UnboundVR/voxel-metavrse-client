@@ -27,7 +27,3 @@ Then point your browser to `http://localhost:1337` and have fun!
 - `Click` => destroy block.
 - `<CONTROL> + click` => place block.
 - `Right click` => edit the code of a block.
-
-## License
-
-BSD
