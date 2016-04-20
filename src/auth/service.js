@@ -5,6 +5,7 @@ import tokenStore from './tokenStore';
 var accessToken;
 var name;
 var avatarUrl;
+var userId;
 
 export default {
   init() {
@@ -41,6 +42,7 @@ export default {
     return githubAuth.getLoggedUserInfo(accessToken).then(me => {
       name = me.name;
       avatarUrl = me.avatar_url;
+      userId = me.id;
     });
   },
   getAccessToken() {
@@ -52,7 +54,18 @@ export default {
   getAvatarUrl() {
     return avatarUrl;
   },
+  getUserId() {
+    return userId;
+  },
   isLoggedIn() {
     return !!accessToken;
+  },
+  getAuthHeaders() {
+    var headers = {};
+    if(accessToken) {
+      headers['Authorization'] = accessToken;
+    }
+
+    return new Headers(headers);
   }
 };

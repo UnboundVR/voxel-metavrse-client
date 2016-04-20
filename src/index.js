@@ -1,36 +1,41 @@
-import client from './voxelClient';
+import voxel from './voxel';
 import auth from './auth';
-import coding from './coding';
-import blockPlacement from './blockPlacement';
 import playerSync from './playerSync';
-import voxelEngine from './voxelEngine';
 import chat from './chat';
-import toolbar from './toolbar';
+import items from './items';
 import ide from './ide';
+import inventory from './inventory';
 import rootVue from './rootVue';
+import querystring from 'querystring';
 
+var qs = querystring.parse(location.search.substring(1));
+if(qs.server) {
+  window.SERVER_ADDRESS = qs.server;
+  console.log('Using server', window.SERVER_ADDRESS);
+}
+
+function appendToContainer(engine) {
+  if (engine.notCapable()) {
+    throw new Error('Browser not capable');
+  }
+
+  var container = document.getElementById('container');
+  engine.appendTo(container);
+}
+
+// TODO handle errors gracefully
 auth.init().then(() => {
-  client.init().then(() => {
-    voxelEngine.init(client.engine);
+  return voxel.init();
+}).then(() => {
+  return Promise.all([
+    playerSync.init(),
+    chat.init(),
+    items.init(),
+    ide.init(),
+    inventory.init()
+  ]);
+}).then(() => {
+  appendToContainer(voxel.engine);
 
-    Promise.all([
-      blockPlacement.init(),
-      playerSync.init(),
-      chat.init(),
-      coding.init(),
-      toolbar.init(),
-      ide.init()
-    ]).then(() => {
-      try {
-        voxelEngine.appendToContainer();
-      } catch(err) {
-        console.log('Browser not capable');
-      }
-
-      rootVue.init();
-    }).catch((err) => {
-      console.log('Error initializing some modules', err);
-      throw err;
-    });
-  });
+  rootVue.init();
 });

@@ -1,0 +1,21 @@
+{
+  "controls": {"discreteFire": true},
+  "generateChunks": false,
+  "controlsDisabled": false,
+  "texturePath": "assets/textures/",
+  "keybindings": {
+    "W": "forward",
+    "A": "left",
+    "S": "backward",
+    "D": "right",
+    "<up>": "forward",
+    "<left>": "left",
+    "<down>": "backward",
+    "<right>": "right",
+    "<mouse 1>": "fire",
+    "<mouse 3>": "firealt",
+    "<space>": "jump",
+    "<shift>": "crouch",
+    "<control>": "alt"
+  }
+}

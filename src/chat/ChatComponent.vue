@@ -1,7 +1,7 @@
 <template>
   <div id="chat-component" v-bind:class="[ this.css.chat.isChatFocused ? this.css.chat.chatFocused : this.css.chat.chatNotFocused ]">
     <ul id="chat-component-message-list">
-      <li class="chat-component-message-list-message" v-for='message in messageList'>[{{ message.date }}] [{{ message.user }}]: {{ message.text }}</li>
+      <li class="chat-component-message-list-message" v-for='message in messageList'>[{{ message.date |  moment "dddd, h:mm:ss a" }}] [{{ message.user }}]: {{ message.text }}</li>
     </ul>
     <div id="chat-component-messagebox-wrapper">
       <input

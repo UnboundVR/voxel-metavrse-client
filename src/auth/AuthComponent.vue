@@ -3,15 +3,16 @@
     <nav id="auth-component-menu" class="css_menu">
       <ul v-if="loggedIn">
         <li>
-          <img id="auth-component-avatar" :src="avatarUrl" alt="" />
+          <img id="auth-component-avatar" :src="avatarUrl" />
           <ul>
             <li class="label"><a href="#">{{ name }}</a></li>
-            <li><a href="#" v-on:click="logout">Logout</a></li>
+            <li><a href="#" @click="inventory">Inventory</a></li>
+            <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
       </ul>
       <ul v-else>
-        <li><a href="#" v-on:click="login">Login</a></li>
+        <li><a href="#" @click="login">Login</a></li>
       </ul>
     </nav>
   </div>
@@ -20,6 +21,7 @@
 <script>
 
 import service from './service';
+import inventory from '../inventory';
 
 export default {
   name: 'AuthComponent',
@@ -27,12 +29,13 @@ export default {
     return {
       loggedIn: service.isLoggedIn(),
       name: service.getName(),
-      avatarUrl: service.getAvatarUrl() + '&s=48',
+      avatarUrl: service.getAvatarUrl() + '&s=48'
     };
   },
   methods: {
     login: service.login,
-    logout: service.logout
+    logout: service.logout,
+    inventory: inventory.open
   }
 };
 </script>

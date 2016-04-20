@@ -1,7 +1,8 @@
 import setupAvatar from './avatar';
-import voxelEngine from '../voxelEngine';
+import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
+import consts from '../constants';
 
 var socket;
 
@@ -9,7 +10,7 @@ export default {
   init() {
     var self = this;
 
-    socket = io.connect(process.env.SERVER_ADDRESS + '/playerSync');
+    socket = io.connect(consts.SERVER_ADDRESS() + '/playerSync');
     socket.on('connect', () => {
       self.playerId = socket.id;
     });
@@ -22,7 +23,7 @@ export default {
         if (!socket.connected) {
           return;
         }
-        var player = voxelEngine.engine.controls.target();
+        var player = voxel.engine.controls.target();
         var state = {
           position: player.yaw.position,
           rotation: {
@@ -33,7 +34,7 @@ export default {
         socket.emit('state', state);
       }
 
-      voxelEngine.engine.controls.on('data', state => {
+      voxel.engine.controls.on('data', state => {
         var interacting = false;
         Object.keys(state).map(control => {
           if (state[control] > 0) {
@@ -63,7 +64,7 @@ export default {
         if (!self.others[id]) {
           return;
         }
-        voxelEngine.engine.scene.remove(self.others[id].mesh);
+        voxel.engine.scene.remove(self.others[id].mesh);
         delete self.others[id];
       });
 
@@ -81,13 +82,13 @@ export default {
     var pos = update.position;
     var player = this.others[id];
     if (!player) {
-      let playerSkin = skin(voxelEngine.engine.THREE, 'assets/avatars/player.png', {
-        scale: new voxelEngine.engine.THREE.Vector3(0.04, 0.04, 0.04)
+      let playerSkin = skin(voxel.engine.THREE, 'assets/avatars/player.png', {
+        scale: new voxel.engine.THREE.Vector3(0.04, 0.04, 0.04)
       });
       let playerMesh = playerSkin.mesh;
       this.others[id] = playerSkin;
       playerMesh.children[0].position.y = 10;
-      voxelEngine.engine.scene.add(playerMesh);
+      voxel.engine.scene.add(playerMesh);
     }
 
     let playerSkin = this.others[id];
