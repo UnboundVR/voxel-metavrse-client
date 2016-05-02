@@ -23,7 +23,7 @@ export default {
     voxel.removeCode(position);
 
     getAdjacent(position).forEach(pos => {
-      events.emit(consts.events.REMOVE_ADJACENT, {}, {position: pos});
+      events.emit(consts.events.REMOVE_ADJACENT, {}, block => block.matchesPosition(pos));
     });
   },
   setBlock(position, blockType) {
@@ -36,7 +36,7 @@ export default {
     }
 
     getAdjacent(position).forEach(pos => {
-      events.emit(consts.events.PLACE_ADJACENT, {}, {position: pos});
+      events.emit(consts.events.PLACE_ADJACENT, {}, block => block.matchesPosition(pos));
     });
   }
 };

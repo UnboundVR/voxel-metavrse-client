@@ -1,10 +1,9 @@
 import events from '../../events';
 import consts from '../../constants';
 import map from '../../map';
-import EventEmitter2 from 'eventemitter2';
-import util from 'util';
+import scriptExecutor from 'script-executor';
 
-var blockObjs = {};
+var prototypes = {};
 var supportedEvents = [
   consts.events.HOVER,
   consts.events.LEAVE,
@@ -13,92 +12,45 @@ var supportedEvents = [
   consts.events.REMOVE_ADJACENT
 ];
 
-var prototypes = {};
-
-function buildPrototype(blockType) {
-  var BlockPrototype = function(type) {
-    this.blockType = type;
-  };
-  util.inherits(BlockPrototype, EventEmitter2.EventEmitter2);
-
-  var proto = new BlockPrototype(blockType);
-  (new Function(blockType.code.code).bind(proto))();
-
-  return proto;
+function getId(pos) {
+  return pos.join('|');
 }
+
+scriptExecutor.wireEvents(events, supportedEvents);
 
 function loadPrototype(blockType) {
-  var oldPrototype = prototypes[blockType.id];
-  if(oldPrototype && oldPrototype.onUnload) {
-    oldPrototype.onUnload();
-  }
-  prototypes[blockType.id] = buildPrototype(blockType);
+  let code = blockType.code.code;
+  let $class = eval(`(${code})`);
+
+  prototypes[blockType.id] = {$class, blockType};
 }
 
-supportedEvents.forEach(eventName => {
-  events.on(eventName, function(payload, filter) {
-    Object.keys(blockObjs).forEach(key => {
-      var block = blockObjs[key];
-      block.emit(eventName, payload, filter);
-    });
-  });
-});
-
-var create = function(position, prototypeId) {
-  let prototype = prototypes[prototypeId];
-  
+function create(position, prototypeId) {
   remove(position);
 
-  var obj = buildBlockObject(position, prototype);
-  blockObjs[position] = obj;
-  subscribeToEvents(obj);
-};
+  let prototype = prototypes[prototypeId];
 
-var remove = function(position) {
-  var obj = blockObjs[position];
-  if(obj) {
-    unsubscribeToEvents(obj);
-    if(obj.onDestroy) {
-      obj.onDestroy();
-    }
-    delete blockObjs[position];
-  }
-};
+  let $class = prototype.$class;
+  let blockType = prototype.blockType;
 
-function buildBlockObject(position, prototype) {
-  var Block = function(position) {
-    this.position = position;
-    this.map = map;
+  let data = {
+    position,
+    blockType
   };
 
-  Block.prototype = prototype;
-  var obj = new Block(position);
+  let id = getId(position);
+  scriptExecutor.createInstance(id, $class, {data, world: map});
+}
 
-  if(obj.init) {
-    obj.init();
+function remove(position) {
+  let id = getId(position);
+
+  let instance = scriptExecutor.getInstance(id);
+  if(instance && instance.onDestroy) {
+    instance.onDestroy();
   }
 
-  return obj;
-}
-
-function subscribeToEvents(obj) {
-  supportedEvents.forEach(eventName => {
-    var handlerName = 'on' + eventName;
-    var handler = obj[handlerName];
-    if(handler) {
-      obj.on(eventName, (payload, filter) => {
-        if(!filter || !filter.position || obj.position.join('|') == filter.position.join('|')) {
-          handler.bind(obj)(payload);
-        }
-      });
-    }
-  });
-}
-
-function unsubscribeToEvents(obj) {
-  supportedEvents.forEach(eventName => {
-    obj.removeAllListeners(eventName);
-  });
+  scriptExecutor.removeInstance(id);
 }
 
 export default {
