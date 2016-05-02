@@ -2,7 +2,7 @@ import auth from '../../auth';
 import github from '../../github';
 import executor from './scriptExecutor';
 import types from '../blockTypes';
-import extend from 'extend';
+import clone from 'clone';
 import voxelClient from '../voxelClient';
 import consts from '../../constants';
 
@@ -13,7 +13,7 @@ function resolveCode(blockType) {
     return Promise.resolve(blockType);
   } else {
     return github.getGist(blockType.code).then(function(codeObj) {
-      var updatedType = extend({}, blockType);
+      var updatedType = clone(blockType);
       updatedType.code = codeObj;
       return updatedType;
     });

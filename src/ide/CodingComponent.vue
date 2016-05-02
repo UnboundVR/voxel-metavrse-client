@@ -79,8 +79,9 @@ export default {
       editor.saveAs(codemirror.getValue(), name);
     },
     close() {
-      this.open = false;
-      editor.close();
+      if(editor.close()) {
+        this.open = false;
+      }
     }
   },
   ready() {

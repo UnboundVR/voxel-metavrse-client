@@ -1,6 +1,7 @@
 import events from '../../events';
 import consts from '../../constants';
 import map from '../../map';
+import Block from '../block';
 import scriptExecutor from 'script-executor';
 
 var prototypes = {};
@@ -32,14 +33,10 @@ function create(position, prototypeId) {
 
   let $class = prototype.$class;
   let blockType = prototype.blockType;
-
-  let data = {
-    position,
-    blockType
-  };
+  let block = new Block(position, blockType);
 
   let id = getId(position);
-  scriptExecutor.createInstance(id, $class, {data, world: map});
+  scriptExecutor.createInstance(id, $class, {metadata: block, api: map});
 }
 
 function remove(position) {
