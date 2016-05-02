@@ -3,13 +3,13 @@ module.exports = {
     return window.SERVER_ADDRESS || process.env.SERVER_ADDRESS;
   },
   events: {
-    HOVER: 'Hover',
-    LEAVE: 'Leave',
-    INTERACT: 'Interact',
-    PLACE_ADJACENT: 'PlaceAdjacent',
-    REMOVE_ADJACENT: 'RemoveAdjacent',
-    FULLSCREEN_WINDOW_OPEN: 'FullScreenWindowOpen',
-    FULLSCREEN_WINDOW_CLOSE: 'FullScreenWindowClose'
+    HOVER: 'hover',
+    LEAVE: 'leave',
+    INTERACT: 'interact',
+    PLACE_ADJACENT: 'placeAdjacent',
+    REMOVE_ADJACENT: 'removeAdjacent',
+    FULLSCREEN_WINDOW_OPEN: 'fullScreenWindowOpen',
+    FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',

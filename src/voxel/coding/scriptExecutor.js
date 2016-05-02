@@ -1,6 +1,8 @@
 import events from '../../events';
 import consts from '../../constants';
 import map from '../../map';
+import EventEmitter2 from 'eventemitter2';
+import util from 'util';
 
 var blockObjs = {};
 var supportedEvents = [
@@ -11,6 +13,28 @@ var supportedEvents = [
   consts.events.REMOVE_ADJACENT
 ];
 
+var prototypes = {};
+
+function buildPrototype(blockType) {
+  var BlockPrototype = function(type) {
+    this.blockType = type;
+  };
+  util.inherits(BlockPrototype, EventEmitter2.EventEmitter2);
+
+  var proto = new BlockPrototype(blockType);
+  (new Function(blockType.code.code).bind(proto))();
+
+  return proto;
+}
+
+function loadPrototype(blockType) {
+  var oldPrototype = prototypes[blockType.id];
+  if(oldPrototype && oldPrototype.onUnload) {
+    oldPrototype.onUnload();
+  }
+  prototypes[blockType.id] = buildPrototype(blockType);
+}
+
 supportedEvents.forEach(eventName => {
   events.on(eventName, function(payload, filter) {
     Object.keys(blockObjs).forEach(key => {
@@ -20,9 +44,11 @@ supportedEvents.forEach(eventName => {
   });
 });
 
-var create = function(position, prototype) {
-  remove(position);
+var create = function(position, prototypeId) {
+  let prototype = prototypes[prototypeId];
   
+  remove(position);
+
   var obj = buildBlockObject(position, prototype);
   blockObjs[position] = obj;
   subscribeToEvents(obj);
@@ -77,5 +103,6 @@ function unsubscribeToEvents(obj) {
 
 export default {
   create,
-  remove
+  remove,
+  loadPrototype
 };

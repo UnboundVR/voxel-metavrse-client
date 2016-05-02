@@ -1,7 +1,6 @@
 import auth from '../../auth';
 import github from '../../github';
 import executor from './scriptExecutor';
-import prototypes from './prototypes';
 import types from '../blockTypes';
 import extend from 'extend';
 import voxelClient from '../voxelClient';
@@ -23,7 +22,7 @@ function resolveCode(blockType) {
 
 function processNewBlockType(position, blockType) {
   types.add(blockType);
-  prototypes.load(blockType);
+  executor.loadPrototype(blockType);
   storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);
 
@@ -32,12 +31,12 @@ function processNewBlockType(position, blockType) {
 
 function storeCode(position, id) {
   blocksWithCode[position] = id;
-  executor.create(position, prototypes.get(id));
+  executor.create(position, id);
 }
 
 export default {
   registerBlockType(blockType) {
-    return resolveCode(blockType).then(prototypes.load);
+    return resolveCode(blockType).then(executor.loadPrototype);
   },
   getCode(position) {
     return types.getById(blocksWithCode[position]);
