@@ -3,7 +3,7 @@ import controller from './controller';
 import auth from '../../auth';
 
 var openNew = function(position) {
-  var code = 'this.onInteract = function() {\n  console.log(\'hello w0rld from '+ position + '\');\n};\n'; // TODO bring from server or something
+  var code = "function SuchBlockBehavior(world, block) {\n  console.log('much instantiate. amaze');\n\n  this.onInteract = function() {\n    alert('such interact. wow.');\n  };\n\n  this.onHover = function() {\n    console.log('very hover');\n  };\n\n  this.onDestroy = function() {\n    console.log(':(');\n  };\n}"; // TODO bring from server or something
 
   return ide.open({position, code}).then(data => {
     return controller.createNewPrototype(position, data.value, data.name).then(codeObj => {
