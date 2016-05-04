@@ -15,7 +15,7 @@ npm install
 
 Then run the watch (to auto-rebuild sass and js on each change):
 ```
-npm run watch-client
+npm run watch
 ```
 
 Then point your browser to `http://localhost:1337` and have fun!
