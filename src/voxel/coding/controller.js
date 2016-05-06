@@ -20,9 +20,9 @@ function resolveCode(blockType) {
   }
 }
 
-function processNewBlockType(position, blockType) {
+async function processNewBlockType(position, blockType) {
   types.add(blockType);
-  executor.loadPrototype(blockType);
+  await executor.loadPrototype(blockType);
   storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);
 
@@ -49,7 +49,7 @@ export default {
     delete blocksWithCode[position];
     executor.remove(position);
   },
-  modifyPrototype(position, code) {
+  async modifyPrototype(position, code) {
     return fetch(consts.SERVER_ADDRESS() + '/inventory/blockType/' + blocksWithCode[position], {
       method: 'PUT',
       body: JSON.stringify({

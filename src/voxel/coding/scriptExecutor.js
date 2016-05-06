@@ -19,11 +19,11 @@ function getId(pos) {
 
 scriptExecutor.wireEvents(events, supportedEvents);
 
-function loadPrototype(blockType) {
+async function loadPrototype(blockType) {
   let code = blockType.code.code;
-  let $class = eval(`(${code})`);
+  let $class = await System.module(code);
 
-  prototypes[blockType.id] = {$class, blockType};
+  prototypes[blockType.id] = {$class: $class.default, blockType};
 }
 
 function create(position, prototypeId) {
