@@ -96,7 +96,9 @@ export default {
       indentUnit: 2,
       hintOptions: {
         completeSingle: false
-      }
+      },
+      gutters: ['CodeMirror-lint-markers'],
+      lint: true
     });
 
     codemirror.on('change', editor.onChange);
