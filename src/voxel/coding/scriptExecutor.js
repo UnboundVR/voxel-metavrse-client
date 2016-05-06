@@ -21,9 +21,16 @@ scriptExecutor.wireEvents(events, supportedEvents);
 
 async function loadPrototype(blockType) {
   let code = blockType.code.code;
-  let $class = await System.module(code);
+  let name = blockType.name;
+  console.log(`Loading code for ${name}`);
 
-  prototypes[blockType.id] = {$class: $class.default, blockType};
+  try {
+    let $class = await System.module(code);
+    prototypes[blockType.id] = {$class: $class.default, blockType};
+    console.log(`Code for ${name} loaded`);
+  } catch(e) {
+    console.log(`Error loading code for ${name}`, e);
+  }
 }
 
 function create(position, prototypeId) {
