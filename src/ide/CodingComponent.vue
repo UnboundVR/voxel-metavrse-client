@@ -92,7 +92,6 @@ export default {
       mode: 'javascript',
       lineNumbers: true,
       matchBrackets: true,
-      indentWithTabs: true,
       tabSize: 2,
       indentUnit: 2,
       hintOptions: {
