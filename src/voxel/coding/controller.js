@@ -1,5 +1,5 @@
 import auth from '../../auth';
-import github from '../../github';
+import github from './github';
 import executor from './scriptExecutor';
 import types from '../blockTypes';
 import clone from 'clone';
@@ -12,7 +12,7 @@ function resolveCode(blockType) {
   if(auth.isLogged()) {
     return Promise.resolve(blockType);
   } else {
-    return github.getGist(blockType.code).then(function(codeObj) {
+    return github.getGist(blockType.code.id, blockType.code.revision).then(function(codeObj) {
       var updatedType = clone(blockType);
       updatedType.code = codeObj;
       return updatedType;
