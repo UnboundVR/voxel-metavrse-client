@@ -10,6 +10,7 @@
     "bluebird": "^3.3.4",
     "clone": "^1.0.2",
     "codemirror": "^5.11.0",
+    "esprima": "^2.7.2",
     "extend": "^3.0.0",
     "http-server": "^0.9.0",
     "minecraft-skin": "^0.1.2",
