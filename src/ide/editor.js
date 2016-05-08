@@ -33,6 +33,7 @@ var saveAs = function(value, name) {
 var close = function() {
   if(!dirty || confirm('Exit without saving?')) {
     doClose();
+    return true;
   }
 };
 

@@ -1,20 +1,25 @@
 @import "_normalize";
 
 body {
-    font-family: Courier !important;
-    font-size: 12px;
-    background-color: #F0F0F0;
-    margin: 0;
-    overflow: hidden;
+  font-family: Courier !important;
+  font-size: 12px;
+  background-color: #F0F0F0;
+  margin: 0;
+  overflow: hidden;
 }
 
 #container {
-       -moz-user-select: none;
-    -webkit-user-select: none;
-            user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #stats {
-    bottom: 0;
-    right: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#logo {
+  margin: 200px auto;
+  display: block;
 }

@@ -18,7 +18,7 @@ export default {
     }
   },
   interact(position) {
-    events.emit(consts.events.INTERACT, {}, {position: position});
+    events.emit(consts.events.INTERACT, {}, block => block.matchesPosition(position));
   },
   codeBlock(position) {
     if(position && permissions.canEdit(position)) {

@@ -8,6 +8,8 @@ import inventory from './inventory';
 import rootVue from './rootVue';
 import querystring from 'querystring';
 
+/* global Pace */
+
 var qs = querystring.parse(location.search.substring(1));
 if(qs.server) {
   window.SERVER_ADDRESS = qs.server;
@@ -19,8 +21,13 @@ function appendToContainer(engine) {
     throw new Error('Browser not capable');
   }
 
+  var logo = document.getElementById('logo');
+  logo.style.display = 'none';
+
   var container = document.getElementById('container');
   engine.appendTo(container);
+
+  Pace.stop();
 }
 
 // TODO handle errors gracefully

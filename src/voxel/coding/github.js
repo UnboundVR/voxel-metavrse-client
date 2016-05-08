@@ -1,10 +1,10 @@
-import consts from './constants';
+import consts from '../../constants';
 
 var SINGLE_FILENAME = 'single_file';
 
 export default {
-  getGist(id) {
-    return fetch(consts.github.API_URL + '/gists/' + id, {
+  getGist(id, revision) {
+    return fetch(`${consts.github.API_URL}/gists/${id}/${revision}`, {
       method: 'GET'
     }).then(response => response.json()).then(response => {
       return {

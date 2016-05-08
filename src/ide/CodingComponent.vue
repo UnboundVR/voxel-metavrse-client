@@ -79,8 +79,9 @@ export default {
       editor.saveAs(codemirror.getValue(), name);
     },
     close() {
-      this.open = false;
-      editor.close();
+      if(editor.close()) {
+        this.open = false;
+      }
     }
   },
   ready() {
@@ -91,12 +92,13 @@ export default {
       mode: 'javascript',
       lineNumbers: true,
       matchBrackets: true,
-      indentWithTabs: true,
       tabSize: 2,
       indentUnit: 2,
       hintOptions: {
         completeSingle: false
-      }
+      },
+      gutters: ['CodeMirror-lint-markers'],
+      lint: true
     });
 
     codemirror.on('change', editor.onChange);
