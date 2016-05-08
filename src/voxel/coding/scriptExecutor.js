@@ -4,29 +4,20 @@ import map from '../../map';
 import Block from '../block';
 import scriptExecutor from 'script-executor';
 import resolveCode from './resolveCode';
-import Queue from 'promise-queue';
 
 var prototypes = {};
-var supportedEvents = [
+
+scriptExecutor.wireEvents(events, [
   consts.events.HOVER,
   consts.events.LEAVE,
   consts.events.INTERACT,
   consts.events.PLACE_ADJACENT,
   consts.events.REMOVE_ADJACENT
-];
+]);
 
 function getId(pos) {
   return pos.join('|');
 }
-
-scriptExecutor.wireEvents(events, supportedEvents);
-
-let queue = new Queue(1, Infinity);
-
-scriptExecutor.setClassLoader(async code => {
-  let mod = await queue.add(() => System.module(code));
-  return mod.default;
-});
 
 async function loadPrototype(blockType) {
   let codeObj = await resolveCode(blockType.code);
