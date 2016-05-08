@@ -2,7 +2,6 @@ import auth from '../../auth';
 import github from './github';
 import executor from './scriptExecutor';
 import types from '../blockTypes';
-import clone from 'clone';
 import voxelClient from '../voxelClient';
 import consts from '../../constants';
 
@@ -10,18 +9,21 @@ var blocksWithCode = {};
 
 function resolveCode(blockType) {
   if(auth.isLogged()) {
-    return Promise.resolve(blockType);
+    return fetch(`${consts.SERVER_ADDRESS()}/coding/${blockType.code.id}/${blockType.code.revision}`, {
+      method: 'GET',
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
   } else {
-    return github.getGist(blockType.code.id, blockType.code.revision).then(function(codeObj) {
-      var updatedType = clone(blockType);
-      updatedType.code = codeObj;
-      return updatedType;
-    });
+    return github.getGist(blockType.code.id, blockType.code.revision);
   }
 }
 
-async function processNewBlockType(position, blockType) {
+async function processNewBlockType(position, blockType) { // FIXME this still assumes block types come with code resolved...
   types.add(blockType);
+
+  let codeObj = await resolveCode(blockType);
+  blockType.code = codeObj;
+
   await executor.loadPrototype(blockType);
   storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);
@@ -36,7 +38,10 @@ function storeCode(position, id) {
 
 export default {
   registerBlockType(blockType) {
-    return resolveCode(blockType).then(executor.loadPrototype);
+    return resolveCode(blockType).then(codeObj => {
+      blockType.code = codeObj;
+      return executor.loadPrototype(blockType);
+    });
   },
   getCode(position) {
     return types.getById(blocksWithCode[position]);
@@ -49,7 +54,7 @@ export default {
     delete blocksWithCode[position];
     executor.remove(position);
   },
-  async modifyPrototype(position, code) {
+  modifyPrototype(position, code) {
     return fetch(consts.SERVER_ADDRESS() + '/inventory/blockType/' + blocksWithCode[position], {
       method: 'PUT',
       body: JSON.stringify({
