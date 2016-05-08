@@ -13,21 +13,21 @@
             <button v-if="blockType && mine" @click="save">Save all</button>
             <button v-if="blockType" @click="saveAs">Fork...</button>
             <button v-if="!blockType" @click="saveAs">Save as...</button>
-            <a v-if="blockType" target="_blank" :href="blockType.code.url">Go to gist</a>
+            <a v-if="blockType" target="_blank" :href="code.url">Go to gist</a>
           </div>
 
           <div v-if="blockType">
             <div class="author-info">
               <h2>Author</h2>
-              <div>{{blockType.code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="blockType.code.author.avatar"></src></div>
+              <div>{{code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="code.author.avatar"></src></div>
             </div>
             <div class="gist-info">
               <h2>Gist info</h2>
               <ul>
-                <li>ID: {{blockType.code.id}}</li>
-                <li>Revision: {{blockType.code.revision.id}}</li>
-                <li>Revision date: {{blockType.code.revision.date | moment "DD/MM/YYYY h:mm:ss A"}}</li>
-                <li v-if="outdated"><span class="outdated">Forks/updates at {{blockType.code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
+                <li>ID: {{code.id}}</li>
+                <li>Revision: {{code.revision.id}}</li>
+                <li>Revision date: {{code.revision.date | moment "DD/MM/YYYY h:mm:ss A"}}</li>
+                <li v-if="outdated"><span class="outdated">Forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
               </ul>
             </div>
           </div>
@@ -55,13 +55,16 @@ export default {
     return {
       position: '',
       blockType: null,
-      open: false,
-      mine: false
+      code: null,
+      open: false
     };
   },
   computed: {
     outdated() {
-      return this.blockType.code.revision.date != this.blockType.code.lastUpdateDate;
+      return this.code.revision.date != this.code.lastUpdateDate;
+    },
+    mine() {
+      return this.code && this.code.author.id == auth.getUserId();
     }
   },
   methods: {
@@ -111,10 +114,10 @@ export default {
       self.open = true;
       self.position = data.position.join('|');
       self.blockType = data.blockType;
-      self.mine = data.blockType && data.blockType.code.author.id == auth.getUserId();
+      self.code = data.code;
 
       Vue.nextTick(() => {
-        codemirror.setValue(data.blockType ? data.blockType.code.code : data.code);
+        codemirror.setValue(data.blockType ? data.code.code : data.code);
         editor.markClean();
         codemirror.focus();
       });

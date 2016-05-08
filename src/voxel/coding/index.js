@@ -1,15 +1,14 @@
-import controller  from './controller';
+import prototypes from './prototypes';
+import instances from './instances';
 import launchIde from './launchIde';
+import executor from './scriptExecutor';
 
 export default {
-  removeCode: controller.removeCode.bind(controller),
-  storeCode: controller.storeCode.bind(controller),
+  removeCode: instances.removeCode.bind(instances),
+  storeCode: instances.storeCode.bind(instances),
   editCode: launchIde,
-  registerBlockType: controller.registerBlockType.bind(controller),
+  registerBlockType: executor.loadPrototype.bind(executor),
   setVoxelEngine(engine) {
-    controller.voxelEngine = engine;
-  },
-  setBroadcast(broadcast) {
-    controller.broadcastSetBlock = broadcast;
+    prototypes.voxelEngine = engine;
   }
 };

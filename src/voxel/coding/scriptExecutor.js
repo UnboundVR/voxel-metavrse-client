@@ -3,6 +3,7 @@ import consts from '../../constants';
 import map from '../../map';
 import Block from '../block';
 import scriptExecutor from 'script-executor';
+import resolveCode from './resolveCode';
 
 var prototypes = {};
 var supportedEvents = [
@@ -20,13 +21,13 @@ function getId(pos) {
 scriptExecutor.wireEvents(events, supportedEvents);
 
 async function loadPrototype(blockType) {
-  let code = blockType.code.code;
+  let code = await resolveCode(blockType.code);
   let name = blockType.name;
   console.log(`Loading code for ${name}`);
 
   try {
-    let $class = await System.module(code);
-    prototypes[blockType.id] = {$class: $class.default, blockType};
+    let $class = await System.module(code.code);
+    prototypes[blockType.id] = {$class: $class.default, blockType, code};
     console.log(`Code for ${name} loaded`);
   } catch(e) {
     console.log(`Error loading code for ${name}`, e);
@@ -57,8 +58,13 @@ function remove(position) {
   scriptExecutor.removeInstance(id);
 }
 
+function getCode(id) {
+  return prototypes[id].code;
+}
+
 export default {
   create,
   remove,
+  getCode,
   loadPrototype
 };
