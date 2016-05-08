@@ -4,6 +4,7 @@ import map from '../../map';
 import Block from '../block';
 import scriptExecutor from 'script-executor';
 import resolveCode from './resolveCode';
+import Queue from 'promise-queue';
 
 var prototypes = {};
 var supportedEvents = [
@@ -20,17 +21,28 @@ function getId(pos) {
 
 scriptExecutor.wireEvents(events, supportedEvents);
 
+let queue = new Queue(1, Infinity);
+
+scriptExecutor.setClassLoader(async code => {
+  let mod = await queue.add(() => System.module(code));
+  return mod.default;
+});
+
 async function loadPrototype(blockType) {
-  let code = await resolveCode(blockType.code);
+  let codeObj = await resolveCode(blockType.code);
   let name = blockType.name;
-  console.log(`Loading code for ${name}`);
 
   try {
-    let $class = await System.module(code.code);
-    prototypes[blockType.id] = {$class: $class.default, blockType, code};
+    let id = codeObj.id;
+    let code = codeObj.code;
+    console.log(`Loading code for ${name} with ID ${id}`);
+    await scriptExecutor.loadClass(id, code);
+
+    prototypes[blockType.id] = {blockType, code: codeObj};
     console.log(`Code for ${name} loaded`);
   } catch(e) {
     console.log(`Error loading code for ${name}`, e);
+    throw e;
   }
 }
 
@@ -39,12 +51,16 @@ function create(position, prototypeId) {
 
   let prototype = prototypes[prototypeId];
 
-  let $class = prototype.$class;
+  if(!prototype) {
+    throw new Error('Prototype does not exist');
+  }
+
+  let classId = prototype.code.id;
   let blockType = prototype.blockType;
   let block = new Block(position, blockType);
+  let instanceId = getId(position);
 
-  let id = getId(position);
-  scriptExecutor.createInstance(id, $class, {metadata: block, api: map});
+  scriptExecutor.createInstance(instanceId, classId, {metadata: block, api: map});
 }
 
 function remove(position) {
