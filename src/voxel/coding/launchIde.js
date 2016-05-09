@@ -34,7 +34,7 @@ var openNew = function(position) {
 };
 
 var openExisting = function(position, data) {
-  return ide.open({position, blockType: data.blockType, code: data.code}).then(data => {
+  return ide.open({position, item: data.blockType, code: data.code}).then(data => {
     if(data.name) {
       return classes.fork(position, data.value, data.name).then((codeObj) => {
         alert('Existing code was forked with ID: ' + codeObj.id);

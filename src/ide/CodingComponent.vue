@@ -1,7 +1,7 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="blockType">Editing the code of {{blockType.name}} block <span v-if="position">at ({{position}})</span> <img class="block-icon" :src="'assets/img/icons/' + blockType.icon + '.png'"></src></h1>
+      <h1 v-if="item">Editing the code of {{item.name}} block <span v-if="position">at ({{position}})</span> <img class="block-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
       <h1 v-else>Editing the code of new block at ({{position}})</h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
@@ -10,13 +10,13 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
-            <button v-if="blockType && mine" @click="save">Save all</button>
-            <button v-if="blockType" @click="saveAs">Fork...</button>
-            <button v-if="!blockType" @click="saveAs">Save as...</button>
-            <a v-if="blockType" target="_blank" :href="code.url">Go to gist</a>
+            <button v-if="item && mine" @click="save">Save all</button>
+            <button v-if="item" @click="saveAs">Fork...</button>
+            <button v-if="!item" @click="saveAs">Save as...</button>
+            <a v-if="item" target="_blank" :href="code.url">Go to gist</a>
           </div>
 
-          <div v-if="blockType">
+          <div v-if="item">
             <div class="author-info">
               <h2>Author</h2>
               <div>{{code.author.login}} <span v-if="mine">(a.k.a. you)</span> <img class="author-avatar" :src="code.author.avatar"></src></div>
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       position: '',
-      blockType: null,
+      item: null,
       code: null,
       open: false
     };
@@ -113,11 +113,11 @@ export default {
     editor.on('open', data => {
       self.open = true;
       self.position = data.position.join('|');
-      self.blockType = data.blockType;
+      self.item = data.item;
       self.code = data.code;
 
       Vue.nextTick(() => {
-        codemirror.setValue(data.blockType ? data.code.code : data.code);
+        codemirror.setValue(data.item ? data.code.code : data.code);
         editor.markClean();
         codemirror.focus();
       });
