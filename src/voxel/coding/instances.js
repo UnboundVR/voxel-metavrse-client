@@ -1,4 +1,4 @@
-import executor from './scriptExecutor';
+import scripts from './scripts';
 import types from '../blockTypes';
 
 var blocksWithCode = {};
@@ -6,7 +6,7 @@ var blocksWithCode = {};
 export default {
   getCode(position) {
     let blockType = types.getById(blocksWithCode[position]);
-    let code = executor.getCode(blockType.id);
+    let code = scripts.getCode(blockType.id);
 
     return {
       blockType,
@@ -21,10 +21,10 @@ export default {
   },
   storeCode(position, id) {
     blocksWithCode[position] = id;
-    executor.create(position, id);
+    scripts.createInstance(position, id);
   },
   removeCode(position) {
     delete blocksWithCode[position];
-    executor.remove(position);
+    scripts.removeInstance(position);
   }
 };

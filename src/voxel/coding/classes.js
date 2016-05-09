@@ -1,4 +1,4 @@
-import executor from './scriptExecutor';
+import scripts from './scripts';
 import types from '../blockTypes';
 import voxelClient from '../voxelClient';
 import instances from './instances';
@@ -8,7 +8,7 @@ import inventory from '../../inventory';
 async function processNew(position, blockType) {
   types.add(blockType);
 
-  await executor.loadPrototype(blockType);
+  await scripts.loadClass(blockType);
 
   instances.storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);

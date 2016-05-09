@@ -3,9 +3,9 @@ import consts from '../../constants';
 import map from '../../map';
 import Block from '../block';
 import scriptExecutor from 'script-executor';
-import resolveCode from './resolveCode';
+import coding from '../../coding';
 
-var prototypes = {};
+var classes = {};
 
 scriptExecutor.wireEvents(events, [
   consts.events.HOVER,
@@ -19,8 +19,8 @@ function getId(pos) {
   return pos.join('|');
 }
 
-async function loadPrototype(blockType) {
-  let codeObj = await resolveCode(blockType.code);
+async function loadClass(blockType) {
+  let codeObj = await coding.get(blockType.code.id, blockType.code.revision);
   let name = blockType.name;
 
   try {
@@ -29,7 +29,7 @@ async function loadPrototype(blockType) {
     console.log(`Loading code for ${name} with ID ${id}`);
     await scriptExecutor.loadClass(id, code);
 
-    prototypes[blockType.id] = {blockType, code: codeObj};
+    classes[blockType.id] = {blockType, code: codeObj};
     console.log(`Code for ${name} loaded`);
   } catch(e) {
     console.log(`Error loading code for ${name}`, e);
@@ -37,24 +37,24 @@ async function loadPrototype(blockType) {
   }
 }
 
-function create(position, prototypeId) {
-  remove(position);
+function createInstance(position, blockTypeId) {
+  removeInstance(position);
 
-  let prototype = prototypes[prototypeId];
+  let $class = classes[blockTypeId];
 
-  if(!prototype) {
-    throw new Error('Prototype does not exist');
+  if(!$class) {
+    throw new Error('Script does not exist');
   }
 
-  let classId = prototype.code.id;
-  let blockType = prototype.blockType;
+  let classId = $class.code.id;
+  let blockType = $class.blockType;
   let block = new Block(position, blockType);
   let instanceId = getId(position);
 
   scriptExecutor.createInstance(instanceId, classId, {metadata: block, api: map});
 }
 
-function remove(position) {
+function removeInstance(position) {
   let id = getId(position);
 
   let instance = scriptExecutor.getInstance(id);
@@ -66,12 +66,12 @@ function remove(position) {
 }
 
 function getCode(id) {
-  return prototypes[id].code;
+  return classes[id].code;
 }
 
 export default {
-  create,
-  remove,
+  createInstance,
+  removeInstance,
   getCode,
-  loadPrototype
+  loadClass
 };
