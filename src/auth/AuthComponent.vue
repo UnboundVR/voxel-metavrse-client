@@ -5,8 +5,9 @@
         <li>
           <img id="auth-component-avatar" :src="avatarUrl" />
           <ul>
-            <li class="label"><a href="#">{{ name }}</a></li>
+            <li><a href="#" @click="goToProfile">{{ name }}</a></li>
             <li><a href="#" @click="inventory">Inventory</a></li>
+            <li><a href="#" @click="toggleCamera">Toggle camera</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
@@ -22,6 +23,7 @@
 
 import service from './service';
 import inventory from '../inventory';
+import playerSync from '../playerSync';
 
 export default {
   name: 'AuthComponent',
@@ -35,7 +37,11 @@ export default {
   methods: {
     login: service.login,
     logout: service.logout,
-    inventory: inventory.open
+    inventory: inventory.open,
+    toggleCamera: playerSync.toggleCamera,
+    goToProfile() {
+      alert('Profile page TBC');
+    }
   }
 };
 </script>

@@ -1,4 +1,4 @@
-import setupAvatar from './avatar';
+import avatar from './avatar';
 import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
@@ -68,7 +68,7 @@ export default {
         delete self.others[id];
       });
 
-      setupAvatar(settings);
+      avatar.setup(settings);
     });
   },
   onServerUpdate(update) {
@@ -97,5 +97,6 @@ export default {
 
     playerMesh.children[0].rotation.y = update.rotation.y + (Math.PI / 2);
     playerSkin.head.rotation.z = scale(update.rotation.x, -1.5, 1.5, -0.75, 0.75);
-  }
+  },
+  toggleCamera: avatar.toggleCamera.bind(avatar)
 };
