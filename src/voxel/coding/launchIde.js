@@ -4,7 +4,25 @@ import instances from './instances';
 import auth from '../../auth';
 
 var openNew = function(position) {
-  var code = "function SuchBlockBehavior(world, block) {\n  console.log('much instantiate. amaze');\n\n  this.onInteract = function() {\n    alert('such interact. wow.');\n  };\n\n  this.onHover = function() {\n    console.log('very hover');\n  };\n\n  this.onDestroy = function() {\n    console.log(':(');\n  };\n}"; // TODO bring from server or something
+  var code =
+`export default class SuchBlockBehavior {
+  constructor(world, block) {
+    this.world = world;
+    this.block = block;
+  }
+
+  onInteract() {
+    alert('such interact. wow.');
+  }
+
+  onHover() {
+    console.log('very hover');
+  }
+
+  onDestroy() {
+    console.log(':(');
+  }
+}`; // TODO bring from server or something
 
   return ide.open({position, code}).then(data => {
     return classes.create(position, data.value, data.name).then(codeObj => {
