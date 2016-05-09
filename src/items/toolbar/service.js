@@ -3,7 +3,8 @@ import auth from '../../auth';
 import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
-import coding from '../coding';
+import itemCoding from '../coding';
+import coding from '../../coding';
 import inventory from '../../inventory';
 import ide from '../../ide';
 
@@ -96,43 +97,52 @@ export default {
   isAdjacentActive() {
     return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
   },
-  setItem(position, item) {
-    var self = this;
-    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar/' + position, {
+  async setItem(position, item) {
+    await fetch(`${consts.SERVER_ADDRESS()}/inventory/toolbar/${position}`, {
       method: 'PUT',
       headers: auth.getAuthHeaders(),
       body: JSON.stringify(item)
-    }).then(() => {
-      if(item.type == 'block') {
-        return voxel.load(item.id).then(() => {
-          self.items.$set(position + 1, fromBlock(voxel.getById(item.id)));
-        });
-      } else {
-        return items.load(item.id).then(() => {
-          self.items.$set(position + 1, items.getById(item.id));
-        });
-      }
     });
+
+    if(item.type == 'block') {
+      await voxel.load(item.id);
+      this.items.$set(position + 1, fromBlock(voxel.getById(item.id)));
+    } else {
+      await items.load(item.id);
+      this.items.$set(position + 1, items.getById(item.id));
+    }
   },
-  removeItem(position) {
+  async removeItem(position) {
     var self = this;
-    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar/' + position, {
+    await fetch(`${consts.SERVER_ADDRESS()}/inventory/toolbar/${position}`, {
       method: 'DELETE',
       headers: auth.getAuthHeaders()
-    }).then(() => {
-      self.items.$set(position + 1, nothing);
     });
+
+    self.items.$set(position + 1, nothing);
   },
-  editCode(item) {
+  async editCode(item, position) {
     if(item.isBlock) {
       alert('Block edition from toolbar not yet supported');
       return;
     }
 
-    let code = coding.get(item.id);
-    ide.open({item, code}).then(data => {
-      alert('Should save and put new item in toolbar');
-      console.log(data);
-    });
+    let code = itemCoding.get(item.id);
+    let data = await ide.open({item, code});
+
+    let name = data.name || `${item.name} bis`;
+    let codingOperation = data.name ? coding.fork : coding.update;
+    let newCode = data.value;
+
+    let props = {
+      name,
+      adjacentActive: item.adjacentActive,
+      crosshairIcon: item.crosshairIcon
+    };
+
+    let codeObj = await codingOperation(code.id, newCode);
+    let updatedItemType = await inventory.addItemType(props, codeObj);
+
+    await this.setItem(position, updatedItemType);
   }
 };

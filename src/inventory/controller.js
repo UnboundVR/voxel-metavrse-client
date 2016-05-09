@@ -71,12 +71,14 @@ export default {
       headers: auth.getAuthHeaders()
     }).then(response => response.json());
   },
-  addItemType(name, code) {
+  addItemType(props, code) {
     return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType`, {
       method: 'POST',
       body: JSON.stringify({
         code,
-        name
+        name: props.name,
+        adjacentActive: props.adjacentActive,
+        crosshairIcon: props.crosshairIcon
       }),
       headers: auth.getAuthHeaders()
     }).then(response => response.json());
