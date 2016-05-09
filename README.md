@@ -15,7 +15,7 @@ npm install
 
 Then run the watch (to auto-rebuild sass and js on each change):
 ```
-npm run watch-client
+npm run watch
 ```
 
 Then point your browser to `http://localhost:1337` and have fun!
@@ -24,6 +24,6 @@ Then point your browser to `http://localhost:1337` and have fun!
 - When you start, click on the page to lock cursor. Press `<ESC>` to unlock cursor.
 - `<W,A,S,D>` => move.
 - `<R>` => toggle third person view.
-- `Click` => destroy block.
-- `<CONTROL> + click` => place block.
+- `Click` => use current item.
+- `<SHIFT> + click` => delete block.
 - `Right click` => edit the code of a block.
