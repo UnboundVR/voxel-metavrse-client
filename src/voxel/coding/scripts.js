@@ -19,22 +19,22 @@ function getId(pos) {
   return pos.join('|');
 }
 
+function getClassId(codeObj) {
+  return `${codeObj.id}-${codeObj.revision.id}`;
+}
+
 async function loadClass(blockType) {
   let codeObj = await coding.get(blockType.code.id, blockType.code.revision);
   let name = blockType.name;
 
-  try {
-    let id = codeObj.id;
-    let code = codeObj.code;
-    console.log(`Loading code for ${name} with ID ${id}`);
-    await scriptExecutor.loadClass(id, code);
+  let classId = getClassId(codeObj);
+  let code = codeObj.code;
 
-    classes[blockType.id] = {blockType, code: codeObj};
-    console.log(`Code for ${name} loaded`);
-  } catch(e) {
-    console.log(`Error loading code for ${name}`, e);
-    throw e;
-  }
+  console.log(`Loading code of block ${name} with ID ${classId}`);
+  await scriptExecutor.loadClass(classId, code);
+
+  classes[blockType.id] = {blockType, code: codeObj};
+  console.log(`Code of block ${name} loaded`);
 }
 
 function createInstance(position, blockTypeId) {
@@ -46,7 +46,7 @@ function createInstance(position, blockTypeId) {
     throw new Error('Script does not exist');
   }
 
-  let classId = $class.code.id;
+  let classId = getClassId($class.code);
   let blockType = $class.blockType;
   let block = new Block(position, blockType);
   let instanceId = getId(position);

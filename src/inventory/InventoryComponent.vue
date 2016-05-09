@@ -54,7 +54,7 @@ export default {
       return this.toolbarItems.map(item => item.id).includes(item.id);
     },
     editCode($event, item) {
-      alert(`Editing the code of ${item.name}`);
+      alert('Code edition from inventory not yet supported');
       $event.preventDefault();
     }
   },

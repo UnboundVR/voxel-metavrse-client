@@ -1,7 +1,7 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="item">Editing the code of {{item.name}} block <span v-if="position">at ({{position}})</span> <img class="block-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
+      <h1 v-if="item">Editing the code of {{item.name}} <span v-if="position">at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
       <h1 v-else>Editing the code of new block at ({{position}})</h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
@@ -112,7 +112,7 @@ export default {
 
     editor.on('open', data => {
       self.open = true;
-      self.position = data.position.join('|');
+      self.position = data.position && data.position.join('|');
       self.item = data.item;
       self.code = data.code;
 
@@ -182,7 +182,7 @@ export default {
     color: #fff;
     border-bottom: 1px solid #111;
 
-    .block-icon {
+    .item-icon {
       border-radius: 25px;
       width: 32px;
       height: 32px;

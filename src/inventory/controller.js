@@ -70,5 +70,15 @@ export default {
       }),
       headers: auth.getAuthHeaders()
     }).then(response => response.json());
+  },
+  addItemType(name, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        name
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
   }
 };

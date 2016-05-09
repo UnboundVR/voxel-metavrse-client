@@ -4,6 +4,8 @@ import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
 import coding from '../coding';
+import inventory from '../../inventory';
+import ide from '../../ide';
 
 const nothing = {
   crosshairIcon: 'hand',
@@ -123,9 +125,14 @@ export default {
   },
   editCode(item) {
     if(item.isBlock) {
-      alert(`Should edit code of block ${item.name}`);
-    } else {
-      coding.edit(item);
+      alert('Block edition from toolbar not yet supported');
+      return;
     }
+
+    let code = coding.get(item.id);
+    ide.open({item, code}).then(data => {
+      alert('Should save and put new item in toolbar');
+      console.log(data);
+    });
   }
 };
