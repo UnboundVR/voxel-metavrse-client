@@ -1,9 +1,9 @@
-import auth from '../../auth';
-import consts from '../../constants';
 import executor from './scriptExecutor';
 import types from '../blockTypes';
 import voxelClient from '../voxelClient';
 import instances from './instances';
+import coding from '../../coding';
+import inventory from '../../inventory';
 
 async function processNew(position, blockType) {
   types.add(blockType);
@@ -16,43 +16,34 @@ async function processNew(position, blockType) {
   return blockType.code;
 }
 
+async function forkOrUpdate(codingOperation, position, material, code, name) {
+  let blockTypeId = instances.getBlockTypeId(position);
+  let blockType = types.getById(blockTypeId);
+  let codeId = blockType.code.id;
+
+  name = name || `${blockType.name} bis`;
+
+  let codeObj = await codingOperation(codeId, code);
+  let updatedBlockType = await inventory.addBlockType(name, material, codeObj);
+
+  return processNew(position, updatedBlockType);
+}
+
 export default {
   async modify(position, code) {
-    let response = await fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType/${instances.getBlockTypeId(position)}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        code
-      }),
-      headers: auth.getAuthHeaders()
-    });
-    let blockType = await response.json();
-
-    return processNew(position, blockType);
+    let material = this.voxelEngine.getBlock(position);
+    return forkOrUpdate(coding.update, position, material, code, null);
   },
   async fork(position, code, name) {
-    let blockType = await fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType/${instances.getBlockTypeId(position)}/fork`, {
-      method: 'POST',
-      body: JSON.stringify({
-        code,
-        name,
-        material: this.voxelEngine.getBlock(position)
-      }),
-      headers: auth.getAuthHeaders()
-    }).then(response => response.json());
-
-    return await processNew(position, blockType);
+    let material = this.voxelEngine.getBlock(position);
+    return forkOrUpdate(coding.fork, position, material, code, name);
   },
   async create(position, code, name) {
-    let blockType = await fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType`, {
-      method: 'POST',
-      body: JSON.stringify({
-        code,
-        name,
-        material: this.voxelEngine.getBlock(position)
-      }),
-      headers: auth.getAuthHeaders()
-    }).then(response => response.json());
+    let material = this.voxelEngine.getBlock(position);
 
-    return await processNew(position, blockType);
+    let codeObj = await coding.create(code);
+    let blockType = await inventory.addBlockType(name, material, codeObj);
+
+    return processNew(position, blockType);
   }
 };

@@ -59,5 +59,16 @@ export default {
     items.removeToolbarItem(position - 1).then(() => {
       this.toolbarItems.$set(position, items.getToolbarItems()[position]);
     });
+  },
+  addBlockType(name, material, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        name,
+        material
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
   }
 };

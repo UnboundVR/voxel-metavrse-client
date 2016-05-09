@@ -8,5 +8,6 @@ export default {
   },
   open() {
     controller.bringAllItems().then(() => controller.open());
-  }
+  },
+  addBlockType: controller.addBlockType.bind(controller)
 };
