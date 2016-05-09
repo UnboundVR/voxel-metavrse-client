@@ -23,7 +23,6 @@ Then point your browser to `http://localhost:1337` and have fun!
 ## Controls
 - When you start, click on the page to lock cursor. Press `<ESC>` to unlock cursor.
 - `<W,A,S,D>` => move.
-- `<R>` => toggle third person view.
 - `Click` => use current item.
-- `<SHIFT> + click` => delete block.
+- `<SHIFT> + click` => remove block.
 - `Right click` => edit the code of a block.
