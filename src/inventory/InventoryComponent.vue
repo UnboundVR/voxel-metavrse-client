@@ -4,27 +4,24 @@
       <h1>Inventory</h1>
 
       <h2>Items</h2>
-      <h3>Click to add</h3>
       <ul>
-        <li v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
+        <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
           <div>{{ item.name }}</div>
         </li>
       </ul>
 
       <h2>Blocks</h2>
-      <h3>Click to add</h3>
       <ul>
-        <li v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
+        <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
           <div>{{ block.name }}</div>
         </li>
       </ul>
 
       <h2>Toolbar</h2>
-      <h3>Click to remove</h3>
       <ul>
-        <li v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
+        <li @contextMenu="editCode($event, item)" v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
           <div>
             <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
             <div v-else class="nothing"></div>
@@ -55,6 +52,10 @@ export default {
     },
     inToolbar(item) {
       return this.toolbarItems.map(item => item.id).includes(item.id);
+    },
+    editCode($event, item) {
+      alert(`Editing the code of ${item.name}`);
+      $event.preventDefault();
     }
   },
   ready() {

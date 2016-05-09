@@ -3,6 +3,7 @@ import auth from '../../auth';
 import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
+import coding from '../coding';
 
 const nothing = {
   crosshairIcon: 'hand',
@@ -119,5 +120,12 @@ export default {
     }).then(() => {
       self.items.$set(position + 1, nothing);
     });
+  },
+  editCode(item) {
+    if(item.isBlock) {
+      alert(`Should edit code of block ${item.name}`);
+    } else {
+      coding.edit(item);
+    }
   }
 };
