@@ -1,11 +1,12 @@
 <template>
-  <div id="chat-component" v-bind:class="[ this.css.chat.isChatFocused ? this.css.chat.chatFocused : this.css.chat.chatNotFocused ]">
+  <div id="chat-component" v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
     <ul id="chat-component-message-list">
       <li class="chat-component-message-list-message" v-for='message in messageList'>[{{ message.date |  moment "dddd, h:mm:ss a" }}] [{{ message.user }}]: {{ message.text }}</li>
     </ul>
     <div id="chat-component-messagebox-wrapper">
       <input
         type="text"
+        :disabled="!css.chat.isChatFocused"
         id="chat-component-messagebox-input"
         v-model="newMessage"
         placeholder="Press <enter> to chat"
@@ -20,6 +21,7 @@ import service from './service';
 import events from '../events';
 import pointerLock from '../pointerLock';
 import consts from '../constants';
+import Vue from 'vue';
 
 export default {
   name: 'ChatComponent',
@@ -49,8 +51,8 @@ export default {
       var el = this.$els.messageInput;
       if (document.activeElement === this.$parent.$el || document.activeElement === 'null' || document.activeElement === undefined) {
         pointerLock.release();
-        el.focus();
         this.css.chat.isChatFocused = true;
+        Vue.nextTick(() => el.focus());
       } else if (document.activeElement === el) {
         if (this.newMessage === '' || this.newMessage === null || el.value === '') {
           el.blur();
