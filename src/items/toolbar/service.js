@@ -139,6 +139,11 @@ export default {
       return;
     }
 
+    if(item == interact || item == nothing) {
+      alert('Interact and Nothing cannot be edited');
+      return;
+    }
+
     let code = itemCoding.get(item.id);
     let data = await ide.open({item, code});
 

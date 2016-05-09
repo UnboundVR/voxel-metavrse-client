@@ -50,14 +50,16 @@ export default {
 .bar-tab {
   right: 33% !important;
   left: 33% !important;
+  user-select: none;
+  cursor: pointer;
 }
 
 #crosshair {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin: -16px 0 0 -16px;
-    width: 32px;
-    height: 32px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: -16px 0 0 -16px;
+  width: 32px;
+  height: 32px;
 }
 </style>
