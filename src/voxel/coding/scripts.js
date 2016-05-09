@@ -1,11 +1,12 @@
 import events from '../../events';
 import consts from '../../constants';
-import map from '../../map';
+import world from '../../map';
 import Block from '../block';
-import scriptExecutor from 'script-executor';
+import ScriptExecutor from 'script-executor';
 import coding from '../../coding';
 
 var classes = {};
+var scriptExecutor = new ScriptExecutor();
 
 scriptExecutor.wireEvents(events, [
   consts.events.HOVER,
@@ -51,7 +52,7 @@ function createInstance(position, blockTypeId) {
   let block = new Block(position, blockType);
   let instanceId = getId(position);
 
-  scriptExecutor.createInstance(instanceId, classId, {metadata: block, api: map});
+  scriptExecutor.createInstance(instanceId, classId, {metadata: block, api: world});
 }
 
 function removeInstance(position) {

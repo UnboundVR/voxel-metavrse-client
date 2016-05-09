@@ -1,4 +1,4 @@
-const MARKETPLACE = 'inventory';
+const INVENTORY = 'inventory';
 import events from '../events';
 import consts from '../constants';
 import auth from '../auth';
@@ -11,11 +11,11 @@ export default {
   isOpen: false,
   open() {
     this.isOpen = true;
-    events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: MARKETPLACE});
+    events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: INVENTORY});
   },
   close() {
     this.isOpen = false;
-    events.emit(consts.events.FULLSCREEN_WINDOW_CLOSE, {name: MARKETPLACE});
+    events.emit(consts.events.FULLSCREEN_WINDOW_CLOSE, {name: INVENTORY});
   },
   bringAllItems() {
     var self = this;

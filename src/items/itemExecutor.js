@@ -1,5 +1,6 @@
 import map from '../map';
 import toolbar from './toolbar';
+import coding from './coding';
 
 export default {
   leftClick(position) {
@@ -14,7 +15,7 @@ export default {
       map.placeBlock(position, item.id);
     } else {
       if(item && !item.isInteract) {
-        alert('executing ' + item.name);
+        coding.execute(position);
       } else {
         map.interact(position);
       }

@@ -15,12 +15,12 @@ export default {
 
     hl.on('highlight', function (voxelPos) {
       positionEdit = voxelPos;
-      events.emit(consts.events.HOVER, {}, block => block.matchesPosition(voxelPos));
+      events.emit(consts.events.HOVER, {position: voxelPos}, block => block.matchesPosition(voxelPos));
     });
 
     hl.on('remove', function (voxelPos) {
       positionEdit = null;
-      events.emit(consts.events.LEAVE, {}, block => block.matchesPosition(voxelPos));
+      events.emit(consts.events.LEAVE, {position: voxelPos}, block => block.matchesPosition(voxelPos));
     });
 
     hl.on('highlight-adjacent', function (voxelPos) {

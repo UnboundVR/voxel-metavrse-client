@@ -40,6 +40,7 @@ export default {
     this.userLogged = auth.isLogged();
 
     this.selectedItem = interact;
+    this.selectedPosition = 0;
     this.deleteMode = false;
 
     if(!this.userLogged) {
@@ -82,9 +83,9 @@ export default {
     }
 
     this.selector = toolbar();
-    var self = this;
-    this.selector.on('select', function(index) {
-      self.selectedItem = self.items[index];
+    this.selector.on('select', index => {
+      this.selectedPosition = index;
+      this._refreshSelected();
     });
   },
   unhookSelection() {
@@ -93,6 +94,13 @@ export default {
     }
 
     this.selector.removeAllListeners('select');
+  },
+  _refreshSelected() {
+    itemCoding.deactivate();
+    this.selectedItem = this.items[this.selectedPosition];
+    if(this.selectedItem != interact && this.selectedItem != nothing && !this.selectedItem.isBlock) {
+      itemCoding.activate(this.selectedItem);
+    }
   },
   isAdjacentActive() {
     return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
@@ -110,6 +118,10 @@ export default {
     } else {
       await items.load(item.id);
       this.items.$set(position + 1, items.getById(item.id));
+    }
+
+    if(this.selectedPosition == position + 1) {
+      this._refreshSelected();
     }
   },
   async removeItem(position) {
@@ -143,6 +155,6 @@ export default {
     let codeObj = await codingOperation(code.id, newCode);
     let updatedItemType = await inventory.addItemType(props, codeObj);
 
-    await this.setItem(position, updatedItemType);
+    await this.setItem(position, {id: updatedItemType.id, type: 'item'});
   }
 };
