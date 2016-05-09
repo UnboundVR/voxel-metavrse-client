@@ -7,6 +7,7 @@ import clientSettings from './settings.json';
 import extend from 'extend';
 import Promise from 'bluebird';
 import consts from '../constants';
+import events from '../events';
 
 export default {
   init() {
@@ -101,7 +102,8 @@ export default {
     this.socket.on('set', (pos, val) => {
       if(val == 0) {
         coding.removeCode(pos);
-        self.engine.setBlock(pos, 0); // TODO raise REMOVE_ADJACENT event too
+        self.engine.setBlock(pos, 0);
+        events.emit(consts.events.REMOVE_ADJACENT, {}, block => block.adjacentTo(pos));
         return;
       }
 
@@ -111,7 +113,8 @@ export default {
           coding.storeCode(pos, type.id);
         }
 
-        self.engine.setBlock(pos, type.material); // TODO raise PLACE_ADJACENT event too
+        self.engine.setBlock(pos, type.material);
+        events.emit(consts.events.PLACE_ADJACENT, {}, block => block.adjacentTo(pos));
       });
     });
   },
