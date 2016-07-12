@@ -16,27 +16,27 @@ async function processNew(position, blockType) {
   return blockType.code;
 }
 
-async function forkOrUpdate(codingOperation, position, material, code, name) {
-  let blockTypeId = instances.getBlockTypeId(position);
-  let blockType = types.getById(blockTypeId);
-  let codeId = blockType.code.id;
-
-  name = name || `${blockType.name} bis`;
-
-  let codeObj = await codingOperation(codeId, code);
-  let updatedBlockType = await inventory.addBlockType(name, material, codeObj);
-
-  return processNew(position, updatedBlockType);
-}
-
 export default {
   async modify(position, code) {
-    let material = this.voxelEngine.getBlock(position);
-    return forkOrUpdate(coding.update, position, material, code, null);
+    let blockTypeId = instances.getBlockTypeId(position);
+    let blockType = types.getById(blockTypeId);
+    let codeId = blockType.code.id;
+
+    let codeObj = await coding.update(codeId, code);
+    let updatedBlockType = await inventory.updateBlockCode(blockTypeId, codeObj);
+
+    return processNew(position, updatedBlockType);
   },
   async fork(position, code, name) {
     let material = this.voxelEngine.getBlock(position);
-    return forkOrUpdate(coding.fork, position, material, code, name);
+    let blockTypeId = instances.getBlockTypeId(position);
+    let blockType = types.getById(blockTypeId);
+    let codeId = blockType.code.id;
+
+    let codeObj = await coding.fork(codeId, code);
+    let updatedBlockType = await inventory.addBlockType(name, material, codeObj);
+
+    return processNew(position, updatedBlockType);
   },
   async create(position, code, name) {
     let material = this.voxelEngine.getBlock(position);

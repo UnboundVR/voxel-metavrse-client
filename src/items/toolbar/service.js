@@ -147,18 +147,25 @@ export default {
     let code = itemCoding.get(item.id);
     let data = await ide.open({item, code});
 
-    let name = data.name || `${item.name} bis`;
     let codingOperation = data.name ? coding.fork : coding.update;
     let newCode = data.value;
 
-    let props = {
-      name,
-      adjacentActive: item.adjacentActive,
-      crosshairIcon: item.crosshairIcon
-    };
-
     let codeObj = await codingOperation(code.id, newCode);
-    let updatedItemType = await inventory.addItemType(props, codeObj);
+
+    let inventoryOperationResult;
+
+    if(data.name) {
+      let props = {
+        name: data.name,
+        adjacentActive: item.adjacentActive,
+        crosshairIcon: item.crosshairIcon
+      };
+      inventoryOperationResult = inventory.addItemType(props, codeObj);
+    } else {
+      inventoryOperationResult = inventory.updateItemCode(item.id, codeObj);
+    }
+
+    let updatedItemType = await inventoryOperationResult;
 
     await this.setItem(position, {id: updatedItemType.id, type: 'item'});
   }

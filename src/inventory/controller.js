@@ -71,6 +71,24 @@ export default {
       headers: auth.getAuthHeaders()
     }).then(response => response.json());
   },
+  updateBlockCode(blockTypeId, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType/${blockTypeId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        code
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
+  },
+  updateItemCode(itemTypeId, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType/${itemTypeId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        code
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
+  },
   addItemType(props, code) {
     return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType`, {
       method: 'POST',
