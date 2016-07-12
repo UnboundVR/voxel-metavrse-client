@@ -7,6 +7,7 @@ import itemCoding from '../coding';
 import coding from '../../coding';
 import inventory from '../../inventory';
 import ide from '../../ide';
+import events from '../../events';
 
 const nothing = {
   crosshairIcon: 'hand',
@@ -25,6 +26,7 @@ const interact = {
 function fromBlock(block) {
   return {
     isBlock: true,
+    type: 'block',
     material: block.material,
     id: block.id,
     name: block.name,
@@ -75,6 +77,33 @@ export default {
             self.deleteMode = voxel.engine.controls.state.crouch;
           }
         });
+
+        events.on(consts.events.CODE_UPDATED, async payload => {
+          let newId = payload.newId;
+          let oldId = payload.oldId;
+          let type = payload.type;
+          let position = payload.toolbar;
+
+          if(position === undefined && oldId) {
+            for(let i = 0; i < this.items.length; i++) {
+              let item = this.items[i];
+              if(item && item.type == type && item.id == oldId) {
+                position = i - 1;
+              }
+            }
+          }
+
+          console.log(newId, oldId, type, position);
+
+          if(position !== undefined) {
+            // if the change originated in toolbar, replace, if not just fetch existing item to grab the "outdated" status
+            let idToFetch = payload.toolbar !== undefined ? newId : oldId;
+
+            await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
+
+            alert('Toolbar item modified!');
+          }
+        });
       });
     });
   },
@@ -114,10 +143,10 @@ export default {
     });
 
     if(item.type == 'block') {
-      await voxel.load(item.id);
+      await voxel.load(item.id, item.forceReload);
       this.items.$set(position + 1, fromBlock(voxel.getById(item.id)));
     } else {
-      await items.load(item.id);
+      await items.load(item.id, item.forceReload);
       this.items.$set(position + 1, items.getById(item.id));
     }
 
@@ -154,8 +183,10 @@ export default {
     let codeObj = await codingOperation(code.id, newCode);
 
     let inventoryOperationResult;
+    let operation;
 
     if(data.name) {
+      operation = consts.coding.OPERATIONS.FORK;
       let props = {
         name: data.name,
         adjacentActive: item.adjacentActive,
@@ -163,13 +194,19 @@ export default {
       };
       inventoryOperationResult = inventory.addItemType(props, codeObj);
     } else {
+      operation = consts.coding.OPERATIONS.UPDATE;
       inventoryOperationResult = inventory.updateItemCode(item.id, codeObj);
     }
 
     try {
       let updatedItemType = await inventoryOperationResult;
-      await this.setItem(position, {id: updatedItemType.id, type: 'item'});
-      alert('Existing code was updated correctly!');
+      events.emit(consts.events.CODE_UPDATED, {
+        oldId: item.id,
+        newId: updatedItemType.id,
+        type: 'item',
+        toolbar: position,
+        operation
+      });
     } catch(err) {
       alert(`Error updating code: ${err}`);
     }

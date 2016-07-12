@@ -13,7 +13,7 @@ async function processNew(position, blockType) {
   instances.storeCode(position, blockType.id);
   voxelClient.setBlock(position, blockType.id);
 
-  return blockType.code;
+  return blockType;
 }
 
 export default {

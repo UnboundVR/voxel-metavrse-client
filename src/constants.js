@@ -16,5 +16,12 @@ module.exports = {
     REQUESTED_SCOPE: 'user,gist',
     API_URL: 'https://api.github.com',
     OAUTH_URL: 'https://github.com/login/oauth'
+  },
+  coding: {
+    OPERATIONS: {
+      UPDATE: 'update',
+      CREATE: 'create',
+      FORK: 'fork'
+    }
   }
 };
