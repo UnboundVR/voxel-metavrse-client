@@ -7,7 +7,7 @@ import clientSettings from './settings.json';
 import extend from 'extend';
 import Promise from 'bluebird';
 import consts from '../constants';
-import events from '../events';
+// import events from '../events';
 
 export default {
   init() {
