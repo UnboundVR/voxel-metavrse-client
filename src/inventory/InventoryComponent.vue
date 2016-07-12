@@ -5,7 +5,7 @@
 
       <h2>Items</h2>
       <ul>
-        <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
+        <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item, false)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
           <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">{{ item.name }}</div>
         </li>
@@ -13,7 +13,7 @@
 
       <h2>Blocks</h2>
       <ul>
-        <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
+        <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block, true)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
           <div v-bind:class="[ !!block.newerVersion ? 'outdated' : '' ]">{{ block.name }}</div>
         </li>
@@ -50,8 +50,8 @@ export default {
     closeInventory() {
       controller.close();
     },
-    inToolbar(item) {
-      return this.toolbarItems.map(item => item.id).includes(item.id);
+    inToolbar(item, isBlock) {
+      return this.toolbarItems.filter(i => !!i.isBlock == isBlock).map(i => i.id).includes(item.id);
     },
     editCode($event, item) {
       alert('Code edition from inventory not yet supported');

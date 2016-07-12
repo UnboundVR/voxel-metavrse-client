@@ -31,7 +31,8 @@ function fromBlock(block) {
     code: block.code,
     adjacentActive: true,
     icon: block.icon,
-    crosshairIcon: 'crosshair'
+    crosshairIcon: 'crosshair',
+    newerVersion: block.newerVersion
   };
 }
 
