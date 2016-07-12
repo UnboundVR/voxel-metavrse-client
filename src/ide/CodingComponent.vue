@@ -1,8 +1,8 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="item">Editing the code of {{item.name}} (#{{item.id}}) <span v-if="position">at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
-      <h1 v-else>Editing the code of new block at ({{position}})</h1>
+      <h1 v-if="item">Editing the code of {{item.name}} (#{{item.id}})<span v-if="!!position"> at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
+      <h1 v-else>Editing the code of new block/item<span v-if="!!position"> at ({{position}})</span></h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
@@ -82,7 +82,7 @@ export default {
       editor.save(codemirror.getValue());
     },
     saveAs() {
-      var name = prompt('Enter the name of the new block');
+      var name = prompt('Enter the name of the new block/item');
       if(!name) {
         return;
       }

@@ -167,8 +167,12 @@ export default {
       return;
     }
 
-    if(item == interact || item == nothing) {
-      alert('Interact and Nothing cannot be edited');
+    if(item == nothing) {
+      return await createNewItem(position);
+    }
+
+    if(item == interact) {
+      alert('Interact cannot be edited');
       return;
     }
 
@@ -210,3 +214,48 @@ export default {
     }
   }
 };
+
+async function createNewItem(position) {
+  let code =
+`export default class NewItem {
+  constructor(world, metadata) {
+    this.world = world;
+    this.metadata = metadata;
+    console.log(\`activating \${this.metadata.name}\`);
+  }
+
+  onExecute(position) {
+    alert(\`executing \${this.metadata.name} on \${position}\`);
+  }
+
+  onHover(payload) {
+    let position = payload.position.join('|');
+    console.log(\`\${this.metadata.name} hovering \${position}...\`);
+  }
+
+  onDestroy() {
+    console.log(\`deactivating \${this.metadata.name}\`);
+  }
+}
+`;
+  let data = await ide.open({code});
+
+  let codeObj = await coding.create(data.value);
+
+  let props = {
+    name: data.name,
+    adjacentActive: false,
+    crosshairIcon: 'code'
+  };
+  try {
+    let newItemType = await inventory.addItemType(props, codeObj);
+    events.emit(consts.events.CODE_UPDATED, {
+      newId: newItemType.id,
+      type: 'item',
+      toolbar: position,
+      operation: consts.coding.OPERATIONS.CREATE
+    });
+  } catch(err) {
+    alert(`Error creating item code: ${err}`);
+  }
+}
