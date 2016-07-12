@@ -7,7 +7,10 @@
       <ul>
         <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item, false)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-          <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">{{ item.name }}</div>
+          <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">
+            <span>{{ item.name }}</span>
+            <span v-if="!!item.newerVersion">(#{{ item.id }})</span>
+          </div>
         </li>
       </ul>
 
@@ -15,7 +18,10 @@
       <ul>
         <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block, true)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
-          <div v-bind:class="[ !!block.newerVersion ? 'outdated' : '' ]">{{ block.name }}</div>
+          <div v-bind:class="[ !!block.newerVersion ? 'outdated' : '' ]">
+            <span>{{ block.name }}</span>
+            <span v-if="!!block.newerVersion">(#{{ block.id }})</span>
+          </div>
         </li>
       </ul>
 
@@ -26,7 +32,10 @@
             <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
             <div v-else class="nothing"></div>
 
-            <div v-if="item.name" v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">{{ item.name }}</div>
+            <div v-if="item.name" v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">
+              <span>{{ item.name }}</span>
+              <span v-if="!!item.newerVersion">(#{{ item.id }})</span>
+            </div>
             <div v-else>Nothing</div>
           </div>
           <span>({{ $index + 1 }})</span>
