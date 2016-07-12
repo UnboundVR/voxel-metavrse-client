@@ -166,8 +166,12 @@ export default {
       inventoryOperationResult = inventory.updateItemCode(item.id, codeObj);
     }
 
-    let updatedItemType = await inventoryOperationResult;
-
-    await this.setItem(position, {id: updatedItemType.id, type: 'item'});
+    try {
+      let updatedItemType = await inventoryOperationResult;
+      await this.setItem(position, {id: updatedItemType.id, type: 'item'});
+      alert('Existing code was updated correctly!');
+    } catch(err) {
+      alert(`Error updating code: ${err}`);
+    }
   }
 };

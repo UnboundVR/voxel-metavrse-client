@@ -9,7 +9,8 @@ module.exports = {
     PLACE_ADJACENT: 'placeAdjacent',
     REMOVE_ADJACENT: 'removeAdjacent',
     FULLSCREEN_WINDOW_OPEN: 'fullScreenWindowOpen',
-    FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose'
+    FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose',
+    CODE_UPDATED: 'codeUpdated'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',
