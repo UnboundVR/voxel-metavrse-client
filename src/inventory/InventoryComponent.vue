@@ -7,7 +7,7 @@
       <ul>
         <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
-          <div>{{ item.name }}</div>
+          <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">{{ item.name }}</div>
         </li>
       </ul>
 
@@ -15,7 +15,7 @@
       <ul>
         <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
-          <div>{{ block.name }}</div>
+          <div v-bind:class="[ !!block.newerVersion ? 'outdated' : '' ]">{{ block.name }}</div>
         </li>
       </ul>
 
@@ -26,7 +26,7 @@
             <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
             <div v-else class="nothing"></div>
 
-            <div v-if="item.name">{{ item.name }}</div>
+            <div v-if="item.name" v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">{{ item.name }}</div>
             <div v-else>Nothing</div>
           </div>
           <span>({{ $index + 1 }})</span>
@@ -93,6 +93,10 @@ export default {
       top: 3px;
       right: 1px;
       cursor: pointer;
+    }
+
+    .outdated {
+      color: #ff0000;
     }
 
     .item {
