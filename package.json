@@ -63,13 +63,12 @@
     ]
   },
   "scripts": {
-    "serve": "http-server -c 1 -a localhost -p 1337",
+    "start": "http-server -c 1 -a localhost -p 1337",
     "watch-js": "watchify -vd -e src -o build/metavrse.js",
     "watch-js-hmr": "watchify -vd -p browserify-hmr -e src -o build/metavrse.js",
     "watch-css": "gulp watch-css",
     "watch": "npm-run-all --parallel watch-js serve watch-css",
     "watch-hmr": "npm-run-all --parallel watch-js-hmr serve watch-css",
-    "build": "browserify -e src -o build/metavrse.js",
-    "start": "npm run serve"
+    "build": "browserify -e src -o build/metavrse.js"
   }
 }
