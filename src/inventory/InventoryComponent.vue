@@ -64,7 +64,7 @@ export default {
     },
     launchCodeEdit($event, item, type, toolbar) {
       $event.preventDefault();
-      if(!item.isInteract) {
+      if(toolbar > 0) {
         controller.editCode(item, type, toolbar);
       }
     }

@@ -24,8 +24,10 @@ var openNew = function(data) {
   }
 }`; // TODO bring from server or something
 
+  let material = data.material || 2; // default material for newly created items is "code"
+
   return ide.open({position: data.position, code}).then(result => {
-    return classes.create(data.position, result.value, result.name).then(newBlockType => {
+    return classes.create(data.position, material, result.value, result.name).then(newBlockType => {
       alert('New code was created correctly with ID: ' + newBlockType.code.id);
       events.emit(consts.events.CODE_UPDATED, {
         operation: consts.coding.OPERATIONS.CREATE,

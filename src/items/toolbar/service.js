@@ -96,7 +96,7 @@ export default {
             }
           }
 
-          if(position !== undefined) {
+          if(position !== undefined && payload.operation != consts.coding.OPERATIONS.FORK) {
             // if the change originated in toolbar, replace, if not just fetch existing item to grab the "outdated" status
             let idToFetch = payload.toolbar !== undefined ? newId : oldId;
 

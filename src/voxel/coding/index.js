@@ -7,12 +7,14 @@ import consts from '../../constants';
 import types from '../blockTypes';
 import extend from 'extend';
 
+let voxelEngine;
+
 export default {
   removeCode: instances.removeCode.bind(instances),
   storeCode: instances.storeCode.bind(instances),
   registerBlockType: scripts.loadClass.bind(scripts),
   setVoxelEngine(engine) {
-    classes.voxelEngine = engine;
+    voxelEngine = engine;
   },
   init() {
     events.on(consts.events.EDIT_CODE, async payload => {
@@ -22,10 +24,12 @@ export default {
           toolbar: payload.toolbar
         };
         if(payload.map) {
-          if(instances.hasCode(payload.map)) {
-            extend(data, instances.getCode(payload.map));
+          let position = payload.map;
+          if(instances.hasCode(position)) {
+            extend(data, instances.getCode(position)); // gets code and blockType properties
             launchIde.openExisting(data);
           } else {
+            data.material = voxelEngine.getBlock(position);
             launchIde.openNew(data);
           }
         } else if(payload.id) {
@@ -36,6 +40,7 @@ export default {
             data.code = scripts.getCode(blockType.id);
             launchIde.openExisting(data);
           } else {
+            data.material = blockType.material;
             launchIde.openNew(data);
           }
         }

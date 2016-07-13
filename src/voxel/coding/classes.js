@@ -18,10 +18,6 @@ async function processNew(position, blockType) {
   return blockType;
 }
 
-function getMaterial(position, engine) {
-  return position ? engine.getBlock(position) : 2; // returns 'code' material if no position specified
-}
-
 export default {
   async modify(position, blockType, code) {
     let codeId = blockType.code.id;
@@ -32,7 +28,7 @@ export default {
     return processNew(position, updatedBlockType);
   },
   async fork(position, blockType, code, name) {
-    let material = getMaterial(position, this.voxelEngine);
+    let material = blockType.material;
     let codeId = blockType.code.id;
 
     let codeObj = await coding.fork(codeId, code);
@@ -40,9 +36,7 @@ export default {
 
     return processNew(position, updatedBlockType);
   },
-  async create(position, code, name) {
-    let material = getMaterial(position, this.voxelEngine);
-
+  async create(position, material, code, name) {
     let codeObj = await coding.create(code);
     let blockType = await inventory.addBlockType(name, material, codeObj);
 
