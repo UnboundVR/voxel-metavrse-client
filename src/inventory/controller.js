@@ -3,12 +3,28 @@ import events from '../events';
 import consts from '../constants';
 import auth from '../auth';
 import items from '../items';
+import voxel from '../voxel';
 
 export default {
   allBlockTypes: [],
   allItemTypes: [],
   toolbarItems: [],
   isOpen: false,
+  async editCode(item, type, toolbar) {
+    type = type || 'item';
+
+    let loadOperation = type == 'block' ? voxel.load : items.load;
+    if(item) {
+      await loadOperation(item.id);
+    }
+
+    this.isOpen = false;
+    events.emit(consts.events.EDIT_CODE, {
+      type,
+      item,
+      toolbar
+    });
+  },
   open() {
     this.isOpen = true;
     events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: INVENTORY});

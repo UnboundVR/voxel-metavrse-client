@@ -8,8 +8,7 @@ var types = {};
 
 export default {
   loadMany(ids, force) {
-    var loadedIds = Object.keys(types);
-    var pendingIds = force ? ids : ids.filter(id => !loadedIds.includes(id));
+    var pendingIds = force ? ids : ids.filter(id => !types[id]);
 
     if(!pendingIds.length) {
       return Promise.resolve([]);

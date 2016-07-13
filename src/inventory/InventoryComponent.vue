@@ -5,7 +5,7 @@
 
       <h2>Items</h2>
       <ul>
-        <li @contextMenu="editCode($event, item)" v-for="item in allItemTypes" v-if="!inToolbar(item, false)" class="item" @click="addToToolbar('item', item.id)">
+        <li @contextMenu="launchCodeEdit($event, item, 'item')" v-for="item in allItemTypes" v-if="!inToolbar(item, false)" class="item" @click="addToToolbar('item', item.id)">
           <img class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
           <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]">
             <span>{{ item.name }}</span>
@@ -16,7 +16,7 @@
 
       <h2>Blocks</h2>
       <ul>
-        <li @contextMenu="editCode($event, block)" v-for="block in allBlockTypes" v-if="!inToolbar(block, true)" class="item" @click="addToToolbar('block', block.id)">
+        <li @contextMenu="launchCodeEdit($event, block, 'block')" v-for="block in allBlockTypes" v-if="!inToolbar(block, true)" class="item" @click="addToToolbar('block', block.id)">
           <img class="icon" :src="'assets/img/icons/' + block.icon + '.png'">
           <div v-bind:class="[ !!block.newerVersion ? 'outdated' : '' ]">
             <span>{{ block.name }}</span>
@@ -27,7 +27,7 @@
 
       <h2>Toolbar</h2>
       <ul>
-        <li @contextMenu="editCode($event, item)" v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
+        <li @contextMenu="launchCodeEdit($event, item, item.type, $index - 1)" v-for="item in toolbarItems" track-by="$index" class="item" @click="removeFromToolbar($index, item.type, item.id)">
           <div>
             <img v-if="item.icon" class="icon" :src="'assets/img/icons/' + item.icon + '.png'">
             <div v-else class="nothing"></div>
@@ -62,9 +62,11 @@ export default {
     inToolbar(item, isBlock) {
       return this.toolbarItems.filter(i => !!i.isBlock == isBlock).map(i => i.id).includes(item.id);
     },
-    editCode($event, item) {
-      alert('Code edition from inventory not yet supported');
+    launchCodeEdit($event, item, type, toolbar) {
       $event.preventDefault();
+      if(!item.isInteract) {
+        controller.editCode(item, type, toolbar);
+      }
     }
   },
   ready() {

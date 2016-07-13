@@ -3,6 +3,7 @@ import highlight from './blockHighlight';
 import voxel from '../voxel';
 import executor from './itemExecutor';
 import coding from './coding';
+import types from './itemTypes';
 
 export default {
   async init() {
@@ -25,5 +26,6 @@ export default {
   },
   getToolbarItems: toolbar.getItems.bind(toolbar),
   setToolbarItem: toolbar.setItem.bind(toolbar),
-  removeToolbarItem: toolbar.removeItem.bind(toolbar)
+  removeToolbarItem: toolbar.removeItem.bind(toolbar),
+  load: types.load.bind(types)
 };

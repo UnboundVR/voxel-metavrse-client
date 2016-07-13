@@ -1,7 +1,7 @@
 <template>
   <nav v-show="userLogged" id="toolbar-component" class="bar-tab">
     <ul class="tab-inner">
-      <li @contextMenu="code($event, item, $index)" v-for="item in items" track-by="$index" class="tab-item" v-bind:class="{'active': $index === 0}">
+      <li @contextMenu="code($event, item, $index - 1)" v-for="item in items" track-by="$index" class="tab-item" v-bind:class="{'active': $index === 0}">
         <div v-if="item.name">
           <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
           <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]" class="tab-label" data-id="{{$index}}">
@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     code($event, item, idx) {
-      service.editCode(item, idx - 1);
+      service.editCode(item, idx);
       $event.preventDefault();
     }
   },
