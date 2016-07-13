@@ -64,7 +64,7 @@ export default {
     },
     launchCodeEdit($event, item, type, toolbar) {
       $event.preventDefault();
-      if(toolbar > 0) {
+      if(toolbar === undefined || toolbar > 0) {
         controller.editCode(item, type, toolbar);
       } else {
         alert('Interact cannot be edited');

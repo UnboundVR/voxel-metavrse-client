@@ -67,8 +67,8 @@
     "watch-js": "watchify -vd -e src -o build/metavrse.js",
     "watch-js-hmr": "watchify -vd -p browserify-hmr -e src -o build/metavrse.js",
     "watch-css": "gulp watch-css",
-    "watch": "npm-run-all --parallel watch-js serve watch-css",
-    "watch-hmr": "npm-run-all --parallel watch-js-hmr serve watch-css",
+    "watch": "npm-run-all --parallel watch-js start watch-css",
+    "watch-hmr": "npm-run-all --parallel watch-js-hmr start watch-css",
     "build": "browserify -e src -o build/metavrse.js"
   }
 }
