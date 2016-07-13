@@ -69,6 +69,7 @@
     "watch-css": "gulp watch-css",
     "watch": "npm-run-all --parallel watch-js serve watch-css",
     "watch-hmr": "npm-run-all --parallel watch-js-hmr serve watch-css",
-    "start": "browserify -e src -o build/metavrse.js && npm run serve"
+    "build": "browserify -e src -o build/metavrse.js",
+    "start": "npm run serve"
   }
 }
