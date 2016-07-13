@@ -5,6 +5,7 @@ import consts from '../../constants';
 import extend from 'extend';
 import world from '../../map';
 import launchIde from './launchIde';
+import types from '../itemTypes';
 
 var scriptExecutor = new ScriptExecutor();
 
@@ -18,14 +19,15 @@ var activeItem = null;
 
 export default {
   init() {
-    events.on(consts.events.EDIT_CODE, payload => {
+    events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'item') {
-        let item = payload.item;
+        let itemId = payload.id;
 
-        if(!item) {
+        if(!itemId) {
           launchIde.create(payload.toolbar);
         } else {
-          launchIde.edit(item, this.get(item.id), payload.toolbar);
+          let item = await types.load(itemId);
+          launchIde.edit(item, this.get(itemId), payload.toolbar);
         }
       }
     });

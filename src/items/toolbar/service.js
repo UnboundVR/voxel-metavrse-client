@@ -174,7 +174,7 @@ export default {
       events.emit(consts.events.EDIT_CODE, {
         type: (item && item.type) || 'item',
         toolbar: position,
-        item: (item && item.type == 'item') && item
+        id: item && item.id
       });
     }
   }

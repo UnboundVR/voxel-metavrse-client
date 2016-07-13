@@ -13,15 +13,16 @@ export default {
   async editCode(item, type, toolbar) {
     type = type || 'item';
 
-    let loadOperation = type == 'block' ? voxel.load : items.load;
-    if(item) {
+    // Technically this is not necessary, but it speeds up the loading :)
+    if(item.id) {
+      let loadOperation = type == 'block' ? voxel.load : items.load;
       await loadOperation(item.id);
     }
 
     this.isOpen = false;
     events.emit(consts.events.EDIT_CODE, {
       type,
-      item,
+      id: item && item.id,
       toolbar
     });
   },

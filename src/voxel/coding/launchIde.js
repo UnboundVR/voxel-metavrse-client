@@ -1,11 +1,9 @@
 import ide from '../../ide';
 import classes from './classes';
-import instances from './instances';
-import auth from '../../auth';
 import events from '../../events';
 import consts from '../../constants';
 
-var openNew = function(position) {
+var openNew = function(data) {
   var code =
 `export default class SuchBlockBehavior {
   constructor(world, block) {
@@ -26,13 +24,14 @@ var openNew = function(position) {
   }
 }`; // TODO bring from server or something
 
-  return ide.open({position, code}).then(data => {
-    return classes.create(position, data.value, data.name).then(newBlockType => {
+  return ide.open({position: data.position, code}).then(result => {
+    return classes.create(data.position, result.value, result.name).then(newBlockType => {
       alert('New code was created correctly with ID: ' + newBlockType.code.id);
       events.emit(consts.events.CODE_UPDATED, {
         operation: consts.coding.OPERATIONS.CREATE,
         newId: newBlockType.id,
-        map: position,
+        map: data.position,
+        toolbar: data.toolbar,
         type: 'block'
       });
     }, err => {
@@ -41,29 +40,31 @@ var openNew = function(position) {
   });
 };
 
-var openExisting = function(position, data) {
-  return ide.open({position, item: data.blockType, code: data.code}).then(result => {
+var openExisting = function(data) {
+  return ide.open({position: data.position, item: data.blockType, code: data.code}).then(result => {
     if(result.name) {
-      return classes.fork(position, result.value, result.name).then(newBlockType => {
+      return classes.fork(data.position, data.blockType, result.value, result.name).then(newBlockType => {
         alert('Existing code was forked with ID: ' + newBlockType.code.id);
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.FORK,
           newId: newBlockType.id,
           oldId: data.blockType.id,
-          map: position,
+          map: data.position,
+          toolbar: data.toolbar,
           type: 'block'
         });
       }, err => {
         alert('Error storing code: ' + err);
       });
     } else {
-      return classes.modify(position, result.value).then((newBlockType) => {
+      return classes.modify(data.position, data.blockType, result.value).then((newBlockType) => {
         alert('Existing code was updated correctly');
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.UPDATE,
           newId: newBlockType.id,
           oldId: data.blockType.id,
-          map: position,
+          map: data.position,
+          toolbar: data.toolbar,
           type: 'block'
         });
       }, err => {
@@ -73,14 +74,7 @@ var openExisting = function(position, data) {
   });
 };
 
-export default function(position) {
-  if(!auth.isLogged()) {
-    return Promise.reject('Please login to be able to edit code');
-  }
-
-  if(instances.hasCode(position)) {
-    return openExisting(position, instances.getCode(position));
-  } else {
-    return openNew(position);
-  }
-}
+export default {
+  openExisting,
+  openNew
+};
