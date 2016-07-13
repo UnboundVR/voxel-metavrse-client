@@ -10,7 +10,8 @@ module.exports = {
     REMOVE_ADJACENT: 'removeAdjacent',
     FULLSCREEN_WINDOW_OPEN: 'fullScreenWindowOpen',
     FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose',
-    CODE_UPDATED: 'codeUpdated'
+    CODE_UPDATED: 'codeUpdated',
+    EDIT_CODE: 'editCode'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',

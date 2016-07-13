@@ -4,6 +4,7 @@ import events from '../../events';
 import consts from '../../constants';
 import extend from 'extend';
 import world from '../../map';
+import launchIde from './launchIde';
 
 var scriptExecutor = new ScriptExecutor();
 
@@ -16,6 +17,19 @@ var classes = {};
 var activeItem = null;
 
 export default {
+  init() {
+    events.on(consts.events.EDIT_CODE, payload => {
+      if(payload.type == 'item') {
+        let item = payload.item;
+
+        if(!item) {
+          launchIde.create(payload.toolbar);
+        } else {
+          launchIde.edit(item, this.get(item.id), payload.toolbar);
+        }
+      }
+    });
+  },
   async registerItemType(itemType) {
     let codeObj = await coding.get(itemType.code.id, itemType.code.revision);
     let classId = `${codeObj.id}-${codeObj.revision.id}`;
@@ -27,9 +41,6 @@ export default {
 
     classes[itemType.id] = {itemType, code: codeObj};
     console.log(`Code of item ${name} loaded`);
-  },
-  edit(item) {
-    alert(`Editing code of item ${item.name}`);
   },
   get(id) {
     return classes[id].code;

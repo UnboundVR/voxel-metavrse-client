@@ -4,9 +4,8 @@ import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
 import itemCoding from '../coding';
-import coding from '../../coding';
-import inventory from '../../inventory';
-import ide from '../../ide';
+import extend from 'extend';
+
 import events from '../../events';
 
 const nothing = {
@@ -38,6 +37,10 @@ function fromBlock(block) {
   };
 }
 
+function fromItem(item) {
+  return extend({}, item, {type: 'item'});
+}
+
 export default {
   init() {
     this.userLogged = auth.isLogged();
@@ -66,7 +69,7 @@ export default {
           }
 
           if(item.type == 'item') {
-            return items.getById(item.id);
+            return fromItem(items.getById(item.id));
           } else {
             return fromBlock(voxel.getById(item.id));
           }
@@ -145,7 +148,7 @@ export default {
       this.items.$set(position + 1, fromBlock(voxel.getById(item.id)));
     } else {
       await items.load(item.id, item.forceReload);
-      this.items.$set(position + 1, items.getById(item.id));
+      this.items.$set(position + 1, fromItem(items.getById(item.id)));
     }
 
     if(this.selectedPosition == position + 1) {
@@ -162,100 +165,17 @@ export default {
     self.items.$set(position + 1, nothing);
   },
   async editCode(item, position) {
-    if(item.isBlock) {
-      alert('Block edition from toolbar not yet supported');
-      return;
-    }
-
-    if(item == nothing) {
-      return await createNewItem(position);
-    }
-
     if(item == interact) {
       alert('Interact cannot be edited');
-      return;
-    }
-
-    let code = itemCoding.get(item.id);
-    let data = await ide.open({item, code});
-
-    let codingOperation = data.name ? coding.fork : coding.update;
-    let newCode = data.value;
-
-    let codeObj = await codingOperation(code.id, newCode);
-
-    let inventoryOperationResult;
-    let operation;
-
-    if(data.name) {
-      operation = consts.coding.OPERATIONS.FORK;
-      let props = {
-        name: data.name,
-        adjacentActive: item.adjacentActive,
-        crosshairIcon: item.crosshairIcon
-      };
-      inventoryOperationResult = inventory.addItemType(props, codeObj);
     } else {
-      operation = consts.coding.OPERATIONS.UPDATE;
-      inventoryOperationResult = inventory.updateItemCode(item.id, codeObj);
-    }
-
-    try {
-      let updatedItemType = await inventoryOperationResult;
-      events.emit(consts.events.CODE_UPDATED, {
-        oldId: item.id,
-        newId: updatedItemType.id,
-        type: 'item',
+      if(item == nothing) {
+        item = undefined;
+      }
+      events.emit(consts.events.EDIT_CODE, {
+        type: (item && item.type) || 'item',
         toolbar: position,
-        operation
+        item: (item && item.type == 'item') && item
       });
-    } catch(err) {
-      alert(`Error updating code: ${err}`);
     }
   }
 };
-
-async function createNewItem(position) {
-  let code =
-`export default class NewItem {
-  constructor(world, metadata) {
-    this.world = world;
-    this.metadata = metadata;
-    console.log(\`activating \${this.metadata.name}\`);
-  }
-
-  onExecute(position) {
-    alert(\`executing \${this.metadata.name} on \${position}\`);
-  }
-
-  onHover(payload) {
-    let position = payload.position.join('|');
-    console.log(\`\${this.metadata.name} hovering \${position}...\`);
-  }
-
-  onDestroy() {
-    console.log(\`deactivating \${this.metadata.name}\`);
-  }
-}
-`;
-  let data = await ide.open({code});
-
-  let codeObj = await coding.create(data.value);
-
-  let props = {
-    name: data.name,
-    adjacentActive: false,
-    crosshairIcon: 'code'
-  };
-  try {
-    let newItemType = await inventory.addItemType(props, codeObj);
-    events.emit(consts.events.CODE_UPDATED, {
-      newId: newItemType.id,
-      type: 'item',
-      toolbar: position,
-      operation: consts.coding.OPERATIONS.CREATE
-    });
-  } catch(err) {
-    alert(`Error creating item code: ${err}`);
-  }
-}
