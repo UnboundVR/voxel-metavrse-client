@@ -29,9 +29,15 @@ export default {
             launchIde.openNew(data);
           }
         } else if(payload.id) {
-          data.blockType = await types.load(payload.id);
-          data.code = scripts.getCode(data.blockType.id);
-          launchIde.openExisting(data);
+          await types.load(payload.id);
+          let blockType = types.getById(payload.id);
+          if(blockType.code) {
+            data.blockType = blockType;
+            data.code = scripts.getCode(blockType.id);
+            launchIde.openExisting(data);
+          } else {
+            launchIde.openNew(data);
+          }
         }
       }
     });

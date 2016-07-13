@@ -26,7 +26,8 @@ export default {
         if(!itemId) {
           launchIde.create(payload.toolbar);
         } else {
-          let item = await types.load(itemId);
+          await types.load(itemId);
+          let item = types.getById(itemId);
           launchIde.edit(item, this.get(itemId), payload.toolbar);
         }
       }
