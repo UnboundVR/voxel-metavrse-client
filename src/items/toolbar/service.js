@@ -4,9 +4,9 @@ import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
 import itemCoding from '../coding';
-import coding from '../../coding';
-import inventory from '../../inventory';
-import ide from '../../ide';
+import extend from 'extend';
+
+import events from '../../events';
 
 const nothing = {
   crosshairIcon: 'hand',
@@ -25,14 +25,20 @@ const interact = {
 function fromBlock(block) {
   return {
     isBlock: true,
+    type: 'block',
     material: block.material,
     id: block.id,
     name: block.name,
     code: block.code,
     adjacentActive: true,
     icon: block.icon,
-    crosshairIcon: 'crosshair'
+    crosshairIcon: 'crosshair',
+    newerVersion: block.newerVersion
   };
+}
+
+function fromItem(item) {
+  return extend({}, item, {type: 'item'});
 }
 
 export default {
@@ -63,7 +69,7 @@ export default {
           }
 
           if(item.type == 'item') {
-            return items.getById(item.id);
+            return fromItem(items.getById(item.id));
           } else {
             return fromBlock(voxel.getById(item.id));
           }
@@ -72,6 +78,31 @@ export default {
         voxel.engine.controls.on('data', () => {
           if(voxel.engine.controls.state.crouch != self.deleteMode) {
             self.deleteMode = voxel.engine.controls.state.crouch;
+          }
+        });
+
+        events.on(consts.events.CODE_UPDATED, async payload => {
+          let newId = payload.newId;
+          let oldId = payload.oldId;
+          let type = payload.type;
+          let position = payload.toolbar;
+
+          if(position === undefined && oldId) {
+            for(let i = 0; i < this.items.length; i++) {
+              let item = this.items[i];
+              if(item && item.type == type && item.id == oldId) {
+                position = i - 1;
+              }
+            }
+          }
+
+          if(position !== undefined && payload.operation != consts.coding.OPERATIONS.FORK) {
+            // if the change originated in toolbar, replace, if not just fetch existing item to grab the "outdated" status
+            let idToFetch = payload.toolbar !== undefined ? newId : oldId;
+
+            await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
+
+            alert('Toolbar item modified!');
           }
         });
       });
@@ -113,11 +144,11 @@ export default {
     });
 
     if(item.type == 'block') {
-      await voxel.load(item.id);
+      await voxel.load(item.id, item.forceReload);
       this.items.$set(position + 1, fromBlock(voxel.getById(item.id)));
     } else {
-      await items.load(item.id);
-      this.items.$set(position + 1, items.getById(item.id));
+      await items.load(item.id, item.forceReload);
+      this.items.$set(position + 1, fromItem(items.getById(item.id)));
     }
 
     if(this.selectedPosition == position + 1) {
@@ -134,32 +165,17 @@ export default {
     self.items.$set(position + 1, nothing);
   },
   async editCode(item, position) {
-    if(item.isBlock) {
-      alert('Block edition from toolbar not yet supported');
-      return;
+    if(item == interact) {
+      alert('Interact cannot be edited');
+    } else {
+      if(item == nothing) {
+        item = undefined;
+      }
+      events.emit(consts.events.EDIT_CODE, {
+        type: (item && item.type) || (confirm('Want to create a new item or block? Yes = item, no = block') ? 'item' : 'block'),
+        toolbar: position,
+        id: item && item.id
+      });
     }
-
-    if(item == interact || item == nothing) {
-      alert('Interact and Nothing cannot be edited');
-      return;
-    }
-
-    let code = itemCoding.get(item.id);
-    let data = await ide.open({item, code});
-
-    let name = data.name || `${item.name} bis`;
-    let codingOperation = data.name ? coding.fork : coding.update;
-    let newCode = data.value;
-
-    let props = {
-      name,
-      adjacentActive: item.adjacentActive,
-      crosshairIcon: item.crosshairIcon
-    };
-
-    let codeObj = await codingOperation(code.id, newCode);
-    let updatedItemType = await inventory.addItemType(props, codeObj);
-
-    await this.setItem(position, {id: updatedItemType.id, type: 'item'});
   }
 };

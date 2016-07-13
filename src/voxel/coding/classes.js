@@ -10,37 +10,33 @@ async function processNew(position, blockType) {
 
   await scripts.loadClass(blockType);
 
-  instances.storeCode(position, blockType.id);
-  voxelClient.setBlock(position, blockType.id);
+  if(position) {
+    instances.storeCode(position, blockType.id);
+    voxelClient.setBlock(position, blockType.id);
+  }
 
-  return blockType.code;
-}
-
-async function forkOrUpdate(codingOperation, position, material, code, name) {
-  let blockTypeId = instances.getBlockTypeId(position);
-  let blockType = types.getById(blockTypeId);
-  let codeId = blockType.code.id;
-
-  name = name || `${blockType.name} bis`;
-
-  let codeObj = await codingOperation(codeId, code);
-  let updatedBlockType = await inventory.addBlockType(name, material, codeObj);
-
-  return processNew(position, updatedBlockType);
+  return blockType;
 }
 
 export default {
-  async modify(position, code) {
-    let material = this.voxelEngine.getBlock(position);
-    return forkOrUpdate(coding.update, position, material, code, null);
-  },
-  async fork(position, code, name) {
-    let material = this.voxelEngine.getBlock(position);
-    return forkOrUpdate(coding.fork, position, material, code, name);
-  },
-  async create(position, code, name) {
-    let material = this.voxelEngine.getBlock(position);
+  async modify(position, blockType, code) {
+    let codeId = blockType.code.id;
 
+    let codeObj = await coding.update(codeId, code);
+    let updatedBlockType = await inventory.updateBlockCode(blockType.id, codeObj);
+
+    return processNew(position, updatedBlockType);
+  },
+  async fork(position, blockType, code, name) {
+    let material = blockType.material;
+    let codeId = blockType.code.id;
+
+    let codeObj = await coding.fork(codeId, code);
+    let updatedBlockType = await inventory.addBlockType(name, material, codeObj);
+
+    return processNew(position, updatedBlockType);
+  },
+  async create(position, material, code, name) {
     let codeObj = await coding.create(code);
     let blockType = await inventory.addBlockType(name, material, codeObj);
 

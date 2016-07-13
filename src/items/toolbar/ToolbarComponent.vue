@@ -1,10 +1,13 @@
 <template>
   <nav v-show="userLogged" id="toolbar-component" class="bar-tab">
     <ul class="tab-inner">
-      <li @contextMenu="code($event, item, $index)" v-for="item in items" track-by="$index" class="tab-item" v-bind:class="{'active': $index === 0}">
+      <li @contextMenu="code($event, item, $index - 1)" v-for="item in items" track-by="$index" class="tab-item" v-bind:class="{'active': $index === 0}">
         <div v-if="item.name">
           <img class="tab-icon" v-bind:src="'assets/img/icons/' + item.icon + '.png'">
-          <div class="tab-label" data-id="{{$index}}">{{ item.name }}</div>
+          <div v-bind:class="[ !!item.newerVersion ? 'outdated' : '' ]" class="tab-label" data-id="{{$index}}">
+            <span>{{ item.name }}</span>
+            <span v-if="!!item.newerVersion">(#{{ item.id }})</span>
+          </div>
         </div>
         <div v-else>
           <div class="tab-label" data-id="{{$index}}">Nothing</div>
@@ -26,7 +29,7 @@ export default {
   },
   methods: {
     code($event, item, idx) {
-      service.editCode(item, idx - 1);
+      service.editCode(item, idx);
       $event.preventDefault();
     }
   },
@@ -52,7 +55,12 @@ export default {
   left: 33% !important;
   user-select: none;
   cursor: pointer;
+
+  .outdated {
+    color: #ff0000;
+  }
 }
+
 
 #crosshair {
   position: fixed;

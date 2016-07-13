@@ -3,12 +3,29 @@ import events from '../events';
 import consts from '../constants';
 import auth from '../auth';
 import items from '../items';
+import voxel from '../voxel';
 
 export default {
   allBlockTypes: [],
   allItemTypes: [],
   toolbarItems: [],
   isOpen: false,
+  async editCode(item, type, toolbar) {
+    type = type || (confirm('Want to create a new item or block? Yes = item, no = block') ? 'item' : 'block');
+
+    // Technically this is not necessary, but it speeds up the loading :)
+    if(item.id) {
+      let loadOperation = type == 'block' ? voxel.load : items.load;
+      await loadOperation(item.id);
+    }
+
+    this.isOpen = false;
+    events.emit(consts.events.EDIT_CODE, {
+      type,
+      id: item && item.id,
+      toolbar
+    });
+  },
   open() {
     this.isOpen = true;
     events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: INVENTORY});
@@ -67,6 +84,24 @@ export default {
         code,
         name,
         material
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
+  },
+  updateBlockCode(blockTypeId, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType/${blockTypeId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        code
+      }),
+      headers: auth.getAuthHeaders()
+    }).then(response => response.json());
+  },
+  updateItemCode(itemTypeId, code) {
+    return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType/${itemTypeId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        code
       }),
       headers: auth.getAuthHeaders()
     }).then(response => response.json());

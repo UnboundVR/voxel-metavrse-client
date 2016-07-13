@@ -1,8 +1,8 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="item">Editing the code of {{item.name}} <span v-if="position">at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
-      <h1 v-else>Editing the code of new block at ({{position}})</h1>
+      <h1 v-if="item">Editing the code of {{item.name}} (#{{item.id}})<span v-if="!!position"> at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
+      <h1 v-else>Editing the code of new block/item<span v-if="!!position"> at ({{position}})</span></h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
@@ -27,7 +27,13 @@
                 <li>ID: {{code.id}}</li>
                 <li>Revision: {{code.revision.id}}</li>
                 <li>Revision date: {{code.revision.date | moment "DD/MM/YYYY h:mm:ss A"}}</li>
-                <li v-if="outdated"><span class="outdated">Forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
+                <li v-if="outdated">
+                  <span class="outdated">Newer version with ID {{item.newerVersion}}</span>
+                  <div class="actions">
+                    <button @click="fetchUpdates()">Update</button>
+                  </div>
+                </li>
+                <li v-if="!outdated && codeHasForks"><span class="outdated">Possibly external forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
               </ul>
             </div>
           </div>
@@ -61,6 +67,9 @@ export default {
   },
   computed: {
     outdated() {
+      return !!this.item.newerVersion;
+    },
+    codeHasForks() {
       return this.code.revision.date != this.code.lastUpdateDate;
     },
     mine() {
@@ -73,7 +82,7 @@ export default {
       editor.save(codemirror.getValue());
     },
     saveAs() {
-      var name = prompt('Enter the name of the new block');
+      var name = prompt('Enter the name of the new block/item');
       if(!name) {
         return;
       }
@@ -85,6 +94,9 @@ export default {
       if(editor.close()) {
         this.open = false;
       }
+    },
+    fetchUpdates() {
+      alert(`Would fetch item with version ${this.item.newerVersion}`);
     }
   },
   ready() {
