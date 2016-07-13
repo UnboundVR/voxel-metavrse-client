@@ -172,7 +172,7 @@ export default {
         item = undefined;
       }
       events.emit(consts.events.EDIT_CODE, {
-        type: (item && item.type) || 'item',
+        type: (item && item.type) || (confirm('Want to create a new item or block? Yes = item, no = block') ? 'item' : 'block'),
         toolbar: position,
         id: item && item.id
       });

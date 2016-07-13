@@ -66,6 +66,8 @@ export default {
       $event.preventDefault();
       if(toolbar > 0) {
         controller.editCode(item, type, toolbar);
+      } else {
+        alert('Interact cannot be edited');
       }
     }
   },

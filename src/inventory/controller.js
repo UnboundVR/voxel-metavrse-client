@@ -11,7 +11,7 @@ export default {
   toolbarItems: [],
   isOpen: false,
   async editCode(item, type, toolbar) {
-    type = type || 'item';
+    type = type || (confirm('Want to create a new item or block? Yes = item, no = block') ? 'item' : 'block');
 
     // Technically this is not necessary, but it speeds up the loading :)
     if(item.id) {

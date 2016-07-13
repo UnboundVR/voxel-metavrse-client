@@ -43,6 +43,8 @@ export default {
             data.material = blockType.material;
             launchIde.openNew(data);
           }
+        } else {
+          launchIde.openNew(data);
         }
       }
     });
