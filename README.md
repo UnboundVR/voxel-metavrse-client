@@ -12,6 +12,11 @@ The first time you set up, you should install the required npm packages:
 npm install
 ```
 
+You should also create a '.env' file with the following fields:
+```
+SERVER_ADDRESS = <the URL where a server is currently running>
+```
+*Tip: Copypasting/renaming '.env.template' file should be enough for a default/local setup*
 
 Then run the watch (to auto-rebuild sass and js on each change):
 ```
