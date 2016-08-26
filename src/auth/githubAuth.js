@@ -1,42 +1,37 @@
-import consts  from '../constants';
+import consts from '../constants';
+import requests from '../requests';
 
 export default {
-  getLoginUrl() {
-    return fetch(consts.SERVER_ADDRESS() + '/auth/github_client_info', {
+  async getLoginUrl() {
+    let clientInfo = await requests.requestToServer('auth/github_client_info', {
       method: 'GET'
-    }).then(response => response.json()).then(clientInfo =>
-      consts.github.OAUTH_URL + '/authorize'
-      + '?client_id=' + clientInfo.clientId
-      + '&scope=' + consts.github.REQUESTED_SCOPE
-      + '&redirect_uri=' + location.origin); // TODO pass state too
-  },
-  getAccessToken(code) {
-    let url = consts.SERVER_ADDRESS() + '/auth/github_access_token/' + code;
-
-    return fetch(url, {
-      method: 'GET'
-    }).then(response => {
-      if(response.ok) {
-        return response.json();
-      }
-
-      return response.text().then(errorCode => {
-        throw new Error('Could not log in to github. ' + errorCode);
-      });
-    }).then(response => {
-      if(response.accessToken) {
-        return response.accessToken;
-      } else {
-        throw new Error('Could not log in to github');
-      }
     });
+
+    // TODO pass state too
+    let oauthUrl = consts.github.OAUTH_URL;
+    let scope = consts.github.REQUESTED_SCOPE;
+    let clientId = clientInfo.clientId;
+    let redirectUri = location.origin;
+    return `${oauthUrl}/authorize?client_id=${clientId}&scope=${scope}&redirect_uri=${redirectUri}`;
   },
-  getLoggedUserInfo(githubAccessToken) {
-    return fetch(consts.github.API_URL + '/user', {
+  async getAccessToken(code) {
+    let url = `auth/github_access_token/${code}`;
+    let response = await requests.requestToServer(url, {
+      method: 'GET'
+    });
+
+    if(response.accessToken) {
+      return response.accessToken;
+    } else {
+      throw new Error('Could not log in to github');
+    }
+  },
+  async getLoggedUserInfo(githubAccessToken) {
+    return await requests.request(`${consts.github.API_URL}/user`, {
       method: 'GET',
       headers: {
         'Authorization': 'token ' + githubAccessToken
       }
-    }).then(response => response.json());
+    });
   }
 };

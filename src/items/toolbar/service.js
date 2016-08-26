@@ -3,6 +3,7 @@ import auth from '../../auth';
 import voxel from '../../voxel';
 import items from '../itemTypes';
 import consts from '../../constants';
+import requests from '../../requests';
 import itemCoding from '../coding';
 import extend from 'extend';
 
@@ -42,7 +43,7 @@ function fromItem(item) {
 }
 
 export default {
-  init() {
+  async init() {
     this.userLogged = auth.isLogged();
 
     this.selectedItem = interact;
@@ -55,56 +56,56 @@ export default {
     }
 
     let self = this;
-    return fetch(consts.SERVER_ADDRESS() + '/inventory/toolbar', {
+    let toolbarItems = await requests.requestToServer('inventory/toolbar', {
       method: 'GET',
       headers: auth.getAuthHeaders()
-    }).then(response => response.json()).then(toolbarItems => {
-      let itemTypeIds = toolbarItems.filter(item => item && item.type == 'item').map(item => item.id);
-      let blockTypeIds = toolbarItems.filter(item => item && item.type == 'block').map(item => item.id);
+    });
 
-      return Promise.all([items.loadMany(itemTypeIds), voxel.loadMany(blockTypeIds)]).then(() => {
-        self.items = [interact].concat(toolbarItems.map(item => {
-          if(!item) {
-            return nothing;
-          }
+    let itemTypeIds = toolbarItems.filter(item => item && item.type == 'item').map(item => item.id);
+    let blockTypeIds = toolbarItems.filter(item => item && item.type == 'block').map(item => item.id);
 
-          if(item.type == 'item') {
-            return fromItem(items.getById(item.id));
-          } else {
-            return fromBlock(voxel.getById(item.id));
-          }
-        }));
+    return Promise.all([items.loadMany(itemTypeIds), voxel.loadMany(blockTypeIds)]).then(() => {
+      self.items = [interact].concat(toolbarItems.map(item => {
+        if(!item) {
+          return nothing;
+        }
 
-        voxel.engine.controls.on('data', () => {
-          if(voxel.engine.controls.state.crouch != self.deleteMode) {
-            self.deleteMode = voxel.engine.controls.state.crouch;
-          }
-        });
+        if(item.type == 'item') {
+          return fromItem(items.getById(item.id));
+        } else {
+          return fromBlock(voxel.getById(item.id));
+        }
+      }));
 
-        events.on(consts.events.CODE_UPDATED, async payload => {
-          let newId = payload.newId;
-          let oldId = payload.oldId;
-          let type = payload.type;
-          let position = payload.toolbar;
+      voxel.engine.controls.on('data', () => {
+        if(voxel.engine.controls.state.crouch != self.deleteMode) {
+          self.deleteMode = voxel.engine.controls.state.crouch;
+        }
+      });
 
-          if(position === undefined && oldId) {
-            for(let i = 0; i < this.items.length; i++) {
-              let item = this.items[i];
-              if(item && item.type == type && item.id == oldId) {
-                position = i - 1;
-              }
+      events.on(consts.events.CODE_UPDATED, async payload => {
+        let newId = payload.newId;
+        let oldId = payload.oldId;
+        let type = payload.type;
+        let position = payload.toolbar;
+
+        if(position === undefined && oldId) {
+          for(let i = 0; i < this.items.length; i++) {
+            let item = this.items[i];
+            if(item && item.type == type && item.id == oldId) {
+              position = i - 1;
             }
           }
+        }
 
-          if(position !== undefined && payload.operation != consts.coding.OPERATIONS.FORK) {
-            // if the change originated in toolbar, replace, if not just fetch existing item to grab the "outdated" status
-            let idToFetch = payload.toolbar !== undefined ? newId : oldId;
+        if(position !== undefined && payload.operation != consts.coding.OPERATIONS.FORK) {
+          // if the change originated in toolbar, replace, if not just fetch existing item to grab the "outdated" status
+          let idToFetch = payload.toolbar !== undefined ? newId : oldId;
 
-            await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
+          await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
 
-            alert('Toolbar item modified!');
-          }
-        });
+          alert('Toolbar item modified!');
+        }
       });
     });
   },
@@ -137,7 +138,7 @@ export default {
     return !voxel.engine.controls.state.crouch && this.selectedItem.adjacentActive;
   },
   async setItem(position, item) {
-    await fetch(`${consts.SERVER_ADDRESS()}/inventory/toolbar/${position}`, {
+    await requests.requestToServer(`inventory/toolbar/${position}`, {
       method: 'PUT',
       headers: auth.getAuthHeaders(),
       body: JSON.stringify(item)
@@ -157,7 +158,7 @@ export default {
   },
   async removeItem(position) {
     var self = this;
-    await fetch(`${consts.SERVER_ADDRESS()}/inventory/toolbar/${position}`, {
+    await requests.requestToServer(`inventory/toolbar/${position}`, {
       method: 'DELETE',
       headers: auth.getAuthHeaders()
     });

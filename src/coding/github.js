@@ -1,15 +1,16 @@
 import consts from '../constants';
+import requests from '../requests';
 
 var SINGLE_FILENAME = 'single_file';
 
 export default {
-  getGist(id, revision) {
-    return fetch(`${consts.github.API_URL}/gists/${id}/${revision}`, {
+  async getGist(id, revision) {
+    let response = await requests.request(`${consts.github.API_URL}/gists/${id}/${revision}`, {
       method: 'GET'
-    }).then(response => response.json()).then(response => {
-      return {
-        code: response.files[SINGLE_FILENAME].content
-      };
     });
+
+    return {
+      code: response.files[SINGLE_FILENAME].content
+    };
   }
 };

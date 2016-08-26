@@ -1,6 +1,7 @@
 const INVENTORY = 'inventory';
 import events from '../events';
 import consts from '../constants';
+import requests from '../requests';
 import auth from '../auth';
 import items from '../items';
 import voxel from '../voxel';
@@ -34,7 +35,7 @@ export default {
     this.isOpen = false;
     events.emit(consts.events.FULLSCREEN_WINDOW_CLOSE, {name: INVENTORY});
   },
-  bringAllItems() {
+  async bringAllItems() {
     var self = this;
 
     this.toolbarItems.splice(0, this.toolbarItems.length);
@@ -42,19 +43,19 @@ export default {
       self.toolbarItems.push(item);
     });
 
-    return fetch(consts.SERVER_ADDRESS() + '/inventory/all', {
+    let res = await requests.requestToServer('inventory/all', {
       method: 'GET',
       headers: auth.getAuthHeaders()
-    }).then(response => response.json()).then(res => {
-      self.allBlockTypes.splice(0, self.allBlockTypes.length);
-      res.blockTypes.forEach(type => {
-        self.allBlockTypes.push(type);
-      });
+    });
 
-      self.allItemTypes.splice(0, self.allItemTypes.length);
-      res.itemTypes.forEach(type => {
-        self.allItemTypes.push(type);
-      });
+    self.allBlockTypes.splice(0, self.allBlockTypes.length);
+    res.blockTypes.forEach(type => {
+      self.allBlockTypes.push(type);
+    });
+
+    self.allItemTypes.splice(0, self.allItemTypes.length);
+    res.itemTypes.forEach(type => {
+      self.allItemTypes.push(type);
     });
   },
   addToToolbar(type, id) {
@@ -77,8 +78,8 @@ export default {
       this.toolbarItems.$set(position, items.getToolbarItems()[position]);
     });
   },
-  addBlockType(name, material, code) {
-    return fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType`, {
+  async addBlockType(name, material, code) {
+    return await requests.requestToServer('inventory/blockType', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -86,28 +87,28 @@ export default {
         material
       }),
       headers: auth.getAuthHeaders()
-    }).then(response => response.json());
+    });
   },
-  updateBlockCode(blockTypeId, code) {
-    return fetch(`${consts.SERVER_ADDRESS()}/inventory/blockType/${blockTypeId}`, {
+  async updateBlockCode(blockTypeId, code) {
+    return await requests.requestToServer(`inventory/blockType/${blockTypeId}`, {
       method: 'PATCH',
       body: JSON.stringify({
         code
       }),
       headers: auth.getAuthHeaders()
-    }).then(response => response.json());
+    });
   },
-  updateItemCode(itemTypeId, code) {
-    return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType/${itemTypeId}`, {
+  async updateItemCode(itemTypeId, code) {
+    return await requests.requestToServer(`inventory/itemType/${itemTypeId}`, {
       method: 'PATCH',
       body: JSON.stringify({
         code
       }),
       headers: auth.getAuthHeaders()
-    }).then(response => response.json());
+    });
   },
-  addItemType(props, code) {
-    return fetch(`${consts.SERVER_ADDRESS()}/inventory/itemType`, {
+  async addItemType(props, code) {
+    return await requests.requestToServer('inventory/itemType', {
       method: 'POST',
       body: JSON.stringify({
         code,
@@ -116,6 +117,6 @@ export default {
         crosshairIcon: props.crosshairIcon
       }),
       headers: auth.getAuthHeaders()
-    }).then(response => response.json());
+    });
   }
 };
