@@ -6,7 +6,7 @@ export default {
 
     if (!response.ok) {
       let text = response.statusText;
-      let responseText = response.text();
+      let responseText = await response.text();
       if(responseText) {
         text += ' - ' + responseText;
       }
