@@ -2,7 +2,7 @@ import player from 'voxel-player';
 import fly from 'voxel-fly';
 import walk from 'voxel-walk';
 import voxel from '../voxel';
-import teleport from '../teleport';
+import teleport from './teleport';
 
 let avatar, avatarVisible;
 
@@ -23,7 +23,7 @@ export default {
     var createPlayer = player(voxel.engine);
     avatar = createPlayer('assets/avatars/player.png');
     avatar.possess();
-    var initialPos = teleport.teleportPosition || settings.initialPosition;
+    var initialPos = settings.initialPosition;
     avatar.position.set(initialPos[0], initialPos[1], initialPos[2]);
 
     var makeFly = fly(voxel.engine);
@@ -50,5 +50,8 @@ export default {
   },
   move(position) {
     avatar.position.set(position[0], position[1], position[2]);
+  },
+  getPosition() {
+    return avatar.position;
   }
 };

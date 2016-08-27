@@ -7,7 +7,6 @@ import ide from './ide';
 import inventory from './inventory';
 import rootVue from './rootVue';
 import querystring from 'querystring';
-import teleport from './teleport';
 
 /* global Pace */
 
@@ -35,8 +34,6 @@ async function init() {
   try {
     await auth.init();
     await voxel.init();
-
-    teleport.init();
 
     await Promise.all([
       playerSync.init(),

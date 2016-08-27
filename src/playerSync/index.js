@@ -3,6 +3,7 @@ import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
 import consts from '../constants';
+import location from './location';
 
 let socket;
 let initialized = false;
@@ -78,11 +79,15 @@ export default {
       });
 
       avatar.setup(settings);
+      location.init();
       initialized = true;
     });
   },
   moveUser(position) {
     avatar.move(position);
+  },
+  displayShareLink() {
+    location.shareLocation();
   },
   onServerUpdate(update) {
     // TODO use server sent location
