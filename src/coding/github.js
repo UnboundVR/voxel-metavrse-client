@@ -10,7 +10,11 @@ export default {
     });
 
     return {
-      code: response.files[SINGLE_FILENAME].content
+      code: response.files[SINGLE_FILENAME].content,
+      revision: {
+        id: response.history[0].version,
+        date: response.history[0].committed_at
+      }
     };
   }
 };

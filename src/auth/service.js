@@ -8,42 +8,34 @@ var avatarUrl;
 var userId;
 
 export default {
-  init() {
+  async init() {
     var self = this;
     if(tokenStore.hasToken()) {
       accessToken = tokenStore.getToken();
-      return this.fetchUserData();
+      return await this.fetchUserData();
     }
 
     var qs = querystring.parse(location.search.substring(1)); // TODO check state too
 
     if(qs.code) {
-      return githubAuth.getAccessToken(qs.code).then(token => {
-        accessToken = token;
-        tokenStore.storeToken(accessToken);
-        return self.fetchUserData();
-      }, err => {
-        alert(err);
-      });
-    } else {
-      return Promise.resolve();
+      accessToken = await githubAuth.getAccessToken(qs.code);
+      tokenStore.storeToken(accessToken);
+      return await self.fetchUserData();
     }
   },
-  login() {
-    githubAuth.getLoginUrl().then(url => {
-      location.href = url;
-    });
+  async login() {
+    location.href = await githubAuth.getLoginUrl();
   },
   logout() {
     tokenStore.deleteToken();
     location.href = location.origin;
   },
-  fetchUserData() {
-    return githubAuth.getLoggedUserInfo(accessToken).then(me => {
-      name = me.name;
-      avatarUrl = me.avatar_url;
-      userId = me.id;
-    });
+  async fetchUserData() {
+    let me = await githubAuth.getLoggedUserInfo(accessToken);
+
+    name = me.name;
+    avatarUrl = me.avatar_url;
+    userId = me.id;
   },
   getAccessToken() {
     return accessToken;
