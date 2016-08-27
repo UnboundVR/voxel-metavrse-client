@@ -15,6 +15,7 @@ npm install
 2) You should also create an '.env' file with the following fields:
 ```
 SERVER_ADDRESS = <the URL where a server is currently running>
+BITLY_ACCESS_TOKEN = <the bit.ly access token to shorten location sharing links (optional)>
 ```
 *Tip: Copypasting/renaming '.env.template' file should be enough for a default/local setup*
 
