@@ -4,6 +4,7 @@ import voxel from '../voxel';
 import consts from '../constants';
 import placement from './blockPlacement';
 import auth from '../auth';
+import playerSync from '../playerSync';
 
 export default {
   async placeBlock(position, block) {
@@ -31,5 +32,8 @@ export default {
         map: position
       });
     }
+  },
+  teleport(position) {
+    playerSync.moveUser(position);
   }
 };

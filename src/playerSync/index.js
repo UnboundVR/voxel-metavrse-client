@@ -4,7 +4,8 @@ import skin from 'minecraft-skin';
 import io from 'socket.io-client';
 import consts from '../constants';
 
-var socket;
+let socket;
+let initialized = false;
 
 export default {
   init() {
@@ -17,6 +18,13 @@ export default {
     });
 
     socket.on('settings', settings => {
+      if(initialized) {
+        console.log('playerSync settings already received, ignoring this time');
+        return;
+      } else {
+        console.log('Receiving playerSync settings');
+      }
+
       self.settings = settings;
       self.others = {};
 
@@ -70,7 +78,11 @@ export default {
       });
 
       avatar.setup(settings);
+      initialized = true;
     });
+  },
+  moveUser(position) {
+    avatar.move(position);
   },
   onServerUpdate(update) {
     // TODO use server sent location

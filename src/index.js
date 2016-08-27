@@ -7,6 +7,7 @@ import ide from './ide';
 import inventory from './inventory';
 import rootVue from './rootVue';
 import querystring from 'querystring';
+import teleport from './teleport';
 
 /* global Pace */
 
@@ -30,19 +31,29 @@ function appendToContainer(engine) {
   Pace.stop();
 }
 
-// TODO handle errors gracefully
-auth.init().then(() => {
-  return voxel.init();
-}).then(() => {
-  return Promise.all([
-    playerSync.init(),
-    chat.init(),
-    items.init(),
-    ide.init(),
-    inventory.init()
-  ]);
-}).then(() => {
-  appendToContainer(voxel.engine);
+async function init() {
+  try {
+    await auth.init();
+    await voxel.init();
 
-  rootVue.init();
-});
+    teleport.init();
+
+    await Promise.all([
+      playerSync.init(),
+      chat.init(),
+      items.init(),
+      ide.init(),
+      inventory.init()
+    ]);
+
+    appendToContainer(voxel.engine);
+    rootVue.init();
+
+    console.log('Finished initializing!');
+  } catch(err) {
+    console.log('Error initializing', err);
+    alert('Error initializing');
+  }
+}
+
+init();
