@@ -10,7 +10,7 @@ export default {
   register() {
     CodeMirror.registerHelper('lint', 'javascript', text => {
       if(!window.eslint) {
-        console.log('eslint is not loaded yet, so we are not linting until the script finishes loading');
+        console.log('ESLint is not loaded yet, so we are not linting until the script finishes loading');
         return [];
       }
 
