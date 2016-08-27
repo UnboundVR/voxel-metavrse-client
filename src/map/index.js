@@ -6,11 +6,10 @@ import placement from './blockPlacement';
 import auth from '../auth';
 
 export default {
-  placeBlock(position, block) {
+  async placeBlock(position, block) {
     if(position && permissions.canPlace(position)) {
-      voxel.load(block).then(() => {
-        placement.setBlock(position, voxel.getById(block));
-      });
+      await voxel.load(block);
+      placement.setBlock(position, voxel.getById(block));
     }
   },
   removeBlock(position) {
