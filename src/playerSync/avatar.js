@@ -2,9 +2,9 @@ import player from 'voxel-player';
 import fly from 'voxel-fly';
 import walk from 'voxel-walk';
 import voxel from '../voxel';
+import teleport from './teleport';
 
-var avatarVisible;
-var avatar;
+let avatar, avatarVisible;
 
 // TODO instead of doing this, we should probably show/hide the whole object, or place the camera further away (so we can use a mirror for example)
 function setAvatarVisibility(visible) {
@@ -24,7 +24,7 @@ export default {
     avatar = createPlayer('assets/avatars/player.png');
     avatar.possess();
     var initialPos = settings.initialPosition;
-    avatar.position.set(initialPos[0],initialPos[1],initialPos[2]);
+    avatar.position.set(initialPos[0], initialPos[1], initialPos[2]);
 
     var makeFly = fly(voxel.engine);
     var target = voxel.engine.controls.target();
@@ -47,5 +47,11 @@ export default {
   toggleCamera() {
     avatar.toggle();
     setAvatarVisibility(!avatarVisible);
+  },
+  move(position) {
+    avatar.position.set(position[0], position[1], position[2]);
+  },
+  getPosition() {
+    return avatar.position;
   }
 };

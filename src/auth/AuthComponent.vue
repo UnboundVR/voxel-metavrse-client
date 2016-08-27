@@ -8,6 +8,7 @@
             <li><a href="#" @click="goToProfile">{{ name }}</a></li>
             <li><a href="#" @click="inventory">Inventory</a></li>
             <li><a href="#" @click="toggleCamera">Toggle camera</a></li>
+            <li><a href="#" @click="shareLocation">Share location</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
@@ -39,6 +40,7 @@ export default {
     logout: service.logout,
     inventory: inventory.open,
     toggleCamera: playerSync.toggleCamera,
+    shareLocation: playerSync.displayShareLink,
     goToProfile() {
       alert('Profile page TBC');
     }

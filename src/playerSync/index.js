@@ -3,8 +3,10 @@ import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
 import consts from '../constants';
+import location from './location';
 
-var socket;
+let socket;
+let initialized = false;
 
 export default {
   init() {
@@ -17,6 +19,13 @@ export default {
     });
 
     socket.on('settings', settings => {
+      if(initialized) {
+        console.log('playerSync settings already received, ignoring this time');
+        return;
+      } else {
+        console.log('Receiving playerSync settings');
+      }
+
       self.settings = settings;
       self.others = {};
 
@@ -70,7 +79,15 @@ export default {
       });
 
       avatar.setup(settings);
+      location.init();
+      initialized = true;
     });
+  },
+  moveUser(position) {
+    avatar.move(position);
+  },
+  displayShareLink() {
+    location.shareLocation();
   },
   onServerUpdate(update) {
     // TODO use server sent location
