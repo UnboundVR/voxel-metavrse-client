@@ -2,7 +2,6 @@ import player from 'voxel-player';
 import fly from 'voxel-fly';
 import walk from 'voxel-walk';
 import voxel from '../voxel';
-import teleport from './teleport';
 
 let avatar, avatarVisible;
 

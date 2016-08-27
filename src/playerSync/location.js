@@ -34,6 +34,6 @@ export default {
     }
 
     console.log(link);
-    alert('Check the console for your share link'); // TODO copy to clipboard using something like https://clipboardjs.com/
+    alert('Check the console for your share link'); // TODO display a popup in the screen and allow copying to clipboard using something like https://clipboardjs.com/
   }
 };
