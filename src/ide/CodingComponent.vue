@@ -18,8 +18,8 @@
 
           <div v-if="item">
             <div class="author-info">
-              <h2>Item/block owner ID</h2>
-              <div>{{item.owner}} <span v-if="mine">(a.k.a. you)</span></div>
+              <h2>Item/block owner</h2>
+              <div>{{item.owner.name}} <span v-if="mine">(a.k.a. you)</span></div>
 
               <h2>Gist Author</h2>
               <div>{{code.author.login}} <img class="author-avatar" :src="code.author.avatar"></div>
@@ -76,7 +76,7 @@ export default {
       return this.code.revision.date != this.code.lastUpdateDate;
     },
     mine() {
-      return this.item.owner == auth.getUserId();
+      return this.item.owner.id == auth.getUserId();
     }
   },
   methods: {
