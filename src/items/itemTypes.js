@@ -2,29 +2,29 @@
 
 import auth from '../auth';
 import coding from './coding';
-import consts from '../constants';
+import requests from '../requests';
 
 var types = {};
 
 export default {
-  loadMany(ids, force) {
+  async loadMany(ids, force) {
     var pendingIds = force ? ids : ids.filter(id => !types[id]);
 
     if(!pendingIds.length) {
       return Promise.resolve([]);
     }
 
-    return fetch(consts.SERVER_ADDRESS() + '/inventory/itemTypes?ids=' + pendingIds, {
+    let response = await requests.requestToServer(`inventory/itemTypes?ids=${pendingIds}`, {
       method: 'GET',
       headers: auth.getAuthHeaders()
-    }).then(response => response.json()).then(response => {
-      return Promise.all(response.map(item => {
-        types[item.id] = item;
-        if(item.code && pendingIds.includes(item.id)) {
-          return coding.registerItemType(item);
-        }
-      }));
     });
+
+    return await Promise.all(response.map(item => {
+      types[item.id] = item;
+      if(item.code && pendingIds.includes(item.id)) {
+        return coding.registerItemType(item);
+      }
+    }));
   },
   load(id, force) {
     return this.loadMany([id], force);
