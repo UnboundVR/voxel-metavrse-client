@@ -30,17 +30,17 @@ export default {
   bindEvents() {
     let self = this;
 
-    function extractChunkVoxels(chunk) {
+    async function extractChunkVoxels(chunk) {
       let voxels = {};
 
       function getUniqueIds(voxels) {
         let blockTypeIds = {};
-        Object.keys(voxels).forEach(pos => {
+        for (let pos of Object.keys(voxels)) {
           let block = voxels[pos];
           if(block > 1) {
             blockTypeIds[block] = true;
           }
-        });
+        }
         return Object.keys(blockTypeIds).map(id => parseInt(id));
       }
 
@@ -57,29 +57,26 @@ export default {
         return [x, y, z];
       }
 
-      return types.loadMany(getUniqueIds(chunk.voxels)).then(() => {
-        Object.keys(chunk.voxels).forEach(pos => {
-          let block = chunk.voxels[pos];
-          if(block) {
-            var blockType = types.getById(block);
-            voxels[pos] = (block == 1) ? 1 : blockType.material;
-            if(block != 1 && blockType.code) {
-              let coords = getCoords(pos, chunk.dims);
-              coding.storeCode(coords, blockType.id);
-            }
+      await types.loadMany(getUniqueIds(chunk.voxels));
+      for (let pos of Object.keys(chunk.voxels)) {
+        let block = chunk.voxels[pos];
+        if(block) {
+          var blockType = types.getById(block);
+          voxels[pos] = (block == 1) ? 1 : blockType.material;
+          if(block != 1 && blockType.code) {
+            let coords = getCoords(pos, chunk.dims);
+            coding.storeCode(coords, blockType.id);
           }
-        });
-
-        return voxels;
-      });
+        }
+      }
+      
+      return voxels;
     }
 
-    function processChunk(chunk) {
+    async function processChunk(chunk) {
       chunk.voxels = compression.uncompress(chunk.voxels);
-      return extractChunkVoxels(chunk).then(voxels => {
-        chunk.voxels = voxels;
-        self.engine.showChunk(chunk);
-      });
+      chunk.voxels = await extractChunkVoxels(chunk);
+      self.engine.showChunk(chunk);
     }
 
     this.socket.on('init', async data => {
@@ -112,7 +109,7 @@ export default {
       }
     });
 
-    this.socket.on('set', (pos, val) => {
+    this.socket.on('set', async (pos, val) => {
       if(val == 0) {
         coding.removeCode(pos);
         self.engine.setBlock(pos, 0);
@@ -121,16 +118,15 @@ export default {
         return;
       }
 
-      types.load(val).then(() => {
-        var type = types.getById(val);
-        if(type.code) {
-          coding.storeCode(pos, type.id);
-        }
+      await types.load(val);
+      let type = types.getById(val);
+      if(type.code) {
+        coding.storeCode(pos, type.id);
+      }
 
-        self.engine.setBlock(pos, type.material);
-        // Temporarily commented out because no other coding event call is networked (i.e. there are no RPCs yet)
-        // events.emit(consts.events.PLACE_ADJACENT, {}, block => block.adjacentTo(pos));
-      });
+      self.engine.setBlock(pos, type.material);
+      // Temporarily commented out because no other coding event call is networked (i.e. there are no RPCs yet)
+      // events.emit(consts.events.PLACE_ADJACENT, {}, block => block.adjacentTo(pos));
     });
   },
   setBlock(position, type) {
