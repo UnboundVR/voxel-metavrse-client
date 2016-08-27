@@ -76,7 +76,6 @@ export default {
       return this.code.revision.date != this.code.lastUpdateDate;
     },
     mine() {
-      console.log(this.item)
       return this.item.owner == auth.getUserId();
     }
   },
