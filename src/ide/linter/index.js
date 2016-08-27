@@ -9,6 +9,11 @@ import config from './config.json';
 export default {
   register() {
     CodeMirror.registerHelper('lint', 'javascript', text => {
+      if(!window.eslint) {
+        console.log('eslint is not loaded yet, so we are not linting until the script finishes loading');
+        return [];
+      }
+
       let errors = eslint.verify(text, config);
       return errors.map(error => ({
         message: error.message,
