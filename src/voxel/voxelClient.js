@@ -9,6 +9,8 @@ import Promise from 'bluebird';
 import consts from '../constants';
 // import events from '../events';
 
+let initialized = false;
+
 export default {
   init() {
     let self = this;
@@ -21,6 +23,7 @@ export default {
     this.socket = io.connect(consts.SERVER_ADDRESS() + '/voxel');
     this.socket.on('disconnect', () => {
       // TODO handle disconnection
+      console.log('Disconnected from server...');
     });
     this.bindEvents();
   },
@@ -79,12 +82,20 @@ export default {
       });
     }
 
-    this.socket.on('init', data => {
-      let settings = extend({}, data.settings, clientSettings);
-      self.engine = engine(settings);
-      self.engine.settings = settings;
+    this.socket.on('init', async data => {
+      let reconnecting = false;
 
-      Promise.each(data.chunks, processChunk).then(() => {
+      if(initialized) {
+        reconnecting = true;
+      } else {
+        initialized = true;
+        let settings = extend({}, data.settings, clientSettings);
+        self.engine = engine(settings);
+        self.engine.settings = settings;
+      }
+
+      await Promise.each(data.chunks, processChunk);
+      if(!reconnecting) {
         self.onReady(self.engine);
 
         self.engine.voxels.on('missingChunk', chunkPosition => {
@@ -96,7 +107,9 @@ export default {
             }
           });
         });
-      });
+      } else {
+        console.log('Reconnecting to server...');
+      }
     });
 
     this.socket.on('set', (pos, val) => {

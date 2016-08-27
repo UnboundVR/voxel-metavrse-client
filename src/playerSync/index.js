@@ -12,6 +12,7 @@ export default {
 
     socket = io.connect(consts.SERVER_ADDRESS() + '/playerSync');
     socket.on('connect', () => {
+      console.log(`Got playerSync id ${socket.id} from server`);
       self.playerId = socket.id;
     });
 
