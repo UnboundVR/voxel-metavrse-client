@@ -10,6 +10,7 @@ import consts from '../constants';
 import playerSync from '../playerSync';
 // import events from '../events';
 import loading from '../loading';
+import auth from '../auth';
 
 let initialized = false;
 
@@ -169,7 +170,7 @@ export default {
     });
   },
   setBlock(position, type) {
-    this.socket.emit('set', position, type);
+    this.socket.emit('set', auth.getAccessToken(), position, type);
   },
   clearBlock(position) {
     this.setBlock(position, 0);
