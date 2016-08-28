@@ -14,20 +14,16 @@ import loading from '../loading';
 let initialized = false;
 
 export default {
-  init() {
-    let self = this;
-    this.connect();
-    return new Promise(resolve => {
-      self.onReady = resolve;
-    });
+  async init() {
+    return await this.connect();
   },
-  connect() {
+  async connect() {
     this.socket = io.connect(consts.SERVER_ADDRESS() + '/voxel');
     this.socket.on('disconnect', () => {
       // TODO handle disconnection
       console.log('Disconnected from server...');
     });
-    this.bindEvents();
+    return await this.bindEvents();
   },
   bindEvents() {
     let self = this;
@@ -125,25 +121,6 @@ export default {
       await Promise.all(initialPositions.map(requestAndLoadChunk));
     }
 
-    this.socket.on('init', async data => {
-      loadingResource.update('Got map settings from server...');
-
-      if(initialized) {
-        console.log('Reconnecting to server...');
-      } else {
-        initialized = true;
-        let settings = extend({}, data.settings, clientSettings);
-        self.engine = engine(settings);
-        self.engine.settings = settings;
-
-        await loadInitialChunks(settings);
-        self.engine.voxels.on('missingChunk', requestAndLoadChunk);
-        self.onReady(self.engine);
-
-        loadingResource.finish('Finished loading map');
-      }
-    });
-
     this.socket.on('set', async (pos, val) => {
       if(val == 0) {
         coding.removeCode(pos);
@@ -162,6 +139,33 @@ export default {
       self.engine.setBlock(pos, type.material);
       // Temporarily commented out because no other coding event call is networked (i.e. there are no RPCs yet)
       // events.emit(consts.events.PLACE_ADJACENT, {}, block => block.adjacentTo(pos));
+    });
+
+    return new Promise((resolve, reject) => {
+      this.socket.on('init', async data => {
+        loadingResource.update('Got map settings from server...');
+
+        if(initialized) {
+          if(loadingResource.finished) {
+            console.log('Reconnecting to server...');
+          } else {
+            loadingResource.error('Server got disconnected while loading, please refresh');
+            reject(new Error('Server got disconnected while loading'));
+          }
+        } else {
+          initialized = true;
+          let settings = extend({}, data.settings, clientSettings);
+          self.engine = engine(settings);
+          self.engine.settings = settings;
+
+          await loadInitialChunks(settings);
+          self.engine.voxels.on('missingChunk', requestAndLoadChunk);
+
+          loadingResource.finish('Finished loading map');
+
+          resolve(self.engine);
+        }
+      });
     });
   },
   setBlock(position, type) {
