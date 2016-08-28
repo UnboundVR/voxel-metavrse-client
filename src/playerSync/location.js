@@ -2,16 +2,28 @@ import querystring from 'querystring';
 import avatar from './avatar';
 import requests from '../requests';
 
+function extractPosition() {
+  let qs = querystring.parse(location.search.substring(1));
+
+  if(qs.position) {
+    let position = qs.position.split(',').map(coord => parseInt(coord));
+    return position;
+  } else {
+    return null;
+  }
+}
+
 export default {
   init() {
-    let qs = querystring.parse(location.search.substring(1));
+    let position = extractPosition();
 
-    if(qs.position) {
-      let position = qs.position.split(',').map(coord => parseInt(coord));
-
+    if(position) {
       console.log(`Teleporting user to ${position.join('|')}`);
       avatar.move(position);
     }
+  },
+  getInitialPosition(settings) {
+    return extractPosition() || settings.initialPosition;
   },
   async shareLocation() {
     let pos = avatar.getPosition();

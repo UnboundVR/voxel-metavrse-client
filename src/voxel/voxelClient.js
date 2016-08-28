@@ -7,6 +7,7 @@ import clientSettings from './settings.json';
 import extend from 'extend';
 import Promise from 'bluebird';
 import consts from '../constants';
+import playerSync from '../playerSync';
 // import events from '../events';
 
 let initialized = false;
@@ -69,7 +70,7 @@ export default {
           }
         }
       }
-      
+
       return voxels;
     }
 
@@ -79,33 +80,50 @@ export default {
       self.engine.showChunk(chunk);
     }
 
-    this.socket.on('init', async data => {
-      let reconnecting = false;
+    let promisifiedEmit = Promise.promisify(self.socket.emit).bind(self.socket);
 
+    async function requestAndLoadChunk(chunkPosition) {
+      try {
+        console.log(`Requesting chunk at ${chunkPosition.join('|')}`);
+        let chunk = await promisifiedEmit('requestChunk', chunkPosition);
+        console.log(`Processing chunk at ${chunkPosition.join('|')}`);
+        await processChunk(chunk);
+        console.log(`Loaded chunk at ${chunkPosition.join('|')}`);
+      } catch(err) {
+        console.log('Error getting chunk', err);
+        alert('Error getting chunk: ');
+      }
+    }
+
+    async function loadInitialChunks(settings) {
+      let initialVoxelPos = playerSync.getInitialPosition(settings);
+      let chunkPos = self.engine.voxels.chunkAtPosition(initialVoxelPos);
+      let dist = settings.chunkDistance;
+
+      let initialPositions = [];
+      for(let i = -1 * dist; i < dist; i++) {
+        for(let j = -1 * dist; j < dist; j++) {
+          for(let k = -1 * dist; k < dist; k++) {
+            initialPositions.push([chunkPos[0] + i, chunkPos[1] + j, chunkPos[2] + k]);
+          }
+        }
+      }
+
+      await Promise.all(initialPositions.map(requestAndLoadChunk));
+    }
+
+    this.socket.on('init', async data => {
       if(initialized) {
-        reconnecting = true;
+        console.log('Reconnecting to server...');
       } else {
         initialized = true;
         let settings = extend({}, data.settings, clientSettings);
         self.engine = engine(settings);
         self.engine.settings = settings;
-      }
 
-      await Promise.each(data.chunks, processChunk);
-      if(!reconnecting) {
+        await loadInitialChunks(settings);
+        self.engine.voxels.on('missingChunk', requestAndLoadChunk);
         self.onReady(self.engine);
-
-        self.engine.voxels.on('missingChunk', chunkPosition => {
-          self.socket.emit('requestChunk', chunkPosition, (err, chunk) => {
-            if(err) {
-              alert('Error getting chunk: ', err);
-            } else {
-              processChunk(chunk);
-            }
-          });
-        });
-      } else {
-        console.log('Reconnecting to server...');
       }
     });
 

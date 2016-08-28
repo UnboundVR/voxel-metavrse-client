@@ -89,6 +89,9 @@ export default {
   displayShareLink() {
     location.shareLocation();
   },
+  getInitialPosition(settings) {
+    return location.getInitialPosition(settings);
+  },
   onServerUpdate(update) {
     // TODO use server sent location
   },
