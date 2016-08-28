@@ -1,4 +1,3 @@
-import classes from './classes';
 import instances from './instances';
 import launchIde from './launchIde';
 import scripts from './scripts';

@@ -29,12 +29,10 @@ function appendToContainer(engine) {
 async function init() {
   try {
     await auth.init();
-    await voxel.init();
 
     await Promise.all([
-      playerSync.init(),
+      voxel.init().then(() => Promise.all([playerSync.init(), items.init()])),
       chat.init(),
-      items.init(),
       ide.init(),
       inventory.init()
     ]);
