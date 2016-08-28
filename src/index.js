@@ -20,7 +20,7 @@ function appendToContainer(engine) {
     throw new Error('Browser not capable');
   }
 
-  loading.finish();
+  loading.finish(true);
 
   let container = document.getElementById('container');
   engine.appendTo(container);
@@ -45,7 +45,7 @@ async function init() {
     console.log('Finished initializing!');
   } catch(err) {
     console.log('Error initializing', err);
-    alert('Error initializing');
+    loading.finish(false);
   }
 }
 

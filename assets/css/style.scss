@@ -28,4 +28,9 @@ body {
   text-align: center;
   display: block;
   font-size: large;
+
+  .consoleError {
+    font-weight: bold;
+    color: red;
+  }
 }

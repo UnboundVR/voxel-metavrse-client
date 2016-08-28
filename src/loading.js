@@ -20,7 +20,7 @@ function refreshConsole() {
   }
 
   let loadingConsole = document.getElementById('loadingConsole');
-  loadingConsole.innerHTML = messages.join('<br></br>');
+  loadingConsole.innerHTML = messages.join('<br><br>');
 }
 
 export default {
@@ -58,6 +58,8 @@ export default {
         if(!loading) {
           console.log(text);
         }
+
+        refreshConsole();
       }
     };
 
@@ -67,12 +69,16 @@ export default {
 
     return resource;
   },
-  finish() {
-    let loadingScreen = document.getElementById('loadingScreen');
-    loadingScreen.style.display = 'none';
-
+  finish(success) {
     Pace.stop();
-
     loading = false;
+
+    if(success) {
+      let loadingScreen = document.getElementById('loadingScreen');
+      loadingScreen.style.display = 'none';
+    } else {
+      let loadingConsole = document.getElementById('loadingConsole');
+      loadingConsole.innerHTML += '<br><br><span class="consoleError">Cannot initialize due to an error</span>';
+    }
   }
 };
