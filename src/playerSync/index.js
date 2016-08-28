@@ -26,7 +26,7 @@ export default {
         console.log('playerSync settings already received, ignoring this time');
         return;
       } else {
-        console.log('Receiving playerSync settings');
+        loadingResource.update('Got player sync settings...');
       }
 
       self.settings = settings;

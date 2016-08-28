@@ -8,7 +8,15 @@ function refreshConsole() {
   let messages = [];
   for (let key of Object.keys(resources)) {
     let resource = resources[key];
-    messages.push(resource.message);
+    let message = resource.message;
+
+    if(resource.hasErrors) {
+      message += ' &#x2717;';
+    } else if(resource.finished) {
+      message += ' &#x2713;';
+    }
+
+    messages.push(message);
   }
 
   let loadingConsole = document.getElementById('loadingConsole');
@@ -34,7 +42,7 @@ export default {
         refreshConsole();
       },
       finish(text) {
-        this.message = `${text} &#x2713;`;
+        this.message = text;
         this.finished = true;
 
         if(!loading) {
@@ -44,7 +52,8 @@ export default {
         refreshConsole();
       },
       error(text) {
-        this.message = `${text} &#x2717;`;
+        this.message = text;
+        this.hasErrors = true;
 
         if(!loading) {
           console.log(text);

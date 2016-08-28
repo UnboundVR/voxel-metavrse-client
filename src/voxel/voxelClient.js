@@ -98,8 +98,12 @@ export default {
           loadingResource.update(`Loaded chunk ${++initialChunksLoadedAmount} of ${initialChunksAmount}...`);
         }
       } catch(err) {
-        console.log('Error getting chunk', err);
-        alert('Error getting chunk: ');
+        if(initialChunksAmount > initialChunksLoadedAmount) {
+          loadingResource.error(`Error getting chunk: ${err}`);
+        } else {
+          console.log('Error getting chunk', err);
+          alert('Error getting chunk');
+        }
       }
     }
 
@@ -122,7 +126,7 @@ export default {
     }
 
     this.socket.on('init', async data => {
-      loadingResource.update('Got map from server...');
+      loadingResource.update('Got map settings from server...');
 
       if(initialized) {
         console.log('Reconnecting to server...');
