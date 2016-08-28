@@ -20,6 +20,12 @@ body {
 }
 
 #logo {
-  margin: 200px auto;
+  margin: 200px auto 75px;
   display: block;
+}
+
+#loadingConsole {
+  text-align: center;
+  display: block;
+  font-size: large;
 }

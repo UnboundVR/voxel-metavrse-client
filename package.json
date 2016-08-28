@@ -14,6 +14,7 @@
     "extend": "^3.0.0",
     "http-server": "^0.9.0",
     "minecraft-skin": "^0.1.2",
+    "node-uuid": "^1.4.7",
     "pointer-lock": "0.0.4",
     "script-executor": "https://github.com/UnboundVR/script-executor.git",
     "socket.io-client": "^1.4.8",

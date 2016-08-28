@@ -9,6 +9,7 @@ import Promise from 'bluebird';
 import consts from '../constants';
 import playerSync from '../playerSync';
 // import events from '../events';
+import loading from '../loading';
 
 let initialized = false;
 
@@ -30,6 +31,7 @@ export default {
   },
   bindEvents() {
     let self = this;
+    let loadingResource = loading.log('Loading map...');
 
     async function extractChunkVoxels(chunk) {
       let voxels = {};
@@ -82,13 +84,19 @@ export default {
 
     let promisifiedEmit = Promise.promisify(self.socket.emit).bind(self.socket);
 
+    let initialChunksAmount, initialChunksLoadedAmount = 0;
+
     async function requestAndLoadChunk(chunkPosition) {
       try {
-        console.log(`Requesting chunk at ${chunkPosition.join('|')}`);
+        // console.log(`Requesting chunk at ${chunkPosition.join('|')}`);
         let chunk = await promisifiedEmit('requestChunk', chunkPosition);
-        console.log(`Processing chunk at ${chunkPosition.join('|')}`);
+        // console.log(`Processing chunk at ${chunkPosition.join('|')}`);
         await processChunk(chunk);
-        console.log(`Loaded chunk at ${chunkPosition.join('|')}`);
+        // console.log(`Loaded chunk at ${chunkPosition.join('|')}`);
+
+        if(initialChunksAmount > initialChunksLoadedAmount) {
+          loadingResource.update(`Loaded chunk ${++initialChunksLoadedAmount} of ${initialChunksAmount}...`);
+        }
       } catch(err) {
         console.log('Error getting chunk', err);
         alert('Error getting chunk: ');
@@ -109,10 +117,13 @@ export default {
         }
       }
 
+      initialChunksAmount = initialPositions.length;
       await Promise.all(initialPositions.map(requestAndLoadChunk));
     }
 
     this.socket.on('init', async data => {
+      loadingResource.update('Got map from server...');
+
       if(initialized) {
         console.log('Reconnecting to server...');
       } else {
@@ -124,6 +135,8 @@ export default {
         await loadInitialChunks(settings);
         self.engine.voxels.on('missingChunk', requestAndLoadChunk);
         self.onReady(self.engine);
+
+        loadingResource.finish('Finished loading map');
       }
     });
 

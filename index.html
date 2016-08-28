@@ -20,7 +20,10 @@
     <script type="text/javascript" src="node_modules/codemirror/mode/javascript/javascript.js"></script>
   </head>
   <body>
-    <img id="logo" src="assets/img/metavrselogo.png">
+    <div id="loadingScreen">
+      <img id="logo" src="assets/img/metavrselogo.png">
+      <span id="loadingConsole"></span>
+    </div>
     <div id="container"></div>
     <div v-show="showUI">
       <chat-component></chat-component>

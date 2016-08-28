@@ -1,22 +1,31 @@
 import querystring from 'querystring';
 import githubAuth from './githubAuth';
 import tokenStore from './tokenStore';
+import loading from '../loading';
 
 let accessToken, name, avatarUrl, userId;
 
 export default {
   async init() {
+    let loadingResource = loading.log('Initializing auth...');
+
     if(tokenStore.hasToken()) {
       accessToken = tokenStore.getToken();
-      return await this.fetchUserData();
+      await this.fetchUserData();
+      loadingResource.finish(`Logged in as ${name} (${userId})`);
+      return;
     }
 
     let qs = querystring.parse(location.search.substring(1)); // TODO check state too
 
     if(qs.code) {
       accessToken = await githubAuth.getAccessToken(qs.code);
+      loadingResource.update('Got access token from Github...');
       tokenStore.storeToken(accessToken);
-      return await this.fetchUserData();
+      await this.fetchUserData();
+      loadingResource.finish(`Logged in as ${name} (${userId})`);
+    } else {
+      loadingResource.finish('Entering as guest');
     }
   },
   async login() {

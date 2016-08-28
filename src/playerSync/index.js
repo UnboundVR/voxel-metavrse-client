@@ -4,12 +4,15 @@ import skin from 'minecraft-skin';
 import io from 'socket.io-client';
 import consts from '../constants';
 import location from './location';
+import loading from '../loading';
 
 let socket;
 let initialized = false;
 
 export default {
   init() {
+    let loadingResource = loading.log('Initializing player sync...');
+
     var self = this;
 
     socket = io.connect(consts.SERVER_ADDRESS() + '/playerSync');
@@ -81,6 +84,8 @@ export default {
       avatar.setup(settings);
       location.init();
       initialized = true;
+
+      loadingResource.finish('Initialized player sync');
     });
   },
   moveUser(position) {

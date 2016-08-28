@@ -7,10 +7,9 @@ import ide from './ide';
 import inventory from './inventory';
 import rootVue from './rootVue';
 import querystring from 'querystring';
+import loading from './loading';
 
-/* global Pace */
-
-var qs = querystring.parse(location.search.substring(1));
+let qs = querystring.parse(location.search.substring(1));
 if(qs.server) {
   window.SERVER_ADDRESS = qs.server;
   console.log('Using server', window.SERVER_ADDRESS);
@@ -21,13 +20,10 @@ function appendToContainer(engine) {
     throw new Error('Browser not capable');
   }
 
-  var logo = document.getElementById('logo');
-  logo.style.display = 'none';
+  loading.finish();
 
-  var container = document.getElementById('container');
+  let container = document.getElementById('container');
   engine.appendTo(container);
-
-  Pace.stop();
 }
 
 async function init() {

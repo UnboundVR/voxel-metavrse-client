@@ -6,6 +6,7 @@ import consts from '../../constants';
 import requests from '../../requests';
 import itemCoding from '../coding';
 import extend from 'extend';
+import loading from '../../loading';
 
 import events from '../../events';
 
@@ -44,6 +45,8 @@ function fromItem(item) {
 
 export default {
   async init() {
+    let loadingResource = loading.log('Initializing toolbar...');
+
     this.userLogged = auth.isLogged();
 
     this.selectedItem = interact;
@@ -107,6 +110,8 @@ export default {
           alert('Toolbar item modified!');
         }
       });
+
+      loadingResource.finish('Initialized toolbar');
     });
   },
   hookSelection() {
