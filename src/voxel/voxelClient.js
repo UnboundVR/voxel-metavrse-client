@@ -174,5 +174,9 @@ export default {
   },
   clearBlock(position) {
     this.setBlock(position, 0);
+  },
+  getChunkAtPosition(position) {
+    let chunkPos = this.engine.voxels.chunkAtPosition(position);
+    return this.engine.voxels.chunks[chunkPos.join('|')];
   }
 };
