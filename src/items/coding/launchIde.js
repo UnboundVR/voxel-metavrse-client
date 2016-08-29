@@ -28,7 +28,7 @@ export default {
   }
 }
 `;
-    let data = await ide.open({code});
+    let data = await ide.open({code, toolbar: position});
 
     let codeObj = await coding.create(data.value);
 
@@ -50,7 +50,7 @@ export default {
     }
   },
   async edit(item, code, position) {
-    let data = await ide.open({item, code});
+    let data = await ide.open({item, code, toolbar: position});
 
     let codingOperation = data.name ? coding.fork : coding.update;
     let newCode = data.value;
@@ -82,7 +82,7 @@ export default {
       } else {
         console.log('Existing code was forked correctly');
       }
-      
+
       events.emit(consts.events.CODE_UPDATED, {
         oldId: item.id,
         newId: updatedItemType.id,

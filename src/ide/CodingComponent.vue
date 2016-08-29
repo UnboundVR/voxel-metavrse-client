@@ -1,8 +1,12 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="item">Editing the code of {{item.name}} (#{{item.id}})<span v-if="!!position"> at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
-      <h1 v-else>Editing the code of new block/item<span v-if="!!position"> at ({{position}})</span></h1>
+
+      <h1>
+        <span v-if="item">Editing the code of {{item.name}} (#{{item.id}})</span><span v-if="!item">Editing the code of new block/item</span>
+        <span v-if="!!position"> at ({{position}})</span><span v-if="!!toolbar"> from toolbar #{{toolbar}}</span>
+        <img v-if="item" class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'">
+      </h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
@@ -62,7 +66,8 @@ export default {
   name: 'CodingComponent',
   data() {
     return {
-      position: '',
+      position: null,
+      toolbar: null,
       item: null,
       code: null,
       open: false
@@ -99,7 +104,8 @@ export default {
         this.open = false;
         this.item = null;
         this.code = null;
-        this.position = '';
+        this.position = null;
+        this.toolbar = null;
       }
     },
     fetchUpdates() {
@@ -132,8 +138,12 @@ export default {
     editor.on('open', data => {
       self.open = true;
       self.position = data.position && data.position.join('|');
+      self.toolbar = data.toolbar !== undefined && data.toolbar + 1;
       self.item = data.item;
       self.code = data.code;
+
+      console.log(data.toolbar);
+      console.trace();
 
       Vue.nextTick(() => {
         codemirror.setValue(data.item ? data.code.code : data.code);
