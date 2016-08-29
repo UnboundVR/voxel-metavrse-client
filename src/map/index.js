@@ -1,4 +1,3 @@
-import permissions from './permissions';
 import events from '../events';
 import voxel from '../voxel';
 import consts from '../constants';
@@ -8,14 +7,18 @@ import playerSync from '../playerSync';
 
 export default {
   async placeBlock(position, block) {
-    if(position && permissions.canPlace(position)) {
+    if(position && voxel.hasPermission(position)) {
       await voxel.load(block);
       placement.setBlock(position, voxel.getById(block));
+    } else {
+      alert('No permissions ¯\\_(ツ)_/¯');
     }
   },
   removeBlock(position) {
-    if(position && permissions.canEdit(position)) {
+    if(position && voxel.hasPermission(position)) {
       placement.removeBlock(position);
+    } else {
+      alert('No permissions ¯\\_(ツ)_/¯');
     }
   },
   interact(position) {
@@ -26,11 +29,13 @@ export default {
       return Promise.reject('Please login to be able to edit code');
     }
 
-    if(position && permissions.canEdit(position)) {
+    if(position && voxel.hasPermission(position)) {
       events.emit(consts.events.EDIT_CODE, {
         type: 'block',
         map: position
       });
+    } else {
+      alert('No permissions ¯\\_(ツ)_/¯');
     }
   },
   teleport(position) {

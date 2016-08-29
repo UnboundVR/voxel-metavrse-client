@@ -183,5 +183,9 @@ export default {
   getChunkAtPosition(position) {
     let chunkPos = this.engine.voxels.chunkAtPosition(position);
     return this.engine.voxels.chunks[chunkPos.join('|')];
+  },
+  hasPermission(position) {
+    let chunk = this.getChunkAtPosition(position);
+    return chunk.owners.includes(auth.getUserId());
   }
 };

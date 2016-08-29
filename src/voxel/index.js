@@ -26,5 +26,6 @@ export default {
   removeCode: coding.removeCode.bind(coding),
   storeCode: coding.storeCode.bind(coding),
   broadcastSetBlock: client.setBlock.bind(client),
-  broadcastRemoveBlock: client.clearBlock.bind(client)
+  broadcastRemoveBlock: client.clearBlock.bind(client),
+  hasPermission: client.hasPermission.bind(client)
 };
