@@ -97,6 +97,9 @@ export default {
     close() {
       if(editor.close()) {
         this.open = false;
+        this.item = null;
+        this.code = null;
+        this.position = '';
       }
     },
     fetchUpdates() {

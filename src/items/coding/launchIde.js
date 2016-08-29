@@ -75,6 +75,14 @@ export default {
 
     try {
       let updatedItemType = await inventoryOperationResult;
+
+      if(operation == consts.coding.OPERATIONS.UPDATE) {
+        item.newerVersion = updatedItemType.id;
+        console.log('Existing code was updated correctly');
+      } else {
+        console.log('Existing code was forked correctly');
+      }
+      
       events.emit(consts.events.CODE_UPDATED, {
         oldId: item.id,
         newId: updatedItemType.id,

@@ -46,7 +46,7 @@ var openExisting = function(data) {
   return ide.open({position: data.position, item: data.blockType, code: data.code}).then(result => {
     if(result.name) {
       return classes.fork(data.position, data.blockType, result.value, result.name).then(newBlockType => {
-        console.log('Existing code was forked with ID: ' + newBlockType.code.id);
+        console.log(`Existing code was forked with ID ${newBlockType.code.id}`);
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.FORK,
           newId: newBlockType.id,
@@ -61,6 +61,7 @@ var openExisting = function(data) {
     } else {
       return classes.modify(data.position, data.blockType, result.value).then((newBlockType) => {
         console.log('Existing code was updated correctly');
+        data.blockType.newerVersion = newBlockType.id;
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.UPDATE,
           newId: newBlockType.id,

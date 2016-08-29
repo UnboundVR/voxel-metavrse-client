@@ -3,6 +3,7 @@ import consts from '../constants';
 import EventEmitter2 from 'eventemitter2';
 import util from 'util';
 import pointerLock from '../pointerLock';
+import clone from 'clone';
 
 const CODING_WINDOW = 'coding';
 
@@ -38,7 +39,7 @@ var close = function() {
 };
 
 var open = function(data) {
-  this.emit('open', data);
+  this.emit('open', clone(data));
   pointerLock.release();
   events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: CODING_WINDOW});
 
