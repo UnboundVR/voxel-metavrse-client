@@ -6,6 +6,12 @@ import auth from '../auth';
 import playerSync from '../playerSync';
 
 export default {
+  init() {
+    events.on(consts.events.PLACE_BLOCK, async data => {
+      await this.placeBlock(data.position, data.block);
+      console.log(`Changed block at ${data.position}`);
+    });
+  },
   async placeBlock(position, block) {
     if(position && voxel.hasPermission(position)) {
       await voxel.load(block);

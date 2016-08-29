@@ -121,9 +121,11 @@ export default {
     },
     update() {
       if(this.position) {
-        events.emit(consts.events.PLACE_BLOCK, {position: this.position, block: this.item.newerVersion});
+        let position = this.position.split('|').map(coord => parseInt(coord));
+        events.emit(consts.events.PLACE_BLOCK, {position, block: this.item.newerVersion});
       } else {
-        events.emit(consts.events.CHANGE_TOOLBAR_ITEM, {position: this.toolbar - 1, item: this.item.newerVersion, type: this.type});
+        let position = this.toolbar - 1;
+        events.emit(consts.events.CHANGE_TOOLBAR_ITEM, {position, item: this.item.newerVersion, type: this.type});
       }
 
       this.close();

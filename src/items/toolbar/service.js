@@ -92,10 +92,12 @@ export default {
     });
 
     events.on(consts.events.CHANGE_TOOLBAR_ITEM, async (data) => {
-      this.setItem(data.position, {
+      await this.setItem(data.position, {
         id: data.item,
         type: data.type
       });
+
+      console.log(`Changed toolbar item at position ${data.position}`);
     });
 
     events.on(consts.events.CODE_UPDATED, async payload => {
