@@ -28,7 +28,11 @@ export default {
   }
 }
 `;
-    let data = await ide.open({code, toolbar: position});
+    let data = await ide.open({
+      code,
+      toolbar: position,
+      type: 'item'
+    });
 
     let codeObj = await coding.create(data.value);
 
@@ -50,7 +54,12 @@ export default {
     }
   },
   async edit(item, code, position) {
-    let data = await ide.open({item, code, toolbar: position});
+    let data = await ide.open({
+      item,
+      code,
+      toolbar: position,
+      type: 'item'
+    });
 
     let codingOperation = data.name ? coding.fork : coding.update;
     let newCode = data.value;

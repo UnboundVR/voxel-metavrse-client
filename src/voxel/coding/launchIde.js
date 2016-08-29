@@ -28,13 +28,14 @@ async function openNew(data) {
   try {
     let result = await ide.open({
       position: data.position,
-      toolbar:
-      data.toolbar, code
+      toolbar: data.toolbar,
+      code,
+      type: 'block'
     });
 
     let newBlockType = await classes.create(data.position, material, result.value, result.name);
     console.log('New code was created correctly with ID: ' + newBlockType.code.id);
-    
+
     events.emit(consts.events.CODE_UPDATED, {
       operation: consts.coding.OPERATIONS.CREATE,
       newId: newBlockType.id,
@@ -52,7 +53,8 @@ async function openExisting(data) {
     position: data.position,
     toolbar: data.toolbar,
     item: data.blockType,
-    code: data.code
+    code: data.code,
+    type: 'block'
   });
 
   try {

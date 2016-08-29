@@ -15,7 +15,9 @@ module.exports = {
     OPEN_CHUNK_PERMISSIONS: 'openChunkPermissions',
     SHARE_LOCATION: 'shareLocation',
     OPEN_INVENTORY: 'openInventory',
-    TOGGLE_CAMERA: 'toggleCamera'
+    TOGGLE_CAMERA: 'toggleCamera',
+    PLACE_BLOCK: 'placeBlock',
+    CHANGE_TOOLBAR_ITEM: 'changeToolbarItem'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',

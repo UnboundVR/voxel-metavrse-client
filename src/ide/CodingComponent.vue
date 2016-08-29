@@ -3,8 +3,12 @@
     <div class="scripting-header">
 
       <h1>
-        <span v-if="item">Editing the code of {{item.name}} (#{{item.id}})</span><span v-if="!item">Editing the code of new block/item</span>
-        <span v-if="!!position"> at ({{position}})</span><span v-if="!!toolbar"> from toolbar #{{toolbar}}</span>
+        <span v-if="item">Editing the code of {{type}} {{item.name}} (#{{item.id}})</span>
+        <span v-else>Editing the code of new {{type}}</span>
+
+        <span v-if="position"> at ({{position}})</span>
+        <span v-if="toolbar"> from toolbar #{{toolbar}}</span>
+
         <img v-if="item" class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'">
       </h1>
 
@@ -22,7 +26,7 @@
 
           <div v-if="item">
             <div class="author-info">
-              <h2>Item/block owner</h2>
+              <h2>{{capitalizedType}} owner</h2>
               <div>{{item.owner}} <span v-if="mine">(a.k.a. you)</span></div>
 
               <h2>Gist Author</h2>
@@ -37,7 +41,7 @@
                 <li v-if="outdated">
                   <span class="outdated">Newer version with ID {{item.newerVersion}}</span>
                   <div class="actions">
-                    <button v-if="toolbar || position" @click="fetchUpdates()">Update</button>
+                    <button v-if="toolbar || position" @click="update()">Update</button>
                   </div>
                 </li>
                 <li v-if="!outdated && codeHasForks"><span class="outdated">Possibly external forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
@@ -54,6 +58,8 @@
 
 import editor from './editor';
 import auth from '../auth';
+import consts from '../constants';
+import events from '../events';
 import Vue from 'vue';
 
 var codemirror;
@@ -70,7 +76,8 @@ export default {
       toolbar: null,
       item: null,
       code: null,
-      open: false
+      open: false,
+      type: null
     };
   },
   computed: {
@@ -83,6 +90,9 @@ export default {
     mine() {
       let currentUser = auth.getUserId();
       return currentUser == this.item.owner && (!this.code || currentUser == this.code.author.id);
+    },
+    capitalizedType() {
+      return this.type.charAt(0).toUpperCase() + this.type.slice(1);
     }
   },
   methods: {
@@ -91,7 +101,7 @@ export default {
       editor.save(codemirror.getValue());
     },
     saveAs() {
-      var name = prompt('Enter the name of the new block/item');
+      var name = prompt(`Enter the name of the new ${this.type}`);
       if(!name) {
         return;
       }
@@ -104,12 +114,19 @@ export default {
         this.open = false;
         this.item = null;
         this.code = null;
+        this.type = null;
         this.position = null;
         this.toolbar = null;
       }
     },
-    fetchUpdates() {
-      console.log(`Would fetch item with version ${this.item.newerVersion}`);
+    update() {
+      if(this.position) {
+        events.emit(consts.events.PLACE_BLOCK, {position: this.position, block: this.item.newerVersion});
+      } else {
+        events.emit(consts.events.CHANGE_TOOLBAR_ITEM, {position: this.toolbar - 1, item: this.item.newerVersion, type: this.type});
+      }
+
+      this.close();
     }
   },
   ready() {
@@ -141,9 +158,7 @@ export default {
       self.toolbar = data.toolbar !== undefined && data.toolbar + 1;
       self.item = data.item;
       self.code = data.code;
-
-      console.log(data.toolbar);
-      console.trace();
+      self.type = data.type;
 
       Vue.nextTick(() => {
         codemirror.setValue(data.item ? data.code.code : data.code);

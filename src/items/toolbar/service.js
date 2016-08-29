@@ -91,6 +91,13 @@ export default {
       }
     });
 
+    events.on(consts.events.CHANGE_TOOLBAR_ITEM, async (data) => {
+      this.setItem(data.position, {
+        id: data.item,
+        type: data.type
+      });
+    });
+
     events.on(consts.events.CODE_UPDATED, async payload => {
       let newId = payload.newId;
       let oldId = payload.oldId;
