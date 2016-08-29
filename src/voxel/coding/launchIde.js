@@ -12,7 +12,7 @@ var openNew = function(data) {
   }
 
   onInteract() {
-    alert('such interact. wow.');
+    console.log('such interact. wow.');
   }
 
   onHover() {
@@ -28,7 +28,7 @@ var openNew = function(data) {
 
   return ide.open({position: data.position, code}).then(result => {
     return classes.create(data.position, material, result.value, result.name).then(newBlockType => {
-      alert('New code was created correctly with ID: ' + newBlockType.code.id);
+      console.log('New code was created correctly with ID: ' + newBlockType.code.id);
       events.emit(consts.events.CODE_UPDATED, {
         operation: consts.coding.OPERATIONS.CREATE,
         newId: newBlockType.id,
@@ -37,7 +37,7 @@ var openNew = function(data) {
         type: 'block'
       });
     }, err => {
-      alert('Error storing code: ' + err);
+      console.log('Error storing code: ' + err);
     });
   });
 };
@@ -46,7 +46,7 @@ var openExisting = function(data) {
   return ide.open({position: data.position, item: data.blockType, code: data.code}).then(result => {
     if(result.name) {
       return classes.fork(data.position, data.blockType, result.value, result.name).then(newBlockType => {
-        alert('Existing code was forked with ID: ' + newBlockType.code.id);
+        console.log('Existing code was forked with ID: ' + newBlockType.code.id);
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.FORK,
           newId: newBlockType.id,
@@ -56,11 +56,11 @@ var openExisting = function(data) {
           type: 'block'
         });
       }, err => {
-        alert('Error storing code: ' + err);
+        console.log('Error storing code: ' + err);
       });
     } else {
       return classes.modify(data.position, data.blockType, result.value).then((newBlockType) => {
-        alert('Existing code was updated correctly');
+        console.log('Existing code was updated correctly');
         events.emit(consts.events.CODE_UPDATED, {
           operation: consts.coding.OPERATIONS.UPDATE,
           newId: newBlockType.id,
@@ -70,7 +70,7 @@ var openExisting = function(data) {
           type: 'block'
         });
       }, err => {
-        alert('Error storing code: ' + err);
+        console.log('Error storing code: ' + err);
       });
     }
   });

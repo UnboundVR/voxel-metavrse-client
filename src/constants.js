@@ -11,7 +11,11 @@ module.exports = {
     FULLSCREEN_WINDOW_OPEN: 'fullScreenWindowOpen',
     FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose',
     CODE_UPDATED: 'codeUpdated',
-    EDIT_CODE: 'editCode'
+    EDIT_CODE: 'editCode',
+    OPEN_CHUNK_PERMISSIONS: 'openChunkPermissions',
+    SHARE_LOCATION: 'shareLocation',
+    OPEN_INVENTORY: 'openInventory',
+    TOGGLE_CAMERA: 'toggleCamera'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',
