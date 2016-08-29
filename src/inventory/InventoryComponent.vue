@@ -67,7 +67,8 @@ export default {
       if(toolbar === undefined || toolbar > 0) {
         controller.editCode(item, type, toolbar);
       } else {
-        alert('Interact cannot be edited');
+        console.log('Interact cannot be edited');
+        return;
       }
     }
   },

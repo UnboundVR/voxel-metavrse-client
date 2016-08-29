@@ -61,7 +61,8 @@ export default {
   addToToolbar(type, id) {
     var position = parseInt(prompt('Enter position (2-9)'));
     if(Number.isNaN(position) || position > 9 || position < 2) {
-      return alert('Invalid position');
+      console.log('Invalid position');
+      return;
     }
     position--;
 
@@ -71,7 +72,8 @@ export default {
   },
   removeFromToolbar(position) {
     if(position == 0) {
-      return alert('Cannot remove interact from first position');
+      console.log('Cannot remove interact from first position');
+      return;
     }
 
     items.removeToolbarItem(position - 1).then(() => {

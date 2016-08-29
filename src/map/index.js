@@ -11,14 +11,14 @@ export default {
       await voxel.load(block);
       placement.setBlock(position, voxel.getById(block));
     } else {
-      alert('No permissions ¯\\_(ツ)_/¯');
+      console.log('No permissions ¯\\_(ツ)_/¯');
     }
   },
   removeBlock(position) {
     if(position && voxel.hasPermission(position)) {
       placement.removeBlock(position);
     } else {
-      alert('No permissions ¯\\_(ツ)_/¯');
+      console.log('No permissions ¯\\_(ツ)_/¯');
     }
   },
   interact(position) {
@@ -35,7 +35,7 @@ export default {
         map: position
       });
     } else {
-      alert('No permissions ¯\\_(ツ)_/¯');
+      console.log('No permissions ¯\\_(ツ)_/¯');
     }
   },
   teleport(position) {

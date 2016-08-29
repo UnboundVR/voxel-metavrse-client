@@ -15,7 +15,7 @@ export default {
   }
 
   onExecute(position) {
-    alert(\`executing \${this.metadata.name} on \${position}\`);
+    console.log(\`executing \${this.metadata.name} on \${position}\`);
   }
 
   onHover(payload) {
@@ -46,7 +46,7 @@ export default {
         operation: consts.coding.OPERATIONS.CREATE
       });
     } catch(err) {
-      alert(`Error creating item code: ${err}`);
+      console.log(`Error creating item code: ${err}`);
     }
   },
   async edit(item, code, position) {
@@ -83,7 +83,7 @@ export default {
         operation
       });
     } catch(err) {
-      alert(`Error updating code: ${err}`);
+      console.log(`Error updating code: ${err}`);
     }
   }
 };

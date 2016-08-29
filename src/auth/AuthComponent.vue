@@ -52,7 +52,7 @@ export default {
       events.emit(consts.events.OPEN_CHUNK_PERMISSIONS);
     },
     goToProfile() {
-      alert('Profile page TBC');
+      console.log('Profile page TBC');
     }
   }
 };

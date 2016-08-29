@@ -5,7 +5,7 @@ import auth from '../auth';
 export default {
   async editChunkPermissions(pos) {
     if(!this.hasPermission(pos)) {
-      alert('No permissions ¯\\_(ツ)_/¯');
+      console.log('No permissions ¯\\_(ツ)_/¯');
       return;
     }
 
@@ -22,7 +22,7 @@ export default {
         headers: auth.getAuthHeaders()
       });
 
-      alert(`Added ${newOwnerId} to list of owners`);
+      console.log(`Added ${newOwnerId} to list of owners`);
     }
   },
   hasPermission(pos) {

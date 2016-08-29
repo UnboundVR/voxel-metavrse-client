@@ -112,7 +112,7 @@ export default {
 
         await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
 
-        alert('Toolbar item modified!');
+        console.log('Toolbar item modified!');
       }
     });
 
@@ -175,7 +175,7 @@ export default {
   },
   async editCode(item, position) {
     if(item == interact) {
-      alert('Interact cannot be edited');
+      console.log('Interact cannot be edited');
     } else {
       if(item == nothing) {
         item = undefined;

@@ -100,7 +100,7 @@ export default {
       }
     },
     fetchUpdates() {
-      alert(`Would fetch item with version ${this.item.newerVersion}`);
+      console.log(`Would fetch item with version ${this.item.newerVersion}`);
     }
   },
   ready() {

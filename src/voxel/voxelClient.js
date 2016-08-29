@@ -99,7 +99,6 @@ export default {
           loadingResource.error(`Error getting chunk: ${err}`);
         } else {
           console.log('Error getting chunk', err);
-          alert('Error getting chunk');
         }
       }
     }
