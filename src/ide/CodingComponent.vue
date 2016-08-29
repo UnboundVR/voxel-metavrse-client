@@ -37,7 +37,7 @@
                 <li v-if="outdated">
                   <span class="outdated">Newer version with ID {{item.newerVersion}}</span>
                   <div class="actions">
-                    <button @click="fetchUpdates()">Update</button>
+                    <button v-if="toolbar || position" @click="fetchUpdates()">Update</button>
                   </div>
                 </li>
                 <li v-if="!outdated && codeHasForks"><span class="outdated">Possibly external forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
