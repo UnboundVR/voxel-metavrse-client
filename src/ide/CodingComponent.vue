@@ -18,6 +18,7 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
+            <button v-if="item && dirty" @click="test">Test</button>
             <button v-if="item && mine && !outdated" @click="save">Save</button>
             <button v-if="item" @click="saveAs">Fork...</button>
             <button v-if="!item" @click="saveAs">Save as...</button>
@@ -77,6 +78,7 @@ export default {
       item: null,
       code: null,
       open: false,
+      dirty: false,
       type: null
     };
   },
@@ -96,6 +98,17 @@ export default {
     }
   },
   methods: {
+    test() {
+      let position;
+      if(this.type == 'item') {
+        position = this.toolbar - 1;
+      } else {
+        position = this.position.split('|').map(coord => parseInt(coord));
+      }
+      editor.test(this.type, position, codemirror.getValue(), this.item);
+      editor.markClean();
+      this.close();
+    },
     save() {
       this.open = false;
       editor.save(codemirror.getValue());
@@ -112,6 +125,7 @@ export default {
     close() {
       if(editor.close()) {
         this.open = false;
+        this.dirty = false;
         this.item = null;
         this.code = null;
         this.type = null;
@@ -154,6 +168,10 @@ export default {
     wrapper = codemirror.getWrapperElement();
     wrapper.addEventListener('keydown', stopPropagation);
 
+    editor.on('markedDirty', () => {
+      self.dirty = true;
+    });
+
     editor.on('open', data => {
       self.open = true;
       self.position = data.position && data.position.join('|');
@@ -165,6 +183,7 @@ export default {
       Vue.nextTick(() => {
         codemirror.setValue(data.item ? data.code.code : data.code);
         editor.markClean();
+        self.dirty = false;
         codemirror.focus();
       });
     });

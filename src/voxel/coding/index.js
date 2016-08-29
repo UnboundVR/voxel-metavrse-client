@@ -5,6 +5,7 @@ import events from '../../events';
 import consts from '../../constants';
 import types from '../blockTypes';
 import extend from 'extend';
+import testing from './testing';
 
 let voxelEngine;
 
@@ -16,6 +17,8 @@ export default {
     voxelEngine = engine;
   },
   init() {
+    testing.init();
+
     events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'block') {
         let data = {

@@ -17,7 +17,8 @@ module.exports = {
     OPEN_INVENTORY: 'openInventory',
     TOGGLE_CAMERA: 'toggleCamera',
     PLACE_BLOCK: 'placeBlock',
-    CHANGE_TOOLBAR_ITEM: 'changeToolbarItem'
+    CHANGE_TOOLBAR_ITEM: 'changeToolbarItem',
+    TEST_CODE: 'testCode'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',
