@@ -122,6 +122,11 @@ export default {
       await Promise.all(initialPositions.map(requestAndLoadChunk));
     }
 
+    this.socket.on('newChunkOwner', (chunkId, ownerId) => {
+      let chunk = self.engine.voxels.chunks[chunkId];
+      chunk.owners.push(ownerId);
+    });
+
     this.socket.on('set', async (pos, val) => {
       if(val == 0) {
         coding.removeCode(pos);
