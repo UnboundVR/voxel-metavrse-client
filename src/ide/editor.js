@@ -61,8 +61,11 @@ function Editor() {
     dirty = true;
     this.emit('markedDirty');
   };
-  this.markClean = function() {
+  this.markClean = () => {
     dirty = false;
+  };
+  this.markDirty = () => {
+    dirty = true;
   };
 }
 

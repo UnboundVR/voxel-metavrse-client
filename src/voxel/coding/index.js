@@ -29,6 +29,13 @@ export default {
           let position = payload.map;
           if(instances.hasCode(position)) {
             extend(data, instances.getCode(position)); // gets code and blockType properties
+
+            let testingCode = testing.getTestingCode(position);
+            if(testingCode) {
+              data.code.code = testingCode;
+              data.code.unsavedChanges = true;
+            }
+
             launchIde.openExisting(data);
           } else {
             data.material = voxelEngine.getBlock(position);

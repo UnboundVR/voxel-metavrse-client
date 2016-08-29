@@ -182,8 +182,13 @@ export default {
 
       Vue.nextTick(() => {
         codemirror.setValue(data.item ? data.code.code : data.code);
-        editor.markClean();
         self.dirty = false;
+        
+        if(data.code.unsavedChanges) {
+          editor.markDirty();
+        } else {
+          editor.markClean();
+        }
         codemirror.focus();
       });
     });
