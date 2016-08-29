@@ -10,7 +10,7 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
-            <button v-if="item && mine" @click="save">Save</button>
+            <button v-if="item && mine && !outdated" @click="save">Save</button>
             <button v-if="item" @click="saveAs">Fork...</button>
             <button v-if="!item" @click="saveAs">Save as...</button>
             <a v-if="item" target="_blank" :href="code.url">Go to gist</a>
