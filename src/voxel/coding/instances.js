@@ -1,5 +1,6 @@
 import scripts from './scripts';
 import types from '../blockTypes';
+import testing from './testing';
 
 var blocksWithCode = {};
 
@@ -22,6 +23,11 @@ export default {
   storeCode(position, id) {
     blocksWithCode[position] = id;
     scripts.createInstance(position, id);
+
+    if(testing.hasTestingCode(position)) {
+      let blockType = types.getById(id);
+      testing.activateTestingCode(position, blockType);
+    }
   },
   removeCode(position) {
     delete blocksWithCode[position];
