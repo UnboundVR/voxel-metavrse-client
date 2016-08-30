@@ -16,10 +16,24 @@ export default {
       }
     });
 
-    events.on(consts.events.CODE_UPDATED, async payload => {
+    events.on(consts.events.CODE_UPDATED, payload => {
       if(payload.map) {
         this.clearTestingCode(payload.map);
       }
+    });
+
+    events.on(consts.events.WIPE_TESTING_CODE, () => {
+      for(let key in testingBlocks) {
+        let position = key.split('|');
+        events.emit(consts.events.RELOAD_CODE, position);
+      }
+
+      let testingBlocksAmount = Object.keys(testingBlocks).length;
+
+      testingBlocks = {};
+      localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
+
+      console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
     });
   },
   async testCode(position, code, item) {

@@ -18,7 +18,9 @@ module.exports = {
     TOGGLE_CAMERA: 'toggleCamera',
     PLACE_BLOCK: 'placeBlock',
     CHANGE_TOOLBAR_ITEM: 'changeToolbarItem',
-    TEST_CODE: 'testCode'
+    TEST_CODE: 'testCode',
+    WIPE_TESTING_CODE: 'wipeTestingCode',
+    RELOAD_CODE: 'reloadCode'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',

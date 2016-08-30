@@ -11,6 +11,7 @@
             <li><a href="#" @click="shareLocation">Share location</a></li>
             <li><a href="#" @click="chunkPermissions">Chunk permissions</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
+            <li><a href="#" @click="clearTestingCode">Clear testing code</a></li>
           </ul>
         </li>
       </ul>
@@ -50,6 +51,9 @@ export default {
     },
     chunkPermissions() {
       events.emit(consts.events.OPEN_CHUNK_PERMISSIONS);
+    },
+    clearTestingCode() {
+      events.emit(consts.events.WIPE_TESTING_CODE);
     },
     goToProfile() {
       console.log('Profile page TBC');
