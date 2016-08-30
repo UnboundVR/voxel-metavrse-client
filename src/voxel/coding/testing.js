@@ -3,6 +3,7 @@ import events from '../../events';
 import scripts from './scripts';
 
 let testingBlocks;
+let activatedTestBlocks = {};
 
 export default {
   init() {
@@ -53,6 +54,8 @@ export default {
   clearTestingCode(position) {
     delete testingBlocks[position];
     localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
+
+    activatedTestBlocks[position] = false;
   },
   storeTestingCode(position, code) {
     testingBlocks[position] = code;
@@ -64,5 +67,10 @@ export default {
   async activateTestingCode(position, item) {
     let classId = await scripts.loadTestClass(position, this.getTestingCode(position));
     scripts.testCode(classId, position, item);
+
+    activatedTestBlocks[position] = true;
+  },
+  hasActivatedTestingCode(position) {
+    return !!activatedTestBlocks[position];
   }
 };

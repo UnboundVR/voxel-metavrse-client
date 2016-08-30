@@ -36,9 +36,8 @@ export default {
     blocksWithCode[position] = id;
     scripts.createInstance(position, id);
 
-    // if we had existing testing code (brought from local storage), activate now
-    // FIXME this brings problem when saving code that was being tested, because testing code is installed. FIX
-    if(testing.hasTestingCode(position)) {
+    // if we had existing testing code brought from local storage but it's not activated yet, activate now
+    if(testing.hasTestingCode(position) && !testing.hasActivatedTestingCode(position)) {
       let blockType = types.getById(id);
       testing.activateTestingCode(position, blockType);
     }
