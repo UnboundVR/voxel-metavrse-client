@@ -8,10 +8,11 @@ import permissions from './permissions';
 
 export default {
   async init() {
+    coding.init();
+    
     let engine = await client.init();
     this.engine = engine;
     coding.setVoxelEngine(engine);
-    coding.init();
 
     events.on(consts.events.OPEN_CHUNK_PERMISSIONS, () => {
       let pos = playerSync.getUserPosition();

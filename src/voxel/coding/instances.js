@@ -9,7 +9,6 @@ var blocksWithCode = {};
 export default {
   init() {
     events.on(consts.events.RELOAD_CODE, position => {
-      console.log(position, typeof position);
       if(this.hasCode(position)) {
         let blockTypeId = this.getBlockTypeId(position);
         scripts.createInstance(position, blockTypeId);
@@ -18,7 +17,7 @@ export default {
     });
   },
   getCode(position) {
-    let blockType = types.getById(blocksWithCode[position]);
+    let blockType = types.getById(blocksWithCode[position.join('|')]);
     let code = scripts.getCode(blockType.id);
 
     return {
@@ -27,13 +26,13 @@ export default {
     };
   },
   getBlockTypeId(position){
-    return blocksWithCode[position];
+    return blocksWithCode[position.join('|')];
   },
   hasCode(position) {
-    return !!blocksWithCode[position];
+    return !!blocksWithCode[position.join('|')];
   },
   storeCode(position, id) {
-    blocksWithCode[position] = id;
+    blocksWithCode[position.join('|')] = id;
     scripts.createInstance(position, id);
 
     // if we had existing testing code brought from local storage but it's not activated yet, activate now
@@ -43,7 +42,7 @@ export default {
     }
   },
   removeCode(position) {
-    delete blocksWithCode[position];
+    delete blocksWithCode[position.join('|')];
     scripts.removeInstance(position);
   }
 };

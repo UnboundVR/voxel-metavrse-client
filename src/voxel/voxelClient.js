@@ -97,9 +97,8 @@ export default {
       } catch(err) {
         if(initialChunksAmount > initialChunksLoadedAmount) {
           loadingResource.error(`Error getting chunk: ${err}`);
-        } else {
-          console.log('Error getting chunk', err);
         }
+        console.log('Error getting chunk', err);
       }
     }
 

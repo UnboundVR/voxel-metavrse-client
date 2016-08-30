@@ -49,16 +49,16 @@ export default {
     }
   },
   getTestingCode(position) {
-    return testingBlocks[position];
+    return testingBlocks[position.join('|')];
   },
   clearTestingCode(position) {
-    delete testingBlocks[position];
+    delete testingBlocks[position.join('|')];
     localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
 
-    activatedTestBlocks[position] = false;
+    activatedTestBlocks[position.join('|')] = false;
   },
   storeTestingCode(position, code) {
-    testingBlocks[position] = code;
+    testingBlocks[position.join('|')] = code;
     localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
   },
   hasTestingCode(position) {
@@ -68,9 +68,9 @@ export default {
     let classId = await scripts.loadTestClass(position, this.getTestingCode(position));
     scripts.testCode(classId, position, item);
 
-    activatedTestBlocks[position] = true;
+    activatedTestBlocks[position.join('|')] = true;
   },
   hasActivatedTestingCode(position) {
-    return !!activatedTestBlocks[position];
+    return !!activatedTestBlocks[position.join('|')];
   }
 };
