@@ -9,6 +9,7 @@ var blocksWithCode = {};
 export default {
   init() {
     events.on(consts.events.RELOAD_CODE, position => {
+      console.log(position, typeof position);
       if(this.hasCode(position)) {
         let blockTypeId = this.getBlockTypeId(position);
         scripts.createInstance(position, blockTypeId);

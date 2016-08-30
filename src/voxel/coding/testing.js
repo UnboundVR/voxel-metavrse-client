@@ -17,14 +17,14 @@ export default {
     });
 
     events.on(consts.events.CODE_UPDATED, payload => {
-      if(payload.map) {
+      if(payload.map && this.hasTestingCode(payload.map)) {
         this.clearTestingCode(payload.map);
       }
     });
 
     events.on(consts.events.WIPE_TESTING_CODE, () => {
       for(let key in testingBlocks) {
-        let position = key.split('|');
+        let position = key.split(',').map(coord => parseInt(coord));
         events.emit(consts.events.RELOAD_CODE, position);
       }
 
@@ -42,20 +42,21 @@ export default {
     try {
       this.storeTestingCode(position, code);
       await this.activateTestingCode(position, item);
-      localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
     } catch(err) {
       console.log('Error executing code', err);
       this.storeTestingCode(position, oldCode);
     }
   },
   getTestingCode(position) {
-    return testingBlocks[position.join('|')];
+    return testingBlocks[position];
   },
   clearTestingCode(position) {
-    delete testingBlocks[position.join('|')];
+    delete testingBlocks[position];
+    localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
   },
   storeTestingCode(position, code) {
-    testingBlocks[position.join('|')] = code;
+    testingBlocks[position] = code;
+    localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
   },
   hasTestingCode(position) {
     return !!this.getTestingCode(position);

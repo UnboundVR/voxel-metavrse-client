@@ -18,6 +18,7 @@ export default {
   },
   init() {
     testing.init();
+    instances.init();
 
     events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'block') {
