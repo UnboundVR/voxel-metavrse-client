@@ -17,6 +17,8 @@ export default {
   setVoxelEngine(engine) {
     voxelEngine = engine;
   },
+  hasTestingCode: testing.hasTestingCode.bind(testing),
+  clearTestingCode: testing.clearTestingCode.bind(testing),
   init() {
     testing.init();
     instances.init();
@@ -30,7 +32,7 @@ export default {
         if(payload.map) {
           let position = payload.map;
           let testingCode = testing.getTestingCode(position);
-          
+
           if(instances.hasCode(position)) {
             extend(data, instances.getCode(position)); // gets code and blockType properties
 

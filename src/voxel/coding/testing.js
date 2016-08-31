@@ -28,7 +28,14 @@ export default {
     });
 
     events.on(consts.events.WIPE_TESTING_CODE, () => {
-      if(prompt(`Reset ${Object.keys(testingBlocks).length} blocks with testing code?`)) {
+      let amount = Object.keys(testingBlocks).length;
+
+      if(amount == 0) {
+        console.log('No testing blocks to clear.');
+        return;
+      }
+
+      if(confirm(`Reset ${amount} blocks with testing code?`)) {
         for(let key in testingBlocks) {
           let position = key.split(',').map(coord => parseInt(coord));
           events.emit(consts.events.RELOAD_CODE, position);
