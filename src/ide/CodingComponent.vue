@@ -197,7 +197,7 @@ export default {
       self.simpleBlock = data.simpleBlock;
 
       Vue.nextTick(() => {
-        codemirror.setValue((data.simpleBlock || !data.item) ? data.code : data.code.code);
+        codemirror.setValue(data.code.code);
         self.dirty = false;
 
         if(data.code.testingLocally) {
@@ -205,6 +205,7 @@ export default {
           self.testingLocally = true;
         } else {
           editor.markClean();
+          self.testingLocally = false;
         }
         codemirror.focus();
       });

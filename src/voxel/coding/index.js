@@ -29,10 +29,11 @@ export default {
         };
         if(payload.map) {
           let position = payload.map;
+          let testingCode = testing.getTestingCode(position);
+          
           if(instances.hasCode(position)) {
             extend(data, instances.getCode(position)); // gets code and blockType properties
 
-            let testingCode = testing.getTestingCode(position);
             if(testingCode) {
               data.code.code = testingCode;
               data.code.testingLocally = true;
@@ -46,6 +47,14 @@ export default {
             if(blockType) {
               data.material = material;
               data.blockType = blockType;
+
+              if(testingCode) {
+                data.code = {
+                  code: testingCode,
+                  testingLocally: true
+                };
+              }
+
               launchIde.openNew(data);
             } else {
               console.log(`Block at ${position} with material ${material} does not have a blockType associated, so we cannot edit its code`);

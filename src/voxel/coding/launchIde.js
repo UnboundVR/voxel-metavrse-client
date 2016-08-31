@@ -29,7 +29,7 @@ async function openNew(data) {
     let result = await ide.open({
       position: data.position,
       toolbar: data.toolbar,
-      code,
+      code: data.code || {code},
       item: data.blockType,
       type: 'block',
       simpleBlock: true
