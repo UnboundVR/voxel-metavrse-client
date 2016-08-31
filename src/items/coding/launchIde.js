@@ -29,7 +29,7 @@ export default {
 }
 `;
     let data = await ide.open({
-      code,
+      code: {code},
       toolbar: position,
       type: 'item'
     });
