@@ -145,6 +145,7 @@ export default {
         this.position = null;
         this.toolbar = null;
         this.simpleBlock = false;
+        this.testingLocally = false;
       }
     },
     update() {
