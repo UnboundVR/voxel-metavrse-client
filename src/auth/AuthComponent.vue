@@ -10,8 +10,8 @@
             <li><a href="#" @click="toggleCamera">Toggle camera</a></li>
             <li><a href="#" @click="shareLocation">Share location</a></li>
             <li><a href="#" @click="chunkPermissions">Chunk permissions</a></li>
-            <li><a href="#" @click="logout">Logout</a></li>
             <li><a href="#" @click="clearTestingCode">Clear testing code</a></li>
+            <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
       </ul>
