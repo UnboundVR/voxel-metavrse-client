@@ -30,7 +30,9 @@ async function openNew(data) {
       position: data.position,
       toolbar: data.toolbar,
       code,
-      type: 'block'
+      item: data.blockType,
+      type: 'block',
+      simpleBlock: true
     });
 
     let newBlockType = await classes.create(data.position, material, result.value, result.name);
@@ -54,7 +56,8 @@ async function openExisting(data) {
     toolbar: data.toolbar,
     item: data.blockType,
     code: data.code,
-    type: 'block'
+    type: 'block',
+    simpleBlock: false
   });
 
   try {

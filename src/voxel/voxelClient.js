@@ -11,6 +11,7 @@ import playerSync from '../playerSync';
 // import events from '../events';
 import loading from '../loading';
 import auth from '../auth';
+import simpleBlockTypes from './simpleBlockTypes';
 
 let initialized = false;
 
@@ -63,9 +64,13 @@ export default {
         if(block) {
           var blockType = types.getById(block);
           voxels[pos] = (block == 1) ? 1 : blockType.material;
+
           if(block != 1 && blockType.code) {
             let coords = getCoords(pos, chunk.dims);
             coding.storeCode(coords, blockType.id);
+          } else if(block != 1) {
+            simpleBlockTypes.store(blockType.material, blockType.id);
+            console.log(`Storing simple type mapping for material ${blockType.material} to type ${blockType.id}`);
           }
         }
       }

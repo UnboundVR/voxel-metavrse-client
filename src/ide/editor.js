@@ -10,8 +10,8 @@ const CODING_WINDOW = 'coding';
 let dirty = false;
 let onSave;
 
-function test(type, position, code, item) {
-  events.emit(consts.events.TEST_CODE, {type, position, code, item});
+function test(type, position, toolbar, code, item) {
+  events.emit(consts.events.TEST_CODE, {type, position, toolbar, code, item});
 }
 
 function doClose() {

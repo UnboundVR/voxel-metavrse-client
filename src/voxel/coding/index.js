@@ -6,6 +6,7 @@ import consts from '../../constants';
 import types from '../blockTypes';
 import extend from 'extend';
 import testing from './testing';
+import simpleBlockTypes from '../simpleBlockTypes';
 
 let voxelEngine;
 
@@ -34,13 +35,21 @@ export default {
             let testingCode = testing.getTestingCode(position);
             if(testingCode) {
               data.code.code = testingCode;
-              data.code.unsavedChanges = true;
+              data.code.testingLocally = true;
             }
 
             launchIde.openExisting(data);
           } else {
-            data.material = voxelEngine.getBlock(position);
-            launchIde.openNew(data);
+            let material = voxelEngine.getBlock(position);
+            let blockType = types.getById(simpleBlockTypes.get(material));
+
+            if(blockType) {
+              data.material = material;
+              data.blockType = blockType;
+              launchIde.openNew(data);
+            } else {
+              console.log(`Block at ${position} with material ${material} does not have a blockType associated, so we cannot edit its code`);
+            }
           }
         } else if(payload.id) {
           await types.load(payload.id);
@@ -51,6 +60,7 @@ export default {
             launchIde.openExisting(data);
           } else {
             data.material = blockType.material;
+            data.blockType = blockType;
             launchIde.openNew(data);
           }
         } else {

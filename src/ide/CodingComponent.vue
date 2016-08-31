@@ -10,6 +10,9 @@
         <span v-if="toolbar"> from toolbar #{{toolbar}}</span>
 
         <img v-if="item" class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'">
+
+        <span v-if="testingLocally">| This code is being tested locally</span>
+        <span v-if="simpleBlock">| This block had no code</span>
       </h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
@@ -18,11 +21,11 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
-            <button v-if="item && mine && !outdated" @click="save">Save</button>
-            <button v-if="item" @click="saveAs">Fork...</button>
-            <button v-if="!item" @click="saveAs">Save as...</button>
+            <button v-if="!simpleBlock && item && mine && !outdated" @click="save">Save</button>
+            <button v-if="!simpleBlock && item" @click="saveAs">Fork...</button>
+            <button v-if="simpleBlock || !item" @click="saveAs">Save as...</button>
             <a v-if="item" target="_blank" :href="code.url">Gist</a>
-            <button v-if="item && dirty" @click="test">Test</button>
+            <button v-if="dirty" @click="test">Test</button>
           </div>
 
           <div v-if="item">
@@ -30,10 +33,13 @@
               <h2>{{capitalizedType}} owner</h2>
               <div>{{item.owner}} <span v-if="mine">(a.k.a. you)</span></div>
 
-              <h2>Gist Author</h2>
-              <div>{{code.author.id}} <img class="author-avatar" :src="code.author.avatar"></div>
+              <div v-if="!simpleBlock">
+                <h2>Gist Author</h2>
+                <div>{{code.author.id}} <img class="author-avatar" :src="code.author.avatar"></div>
+              </div>
             </div>
-            <div class="gist-info">
+            <div class="gist-info" v-if="!simpleBlock">
+
               <h2>Gist info</h2>
               <ul>
                 <li>ID: {{code.id}}</li>
@@ -79,7 +85,9 @@ export default {
       code: null,
       open: false,
       dirty: false,
-      type: null
+      type: null,
+      simpleBlock: false,
+      testingLocally: false
     };
   },
   computed: {
@@ -90,6 +98,10 @@ export default {
       return this.code.revision.date != this.code.lastUpdateDate;
     },
     mine() {
+      if(!this.item || !this.code.author) {
+        return false;
+      }
+
       let currentUser = auth.getUserId();
       return currentUser == this.item.owner && (!this.code || currentUser == this.code.author.id);
     },
@@ -99,13 +111,14 @@ export default {
   },
   methods: {
     test() {
-      let position;
+      let position, toolbar;
       if(this.type == 'item') {
-        position = this.toolbar - 1;
+        toolbar = this.toolbar - 1;
       } else {
-        position = this.position.split('|').map(coord => parseInt(coord));
+        position = this.position && this.position.split('|').map(coord => parseInt(coord));
+        toolbar = this.toolbar && this.toolbar - 1;
       }
-      editor.test(this.type, position, codemirror.getValue(), this.item);
+      editor.test(this.type, position, toolbar, codemirror.getValue(), this.item);
       editor.markClean();
       this.close();
     },
@@ -131,6 +144,7 @@ export default {
         this.type = null;
         this.position = null;
         this.toolbar = null;
+        this.simpleBlock = false;
       }
     },
     update() {
@@ -179,13 +193,15 @@ export default {
       self.item = data.item;
       self.code = data.code;
       self.type = data.type;
+      self.simpleBlock = data.simpleBlock;
 
       Vue.nextTick(() => {
-        codemirror.setValue(data.item ? data.code.code : data.code);
+        codemirror.setValue((data.simpleBlock || !data.item) ? data.code : data.code.code);
         self.dirty = false;
 
-        if(data.code.unsavedChanges) {
+        if(data.code.testingLocally) {
           editor.markDirty();
+          self.testingLocally = true;
         } else {
           editor.markClean();
         }
