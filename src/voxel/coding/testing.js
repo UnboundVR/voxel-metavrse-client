@@ -28,17 +28,19 @@ export default {
     });
 
     events.on(consts.events.WIPE_TESTING_CODE, () => {
-      for(let key in testingBlocks) {
-        let position = key.split(',').map(coord => parseInt(coord));
-        events.emit(consts.events.RELOAD_CODE, position);
+      if(prompt(`Reset ${Object.keys(testingBlocks).length} blocks with testing code?`)) {
+        for(let key in testingBlocks) {
+          let position = key.split(',').map(coord => parseInt(coord));
+          events.emit(consts.events.RELOAD_CODE, position);
+        }
+
+        let testingBlocksAmount = Object.keys(testingBlocks).length;
+
+        testingBlocks = {};
+        localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
+
+        console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
       }
-
-      let testingBlocksAmount = Object.keys(testingBlocks).length;
-
-      testingBlocks = {};
-      localStorage.setItem('testingBlocks', JSON.stringify(testingBlocks));
-
-      console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
     });
   },
   async testCode(position, code, item) {
