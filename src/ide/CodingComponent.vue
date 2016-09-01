@@ -38,7 +38,6 @@
                 <div>{{code.author.id}} <img class="author-avatar" :src="code.author.avatar"></div>
               </div>
 
-
             </div>
             <div class="gist-info" v-if="!simpleBlock">
 
