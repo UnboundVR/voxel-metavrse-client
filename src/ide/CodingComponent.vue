@@ -12,7 +12,7 @@
         <img v-if="item" class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'">
 
         <span v-if="testingLocally">| This code is being tested locally</span>
-        <span v-if="simpleBlock">| This block had no code</span>
+        <span v-if="simpleBlock && !testingLocally">| This block type had no code</span>
       </h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
@@ -37,6 +37,8 @@
                 <h2>Gist Author</h2>
                 <div>{{code.author.id}} <img class="author-avatar" :src="code.author.avatar"></div>
               </div>
+
+
             </div>
             <div class="gist-info" v-if="!simpleBlock">
 
