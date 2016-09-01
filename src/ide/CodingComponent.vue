@@ -25,7 +25,7 @@
             <button v-if="!simpleBlock && item" @click="saveAs">Fork...</button>
             <button v-if="simpleBlock || !item" @click="saveAs">Save as...</button>
             <a v-if="item && !simpleBlock" target="_blank" :href="code.url">Gist</a>
-            <button v-if="dirty && item && ((type == 'item' && toolbar) || (type == 'block' && position))" @click="test">Test</button>
+            <button v-if="(dirty || simpleBlock) && item && ((type == 'item' && toolbar) || (type == 'block' && position))" @click="test">Test</button>
           </div>
 
           <div v-if="item">
