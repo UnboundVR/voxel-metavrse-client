@@ -19,6 +19,7 @@ export default {
   },
   hasTestingCode: testing.hasTestingCode.bind(testing),
   clearTestingCode: testing.clearTestingCode.bind(testing),
+  getTestingCode: testing.getTestingCode.bind(testing),
   init() {
     testing.init();
     instances.init();

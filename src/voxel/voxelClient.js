@@ -11,7 +11,6 @@ import playerSync from '../playerSync';
 // import events from '../events';
 import loading from '../loading';
 import auth from '../auth';
-import simpleBlockTypes from './simpleBlockTypes';
 
 let initialized = false;
 
@@ -128,6 +127,12 @@ export default {
     });
 
     this.socket.on('set', async (pos, val) => {
+      if(coding.hasTestingCode(pos)) {
+        let testingCode = coding.getTestingCode(pos);
+        console.log(`Another user has changed the block at ${pos}, which had locally testing code. We're thus removing that code. Here's a copy in case you wanna keep it:\n ${testingCode}`);
+        coding.clearTestingCode(pos);
+      }
+
       if(val == 0) {
         coding.removeCode(pos);
         self.engine.setBlock(pos, 0);

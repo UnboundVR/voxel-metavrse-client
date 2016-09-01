@@ -33,12 +33,13 @@ export default {
   },
   storeCode(position, id) {
     blocksWithCode[position.join('|')] = id;
-    scripts.createInstance(position, id);
 
     // if we had existing testing code brought from local storage but it's not activated yet, activate now
     if(testing.hasTestingCode(position) && !testing.hasActivatedTestingCode(position)) {
       let blockType = types.getById(id);
       testing.activateTestingCode(position, blockType);
+    } else {
+      scripts.createInstance(position, id);
     }
   },
   removeCode(position) {
