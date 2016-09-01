@@ -68,9 +68,6 @@ export default {
           if(block != 1 && blockType.code) {
             let coords = getCoords(pos, chunk.dims);
             coding.storeCode(coords, blockType.id);
-          } else if(block != 1) {
-            simpleBlockTypes.store(blockType.material, blockType.id);
-            console.log(`Storing simple type mapping for material ${blockType.material} to type ${blockType.id}`);
           }
         }
       }

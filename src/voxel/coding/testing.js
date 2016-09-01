@@ -10,14 +10,10 @@ export default {
     testingBlocks = JSON.parse(localStorage.getItem('testingBlocks') || '{}');
 
     events.on(consts.events.TEST_CODE, async data => {
-      let {type, position, toolbar, code, item} = data;
+      let {type, position, code, item} = data;
 
       if(type == 'block') {
-        if(position) {
-          await this.testCode(position, code, item);
-        } else {
-          console.log(`Testing block from toolbar not supported yet (wanted to test in #${toolbar})`);
-        }
+        await this.testCode(position, code, item);
       }
     });
 

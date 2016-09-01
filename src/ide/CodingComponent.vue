@@ -24,8 +24,8 @@
             <button v-if="!simpleBlock && item && mine && !outdated" @click="save">Save</button>
             <button v-if="!simpleBlock && item" @click="saveAs">Fork...</button>
             <button v-if="simpleBlock || !item" @click="saveAs">Save as...</button>
-            <a v-if="item" target="_blank" :href="code.url">Gist</a>
-            <button v-if="dirty && item" @click="test">Test</button>
+            <a v-if="item && !simpleBlock" target="_blank" :href="code.url">Gist</a>
+            <button v-if="dirty && item && ((type == 'item' && toolbar) || (type == 'block' && position))" @click="test">Test</button>
           </div>
 
           <div v-if="item">
@@ -116,7 +116,6 @@ export default {
         toolbar = this.toolbar - 1;
       } else {
         position = this.position && this.position.split('|').map(coord => parseInt(coord));
-        toolbar = this.toolbar && this.toolbar - 1;
       }
       editor.test(this.type, position, toolbar, codemirror.getValue(), this.item);
       editor.markClean();

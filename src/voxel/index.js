@@ -5,7 +5,6 @@ import consts from '../constants';
 import events from '../events';
 import playerSync from '../playerSync';
 import permissions from './permissions';
-import simpleBlockTypes from './simpleBlockTypes';
 
 export default {
   async init() {
@@ -21,9 +20,6 @@ export default {
 
       permissions.editChunkPermissions(voxelPosition);
     });
-  },
-  registerSimpleType(blockType) {
-    simpleBlockTypes.store(blockType.material, blockType.id);
   },
   loadMany: types.loadMany.bind(types),
   load: types.load.bind(types),

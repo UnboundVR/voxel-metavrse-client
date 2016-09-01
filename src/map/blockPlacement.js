@@ -34,8 +34,6 @@ export default {
     voxel.removeCode(position);
     if(blockType.code) {
       voxel.storeCode(position, blockType.id);
-    } else {
-      voxel.registerSimpleType(blockType);
     }
 
     events.emit(consts.events.PLACE_ADJACENT, {}, block => block.adjacentTo(position));

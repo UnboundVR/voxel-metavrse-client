@@ -6,6 +6,7 @@ import extend from 'extend';
 import world from '../../map';
 import launchIde from './launchIde';
 import types from '../itemTypes';
+import testing from './testing';
 
 var scriptExecutor = new ScriptExecutor();
 
@@ -19,6 +20,8 @@ var activeItem = null;
 
 export default {
   init() {
+    testing.init();
+
     events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'item') {
         let itemId = payload.id;

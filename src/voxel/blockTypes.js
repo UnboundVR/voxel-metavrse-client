@@ -1,6 +1,7 @@
 import auth from '../auth';
 import coding from './coding';
 import requests from '../requests';
+import simpleBlockTypes from './simpleBlockTypes';
 
 var types = {};
 
@@ -19,6 +20,11 @@ export default {
 
     for(let type of response) {
       types[type.id] = type;
+
+      if(!type.code) {
+        simpleBlockTypes.store(type.material, type.id);
+        console.log(`Storing simple type mapping for material ${type.material} to type ${type.id}`);
+      }
     }
 
     let newItems = response.filter(type => type.code && pendingIds.includes(type.id));
