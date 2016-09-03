@@ -19,6 +19,11 @@ function ChatService() {
   this.sendMessage = function(message) {
     this.socket.emit('message', message);
   };
+
+  this.clientMessage = function(message) {
+    var self = this;
+    this.emit('debugMessage', message);
+  }
 }
 
 util.inherits(ChatService, EventEmitter2.EventEmitter2);

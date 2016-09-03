@@ -2,6 +2,7 @@ import player from 'voxel-player';
 import fly from 'voxel-fly';
 import walk from 'voxel-walk';
 import voxel from '../voxel';
+import chat from '../chat/service';
 
 let avatar, avatarVisible;
 
@@ -39,6 +40,9 @@ export default {
       } else {
         walk.startWalking();
       }
+
+      //console.log('The player position is: ', voxel.engine.getChunkAtPosition(avatar.position).position);
+      //chat.clientMessage({ date: Date.now(), user: 'DEBUG', text: 'The player position is: ' + voxel.engine.getChunkAtPosition(avatar.position).position });
     }
 
     voxel.engine.on('tick', onTick);
