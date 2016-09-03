@@ -8,10 +8,11 @@ import permissions from './permissions';
 
 export default {
   async init() {
+    coding.init();
+
     let engine = await client.init();
     this.engine = engine;
     coding.setVoxelEngine(engine);
-    coding.init();
 
     events.on(consts.events.OPEN_CHUNK_PERMISSIONS, () => {
       let pos = playerSync.getUserPosition();
@@ -27,5 +28,7 @@ export default {
   storeCode: coding.storeCode.bind(coding),
   broadcastSetBlock: client.setBlock.bind(client),
   broadcastRemoveBlock: client.clearBlock.bind(client),
-  hasPermission: permissions.hasPermission.bind(permissions)
+  hasPermission: permissions.hasPermission.bind(permissions),
+  hasTestingCode: coding.hasTestingCode.bind(coding),
+  clearTestingCode: coding.clearTestingCode.bind(coding)
 };
