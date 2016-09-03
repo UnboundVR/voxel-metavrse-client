@@ -13,18 +13,26 @@ export default {
     });
   },
   async placeBlock(position, block) {
-    if(position && voxel.hasPermission(position)) {
+    if(!position) {
+      console.log('No position selected');
+    }
+
+    if(voxel.hasPermission(position)) {
       await voxel.load(block);
       placement.setBlock(position, voxel.getById(block));
     } else {
-      console.log('No permissions ¯\\_(ツ)_/¯');
+      console.log(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
     }
   },
   removeBlock(position) {
-    if(position && voxel.hasPermission(position)) {
+    if(!position) {
+      console.log('No position selected');
+    }
+
+    if(voxel.hasPermission(position)) {
       placement.removeBlock(position);
     } else {
-      console.log('No permissions ¯\\_(ツ)_/¯');
+      console.log(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
     }
   },
   interact(position) {
