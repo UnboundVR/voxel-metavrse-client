@@ -15,6 +15,7 @@ export default {
   async placeBlock(position, block) {
     if(!position) {
       console.log('No position selected');
+      return;
     }
 
     if(voxel.hasPermission(position)) {
@@ -27,6 +28,7 @@ export default {
   removeBlock(position) {
     if(!position) {
       console.log('No position selected');
+      return;
     }
 
     if(voxel.hasPermission(position)) {
