@@ -20,6 +20,7 @@ module.exports = {
     CHANGE_TOOLBAR_ITEM: 'changeToolbarItem',
     TEST_CODE: 'testCode',
     WIPE_TESTING_CODE: 'wipeTestingCode',
+    LOAD_TESTING_CODE: 'loadTestingCode',
     RELOAD_CODE: 'reloadCode'
   },
   github: {
