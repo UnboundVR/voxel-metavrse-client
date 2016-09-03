@@ -53,6 +53,7 @@ export default {
       });
     } catch(err) {
       console.log(`Error creating item code: ${err}`);
+      throw err;
     }
   },
   async edit(item, code, toolbar) {
@@ -109,6 +110,7 @@ export default {
       });
     } catch(err) {
       console.log(`Error updating code: ${err}`);
+      throw err;
     }
   }
 };

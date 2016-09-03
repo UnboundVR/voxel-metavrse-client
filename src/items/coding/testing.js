@@ -3,12 +3,15 @@ import events from '../../events';
 import scripts from './scripts';
 
 let testingItems;
+let toolbarIdMapping;
 
 const LOCAL_STORAGE_TESTING_ITEMS = 'testingItems';
+const LOCAL_STORAGE_TOOLBAR_ID_MAPPING = 'testingCodeToolbarIdMapping';
 
 export default {
   async init() {
     testingItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TESTING_ITEMS) || '{}');
+    toolbarIdMapping = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TOOLBAR_ID_MAPPING) || '{}');
 
     for(let key in testingItems) {
       let toolbar = parseInt(key);
@@ -26,13 +29,13 @@ export default {
     });
 
     events.on(consts.events.CODE_UPDATED, payload => {
-      if(payload.toolbar && this.hasTestingCode(payload.toolbar)) {
+      if(payload.toolbar !== undefined && this.hasTestingCode(payload.toolbar)) {
         this.clearTestingCode(payload.toolbar);
       }
     });
 
     events.on(consts.events.WIPE_TESTING_CODE, payload => {
-      if(payload.toolbar) {
+      if(payload.toolbar !== undefined) {
         this.clearTestingCode(payload.toolbar);
       } else if(payload.all) {
         let amount = Object.keys(testingItems).length;
@@ -59,6 +62,9 @@ export default {
     try {
       this._storeTestingCode(toolbar, code);
       await scripts.loadTestClass(toolbar, code, item);
+
+      toolbarIdMapping[toolbar] = item.id;
+      localStorage.setItem(LOCAL_STORAGE_TOOLBAR_ID_MAPPING, JSON.stringify(toolbarIdMapping));
     } catch(err) {
       console.log('Error executing code', err);
       this._storeTestingCode(toolbar, oldCode);
@@ -71,10 +77,15 @@ export default {
     return !!this.getTestingCode(toolbar);
   },
   clearTestingCode(toolbar) {
+    let itemTypeId = toolbarIdMapping[toolbar];
+
     delete testingItems[toolbar];
     localStorage.setItem(LOCAL_STORAGE_TESTING_ITEMS, JSON.stringify(testingItems));
 
-    events.emit(consts.events.RELOAD_CODE, {type: 'item', toolbar});
+    delete toolbarIdMapping[toolbar];
+    localStorage.setItem(LOCAL_STORAGE_TOOLBAR_ID_MAPPING, JSON.stringify(toolbarIdMapping));
+
+    events.emit(consts.events.RELOAD_CODE, {type: 'item', toolbar, itemTypeId});
   },
   _storeTestingCode(toolbar, code) {
     testingItems[toolbar] = code;

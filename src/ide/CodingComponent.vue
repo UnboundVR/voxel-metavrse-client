@@ -126,7 +126,7 @@ export default {
     clearTestingCode() {
       events.emit(consts.events.WIPE_TESTING_CODE, {
         position: this.position && this.position.split('|').map(coord => parseInt(coord)),
-        toolbar: this.toolbar
+        toolbar: this.toolbar - 1
       });
       editor.markClean();
       this.close();

@@ -9,13 +9,18 @@ export default {
   async init() {
     await testing.init();
 
-    // events.on(consts.events.RELOAD_CODE, payload => {
-    //   let {toolbar, type} = payload;
-    //
-    //   if(type == 'item') {
-    //     console.log(`Item at #${toolbar} reset!`);
-    //   }
-    // });
+    events.on(consts.events.RELOAD_CODE, payload => {
+      let {toolbar, type, itemTypeId} = payload;
+
+      if(type == 'item') {
+        if(scripts.getCurrentToolbar() == toolbar) {
+          scripts.deactivate();
+          let item = types.getById(itemTypeId);
+          scripts.activate(item, toolbar);
+          console.log(`Item at #${toolbar} reset!`);
+        }
+      }
+    });
 
     events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'item') {

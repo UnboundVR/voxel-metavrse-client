@@ -51,6 +51,9 @@ export default {
   get(id) {
     return classes[id].code;
   },
+  getCurrentToolbar() {
+    return currentToolbar;
+  },
   activate(item, toolbar) {
     currentToolbar = toolbar;
 
