@@ -124,7 +124,10 @@ export default {
       this.close();
     },
     clearTestingCode() {
-      events.emit(consts.events.WIPE_TESTING_CODE, {position: this.position.split('|').map(coord => parseInt(coord)), toolbar: this.toolbar});
+      events.emit(consts.events.WIPE_TESTING_CODE, {
+        position: this.position && this.position.split('|').map(coord => parseInt(coord)),
+        toolbar: this.toolbar
+      });
       editor.markClean();
       this.close();
     },

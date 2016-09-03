@@ -54,14 +54,12 @@ export default {
         }
 
         if(confirm(`Reset ${amount} blocks with testing code?`)) {
-          let testingBlocksAmount = Object.keys(testingBlocks).length;
-
           for(let key in testingBlocks) {
             let position = key.split('|').map(coord => parseInt(coord));
             this.clearTestingCode(position);
           }
 
-          console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
+          console.log(`${amount} blocks with testing code reset to default`);
         }
       }
     });
@@ -72,6 +70,7 @@ export default {
     try {
       this._storeTestingCode(position, code);
       await this._activateTestingCode(position, item);
+      
       positionIdMapping[position.join('|')] = item.id;
       localStorage.setItem(LOCAL_STORAGE_POSITION_ID_MAPPING, JSON.stringify(positionIdMapping));
     } catch(err) {
@@ -89,7 +88,7 @@ export default {
     delete positionIdMapping[position.join('|')];
     localStorage.setItem(LOCAL_STORAGE_POSITION_ID_MAPPING, JSON.stringify(positionIdMapping));
 
-    events.emit(consts.events.RELOAD_CODE, position);
+    events.emit(consts.events.RELOAD_CODE, {type: 'block', position});
   },
   hasTestingCode(position) {
     return !!this.getTestingCode(position);

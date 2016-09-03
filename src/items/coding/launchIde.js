@@ -3,9 +3,11 @@ import inventory from '../../inventory';
 import ide from '../../ide';
 import events from '../../events';
 import consts from '../../constants';
+import testing from './testing';
+import clone from 'clone';
 
 export default {
-  async create(position) {
+  async create(toolbar) {
     let code =
 `export default class NewItem {
   constructor(world, metadata) {
@@ -30,7 +32,7 @@ export default {
 `;
     let data = await ide.open({
       code: {code},
-      toolbar: position,
+      toolbar,
       type: 'item'
     });
 
@@ -46,18 +48,24 @@ export default {
       events.emit(consts.events.CODE_UPDATED, {
         newId: newItemType.id,
         type: 'item',
-        toolbar: position,
+        toolbar,
         operation: consts.coding.OPERATIONS.CREATE
       });
     } catch(err) {
       console.log(`Error creating item code: ${err}`);
     }
   },
-  async edit(item, code, position) {
+  async edit(item, code, toolbar) {
+    if(testing.hasTestingCode(toolbar)) {
+      code = clone(code);
+      code.testingLocally = true;
+      code.code = testing.getTestingCode(toolbar);
+    }
+
     let data = await ide.open({
       item,
       code,
-      toolbar: position,
+      toolbar,
       type: 'item'
     });
 
@@ -96,7 +104,7 @@ export default {
         oldId: item.id,
         newId: updatedItemType.id,
         type: 'item',
-        toolbar: position,
+        toolbar,
         operation
       });
     } catch(err) {

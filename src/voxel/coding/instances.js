@@ -8,8 +8,10 @@ var blocksWithCode = {};
 
 export default {
   init() {
-    events.on(consts.events.RELOAD_CODE, position => {
-      if(this.hasCode(position)) {
+    events.on(consts.events.RELOAD_CODE, payload => {
+      let {position, type} = payload;
+
+      if(type == 'block' && this.hasCode(position)) {
         let blockTypeId = this.getBlockTypeId(position);
         scripts.createInstance(position, blockTypeId);
         console.log(`Code of block of type ${blockTypeId} at ${position} reset!`);

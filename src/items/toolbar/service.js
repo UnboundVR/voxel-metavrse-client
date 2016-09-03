@@ -147,9 +147,10 @@ export default {
   },
   _refreshSelected() {
     itemCoding.deactivate();
+
     this.selectedItem = this.items[this.selectedPosition];
     if(this.selectedItem != interact && this.selectedItem != nothing && !this.selectedItem.isBlock) {
-      itemCoding.activate(this.selectedItem);
+      itemCoding.activate(this.selectedItem, this.selectedPosition - 1);
     }
   },
   isAdjacentActive() {
