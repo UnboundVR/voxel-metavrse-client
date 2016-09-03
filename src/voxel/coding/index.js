@@ -7,6 +7,7 @@ import types from '../blockTypes';
 import extend from 'extend';
 import testing from './testing';
 import simpleBlockTypes from '../simpleBlockTypes';
+import clone from 'clone';
 
 let voxelEngine;
 
@@ -38,6 +39,7 @@ export default {
             extend(data, instances.getCode(position)); // gets code and blockType properties
 
             if(testingCode) {
+              data.code = clone(data.code);
               data.code.code = testingCode;
               data.code.testingLocally = true;
             }

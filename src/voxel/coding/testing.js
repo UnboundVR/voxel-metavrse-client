@@ -42,23 +42,27 @@ export default {
       }
     });
 
-    events.on(consts.events.WIPE_TESTING_CODE, () => {
-      let amount = Object.keys(testingBlocks).length;
+    events.on(consts.events.WIPE_TESTING_CODE, payload => {
+      if(payload.position) {
+        this.clearTestingCode(payload.position);
+      } else if(payload.all) {
+        let amount = Object.keys(testingBlocks).length;
 
-      if(amount == 0) {
-        console.log('No testing blocks to clear.');
-        return;
-      }
-
-      if(confirm(`Reset ${amount} blocks with testing code?`)) {
-        let testingBlocksAmount = Object.keys(testingBlocks).length;
-
-        for(let key in testingBlocks) {
-          let position = key.split('|').map(coord => parseInt(coord));
-          this.clearTestingCode(position);
+        if(amount == 0) {
+          console.log('No testing blocks to clear.');
+          return;
         }
 
-        console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
+        if(confirm(`Reset ${amount} blocks with testing code?`)) {
+          let testingBlocksAmount = Object.keys(testingBlocks).length;
+
+          for(let key in testingBlocks) {
+            let position = key.split('|').map(coord => parseInt(coord));
+            this.clearTestingCode(position);
+          }
+
+          console.log(`${testingBlocksAmount} blocks with testing code reset to default`);
+        }
       }
     });
   },

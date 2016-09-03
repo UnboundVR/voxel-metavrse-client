@@ -53,7 +53,7 @@ export default {
       events.emit(consts.events.OPEN_CHUNK_PERMISSIONS);
     },
     clearTestingCode() {
-      events.emit(consts.events.WIPE_TESTING_CODE);
+      events.emit(consts.events.WIPE_TESTING_CODE, {all: true});
     },
     goToProfile() {
       console.log('Profile page TBC');

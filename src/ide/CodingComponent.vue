@@ -26,6 +26,7 @@
             <button v-if="simpleBlock || !item" @click="saveAs">Save as...</button>
             <a v-if="item && !simpleBlock" target="_blank" :href="code.url">Gist</a>
             <button v-if="(dirty || simpleBlock) && item && ((type == 'item' && toolbar) || (type == 'block' && position))" @click="test">Test</button>
+            <button v-if="testingLocally" @click="clearTestingCode">Clear testing</button>
           </div>
 
           <div v-if="item">
@@ -119,6 +120,11 @@ export default {
         position = this.position && this.position.split('|').map(coord => parseInt(coord));
       }
       editor.test(this.type, position, toolbar, codemirror.getValue(), this.item);
+      editor.markClean();
+      this.close();
+    },
+    clearTestingCode() {
+      events.emit(consts.events.WIPE_TESTING_CODE, {position: this.position.split('|').map(coord => parseInt(coord)), toolbar: this.toolbar});
       editor.markClean();
       this.close();
     },
