@@ -30,7 +30,7 @@ export default {
 
     events.on(consts.events.CODE_UPDATED, payload => {
       if(payload.toolbar !== undefined && this.hasTestingCode(payload.toolbar)) {
-        this.clearTestingCode(payload.toolbar);
+        this.clearTestingCode(payload.toolbar, false);
       }
     });
 
@@ -76,7 +76,9 @@ export default {
   hasTestingCode(toolbar) {
     return !!this.getTestingCode(toolbar);
   },
-  clearTestingCode(toolbar) {
+  clearTestingCode(toolbar, reload) {
+    reload = reload !== false;
+
     let itemTypeId = toolbarIdMapping[toolbar];
 
     delete testingItems[toolbar];
@@ -85,7 +87,9 @@ export default {
     delete toolbarIdMapping[toolbar];
     localStorage.setItem(LOCAL_STORAGE_TOOLBAR_ID_MAPPING, JSON.stringify(toolbarIdMapping));
 
-    events.emit(consts.events.RELOAD_CODE, {type: 'item', toolbar, itemTypeId});
+    if(reload) {
+      events.emit(consts.events.RELOAD_CODE, {type: 'item', toolbar, itemTypeId});
+    }
   },
   _storeTestingCode(toolbar, code) {
     testingItems[toolbar] = code;
