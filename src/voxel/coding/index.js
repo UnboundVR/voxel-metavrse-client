@@ -8,6 +8,7 @@ import extend from 'extend';
 import testing from './testing';
 import simpleBlockTypes from '../simpleBlockTypes';
 import clone from 'clone';
+import chat from '../../chat';
 
 let voxelEngine;
 
@@ -62,7 +63,7 @@ export default {
 
               launchIde.openNew(data);
             } else {
-              console.log(`Block at ${position} with material ${material} does not have a blockType associated, so we cannot edit its code`);
+              chat.debug(`Block at ${position} with material ${material} does not have a blockType associated, so we cannot edit its code`);
             }
           }
         } else if(payload.id) {

@@ -1,6 +1,7 @@
 import querystring from 'querystring';
 import avatar from './avatar';
 import requests from '../requests';
+import chat from '../chat';
 
 function extractPosition() {
   let qs = querystring.parse(location.search.substring(1));
@@ -18,7 +19,7 @@ export default {
     let position = extractPosition();
 
     if(position) {
-      console.log(`Teleporting user to ${position.join('|')}`);
+      chat.debug(`Teleporting user to ${position.join('|')}`);
       avatar.move(position);
     }
   },
@@ -41,11 +42,11 @@ export default {
           throw new Error(bitlyResponse.status_txt);
         }
       } catch(err) {
-        console.log('Failed to call bitly for link shortening, using long link');
+        chat.debug('Failed to call bitly for link shortening, using long link');
       }
     }
 
-    // TODO display a popup in the screen and allow copying to clipboard using something like https://clipboardjs.com/
-    console.log(link);
+    // TODO display a popup in the screen and/or allow copying to clipboard using something like https://clipboardjs.com/
+    chat.debug(link);
   }
 };

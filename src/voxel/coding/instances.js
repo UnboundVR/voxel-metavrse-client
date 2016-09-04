@@ -3,6 +3,7 @@ import types from '../blockTypes';
 import testing from './testing';
 import consts from '../../constants';
 import events from '../../events';
+import chat from '../../chat';
 
 var blocksWithCode = {};
 
@@ -16,7 +17,7 @@ export default {
         if(this.hasCode(position)) {
           let blockTypeId = this.getBlockTypeId(position);
           scripts.createInstance(position, blockTypeId);
-          console.log(`Code of block of type ${blockTypeId} at ${position} reset!`);
+          chat.debug(`Code of block of type ${blockTypeId} at ${position} reset!`);
         } else {
           scripts.removeInstance(position);
         }

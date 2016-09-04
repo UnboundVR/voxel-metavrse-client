@@ -13,6 +13,7 @@ import auth from '../auth';
 import clone from 'clone';
 import events from '../events';
 import coordsHelper from './voxelCoordsHelper';
+import chat from '../chat';
 
 let initialized = false;
 
@@ -24,7 +25,7 @@ export default {
     this.socket = io.connect(consts.SERVER_ADDRESS() + '/voxel');
     this.socket.on('disconnect', () => {
       // TODO handle disconnection
-      console.log('Disconnected from server...');
+      chat.debug('Disconnected from server...');
     });
     return await this.bindEvents();
   },
@@ -92,7 +93,7 @@ export default {
         if(initialChunksAmount > initialChunksLoadedAmount) {
           loadingResource.error(`Error getting chunk: ${err}`);
         }
-        console.log('Error getting chunk', err);
+        chat.error('Error getting chunk', err);
       }
     }
 
@@ -122,7 +123,7 @@ export default {
     this.socket.on('set', async (pos, val) => {
       if(coding.hasTestingCode(pos)) {
         let testingCode = coding.getTestingCode(pos);
-        console.log(`Another user has changed the block at ${pos}, which had locally testing code. We're thus removing that code. Here's a copy in case you wanna keep it:\n ${testingCode}`);
+        chat.debug(`Another user has changed the block at ${pos}, which had locally testing code. We're thus removing that code. Here's a copy in case you wanna keep it:\n ${testingCode}`);
         coding.clearTestingCode(pos);
       }
 
@@ -151,7 +152,7 @@ export default {
 
         if(initialized) {
           if(loadingResource.finished) {
-            console.log('Reconnecting to server...');
+            chat.debug('Reconnecting to server...');
           } else {
             loadingResource.error('Server got disconnected while loading, please refresh');
             reject(new Error('Server got disconnected while loading'));

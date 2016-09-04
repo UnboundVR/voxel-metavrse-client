@@ -4,6 +4,7 @@ import events from '../../events';
 import consts from '../../constants';
 import extend from 'extend';
 import world from '../../map';
+import chat from '../../chat';
 
 var scriptExecutor = new ScriptExecutor();
 
@@ -22,11 +23,11 @@ export default {
     let code = codeObj.code;
     let name = itemType.name;
 
-    console.log(`Loading code of item ${name} with ID ${classId}`);
+    chat.debug(`Loading code of item ${name} with ID ${classId}`);
     await scriptExecutor.loadClass(classId, code);
 
     classes[itemType.id] = {itemType, code: codeObj};
-    console.log(`Code of item ${name} loaded`);
+    chat.debug(`Code of item ${name} loaded`);
   },
   async loadTestClass(toolbar, code, item) {
     let classId = `itemTesting-${toolbar}`;

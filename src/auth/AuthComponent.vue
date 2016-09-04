@@ -27,6 +27,7 @@
 import service from './service';
 import consts from '../constants';
 import events from '../events';
+import chat from '../chat';
 
 export default {
   name: 'AuthComponent',
@@ -56,7 +57,7 @@ export default {
       events.emit(consts.events.WIPE_TESTING_CODE, {all: true});
     },
     goToProfile() {
-      console.log('Profile page TBC');
+      chat.debug('Profile page TBC');
     }
   }
 };

@@ -5,6 +5,7 @@ import Block from '../block';
 import ScriptExecutor from 'script-executor';
 import coding from '../../coding';
 import uuid from 'node-uuid';
+import chat from '../../chat';
 
 let classes = {};
 let scriptExecutor = new ScriptExecutor();
@@ -51,11 +52,11 @@ async function loadClass(blockType) {
   let classId = getClassId(codeObj);
   let code = codeObj.code;
 
-  console.log(`Loading code of block ${name} with ID ${classId}`);
+  chat.debug(`Loading code of block ${name} with ID ${classId}`);
   await scriptExecutor.loadClass(classId, code);
 
   classes[blockType.id] = {blockType, code: codeObj};
-  console.log(`Code of block ${name} loaded`);
+  chat.debug(`Code of block ${name} loaded`);
 }
 
 function createInstance(position, blockTypeId) {

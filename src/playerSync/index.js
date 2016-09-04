@@ -6,6 +6,7 @@ import consts from '../constants';
 import events from '../events';
 import location from './location';
 import loading from '../loading';
+import chat from '../chat';
 
 let socket;
 let initialized = false;
@@ -18,7 +19,7 @@ export default {
 
     socket = io.connect(consts.SERVER_ADDRESS() + '/playerSync');
     socket.on('connect', () => {
-      console.log(`Got playerSync id ${socket.id} from server`);
+      chat.debug(`Got playerSync id ${socket.id} from server`);
       self.playerId = socket.id;
     });
 
@@ -27,7 +28,7 @@ export default {
 
     socket.on('settings', settings => {
       if(initialized) {
-        console.log('playerSync settings already received, ignoring this time');
+        chat.debug('playerSync settings already received, ignoring this time');
         return;
       } else {
         loadingResource.update('Got player sync settings...');

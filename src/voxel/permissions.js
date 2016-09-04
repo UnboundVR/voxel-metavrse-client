@@ -1,11 +1,12 @@
 import client from './voxelClient';
 import requests from '../requests';
 import auth from '../auth';
+import chat from '../chat';
 
 export default {
   async editChunkPermissions(pos) {
     if(!this.hasPermission(pos)) {
-      console.log('No permissions ¯\\_(ツ)_/¯');
+      chat.error(`No permissions at ${pos.join('|')} ¯\\_(ツ)_/¯`);
       return;
     }
 
@@ -22,7 +23,7 @@ export default {
         headers: auth.getAuthHeaders()
       });
 
-      console.log(`Added ${newOwnerId} to list of owners`);
+      chat.debug(`Added ${newOwnerId} to list of owners`);
     }
   },
   hasPermission(pos) {

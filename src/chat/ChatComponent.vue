@@ -2,7 +2,7 @@
   <div id="chat-component" v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
     <ul id="chat-component-message-list" v-el:message-list>
       <li class="chat-component-message-list-message" v-for='message in messageList'>
-        <span class="chat-component-message-list-message-user" v-el:messageuser>{{ [message.user] }}</span>:
+        <span class="chat-component-message-list-message-user" v-el:messageuser>{{ message.user }}</span><span>:
         <span class="chat-component-message-list-message-message">{{ message.text }}</span>
         <ui-tooltip :trigger="$els.messageuser" :position="tooltipPosition" :content="message.date | moment 'dddd, h:mm:ss a'"></ui-tooltip>
       </li>

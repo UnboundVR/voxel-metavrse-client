@@ -5,12 +5,13 @@
 /* global eslint */
 
 import config from './config.json';
+import chat from '../../chat';
 
 export default {
   register() {
     CodeMirror.registerHelper('lint', 'javascript', text => {
       if(!window.eslint) {
-        console.log('ESLint is not loaded yet, so we are not linting until the script finishes loading');
+        chat.debug('ESLint is not loaded yet, so we are not linting until the script finishes loading');
         return [];
       }
 

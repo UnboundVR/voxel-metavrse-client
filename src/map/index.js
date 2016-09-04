@@ -4,17 +4,18 @@ import consts from '../constants';
 import placement from './blockPlacement';
 import auth from '../auth';
 import playerSync from '../playerSync';
+import chat from '../chat';
 
 export default {
   init() {
     events.on(consts.events.PLACE_BLOCK, async data => {
       await this.placeBlock(data.position, data.block);
-      console.log(`Changed block at ${data.position}`);
+      chat.debug(`Changed block at ${data.position}`);
     });
   },
   async placeBlock(position, block) {
     if(!position) {
-      console.log('No position selected');
+      chat.debug(`No position selected when trying to put block ${block}`);
       return;
     }
 
@@ -22,19 +23,19 @@ export default {
       await voxel.load(block);
       placement.setBlock(position, voxel.getById(block));
     } else {
-      console.log(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
+      chat.error(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
     }
   },
   removeBlock(position) {
     if(!position) {
-      console.log('No position selected');
+      chat.debug('No position selected');
       return;
     }
 
     if(voxel.hasPermission(position)) {
       placement.removeBlock(position);
     } else {
-      console.log(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
+      chat.error(`No permissions at ${position.join('|')} ¯\\_(ツ)_/¯`);
     }
   },
   interact(position) {
@@ -42,7 +43,8 @@ export default {
   },
   codeBlock(position) {
     if(!auth.isLogged()) {
-      return Promise.reject('Please login to be able to edit code');
+      chat.error('Please login to be able to edit code');
+      return;
     }
 
     if(position && voxel.hasPermission(position)) {
@@ -51,10 +53,12 @@ export default {
         map: position
       });
     } else {
-      console.log('No permissions ¯\\_(ツ)_/¯');
+      chat.error.log('No permissions at ${position.join('|')}  ¯\\_(ツ)_/¯');
     }
   },
   teleport(position) {
     playerSync.moveUser(position);
-  }
+  },
+  debug: chat.debug.bind(chat),
+  error: chat.error.bind(chat)
 };

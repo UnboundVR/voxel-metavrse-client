@@ -2,6 +2,7 @@ import ide from '../../ide';
 import classes from './classes';
 import events from '../../events';
 import consts from '../../constants';
+import chat from '../../chat';
 
 async function openNew(data) {
   let code =
@@ -12,15 +13,15 @@ async function openNew(data) {
   }
 
   onInteract() {
-    console.log('such interact. wow.');
+    this.world.debug('such interact. wow.');
   }
 
   onHover() {
-    console.log('very hover');
+    this.world.debug('very hover');
   }
 
   onDestroy() {
-    console.log(':(');
+    this.world.debug(':(');
   }
 }`; // TODO bring from server or something
 
@@ -36,7 +37,7 @@ async function openNew(data) {
     });
 
     let newBlockType = await classes.create(data.position, material, result.value, result.name);
-    console.log('New code was created correctly with ID: ' + newBlockType.code.id);
+    chat.debug('New code was created correctly with ID: ' + newBlockType.code.id);
 
     events.emit(consts.events.CODE_UPDATED, {
       operation: consts.coding.OPERATIONS.CREATE,
@@ -46,7 +47,7 @@ async function openNew(data) {
       type: 'block'
     });
   } catch(err) {
-    console.log('Error storing code: ' + err);
+    chat.error('Error storing code', err);
   }
 }
 
@@ -65,11 +66,11 @@ async function openExisting(data) {
     if(result.name) {
       operation = consts.coding.OPERATIONS.FORK;
       newBlockType = await classes.fork(data.position, data.blockType, result.value, result.name);
-      console.log(`Existing code was forked with ID ${newBlockType.code.id}`);
+      chat.debug(`Existing code was forked with ID ${newBlockType.code.id}`);
     } else {
       operation = consts.coding.OPERATIONS.UPDATE;
       newBlockType = await classes.modify(data.position, data.blockType, result.value);
-      console.log('Existing code was updated correctly');
+      chat.debug('Existing code was updated correctly');
       data.blockType.newerVersion = newBlockType.id;
     }
 
@@ -82,7 +83,7 @@ async function openExisting(data) {
       type: 'block'
     });
   } catch(err) {
-    console.log('Error storing code: ' + err);
+    chat.error('Error storing code', err);
   }
 }
 

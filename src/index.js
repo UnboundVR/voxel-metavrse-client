@@ -13,7 +13,7 @@ import map from './map';
 let qs = querystring.parse(location.search.substring(1));
 if(qs.server) {
   window.SERVER_ADDRESS = qs.server;
-  console.log('Using server', window.SERVER_ADDRESS);
+  chat.debug(`Using server ${window.SERVER_ADDRESS}`);
 }
 
 function appendToContainer(engine) {
@@ -42,9 +42,9 @@ async function init() {
     appendToContainer(voxel.engine);
     rootVue.init();
 
-    console.log('Finished initializing!');
+    chat.debug('Finished initializing!');
   } catch(err) {
-    console.log('Error initializing', err);
+    chat.error('Error initializing', err);
     loading.finish(false);
   }
 }

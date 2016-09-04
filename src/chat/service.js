@@ -20,9 +20,12 @@ function ChatService() {
     this.socket.emit('message', message);
   };
 
-  this.clientMessage = function(message) {
-    var self = this;
-    this.emit('debugMessage', message);
+  this.debugMessage = function(text) {
+    this.emit('debugMessage', {type: 'info', text, date: new Date(), user: 'System'});
+  }
+
+  this.errorMessage = function(text) {
+    this.emit('debugMessage', {type: 'error', text, date: new Date(), user: 'System'});
   }
 }
 

@@ -5,6 +5,7 @@ import events from '../../events';
 import consts from '../../constants';
 import testing from './testing';
 import clone from 'clone';
+import chat from '../../chat';
 
 export default {
   async create(toolbar) {
@@ -13,20 +14,20 @@ export default {
   constructor(world, metadata) {
     this.world = world;
     this.metadata = metadata;
-    console.log(\`activating \${this.metadata.name}\`);
+    this.world.debug(\`activating \${this.metadata.name}\`);
   }
 
   onExecute(position) {
-    console.log(\`executing \${this.metadata.name} on \${position}\`);
+    this.world.debug(\`executing \${this.metadata.name} on \${position}\`);
   }
 
   onHover(payload) {
     let position = payload.position.join('|');
-    console.log(\`\${this.metadata.name} hovering \${position}...\`);
+    this.world.debug(\`\${this.metadata.name} hovering \${position}...\`);
   }
 
   onDestroy() {
-    console.log(\`deactivating \${this.metadata.name}\`);
+    this.world.debug(\`deactivating \${this.metadata.name}\`);
   }
 }
 `;
@@ -52,7 +53,7 @@ export default {
         operation: consts.coding.OPERATIONS.CREATE
       });
     } catch(err) {
-      console.log(`Error creating item code: ${err}`);
+      chat.error('Error creating item code', err);
       throw err;
     }
   },
@@ -96,9 +97,9 @@ export default {
 
       if(operation == consts.coding.OPERATIONS.UPDATE) {
         item.newerVersion = updatedItemType.id;
-        console.log('Existing code was updated correctly');
+        chat.debug('Existing code was updated correctly');
       } else {
-        console.log('Existing code was forked correctly');
+        chat.debug('Existing code was forked correctly');
       }
 
       events.emit(consts.events.CODE_UPDATED, {
@@ -109,7 +110,7 @@ export default {
         operation
       });
     } catch(err) {
-      console.log(`Error updating code: ${err}`);
+      chat.error('Error updating code', err);
       throw err;
     }
   }

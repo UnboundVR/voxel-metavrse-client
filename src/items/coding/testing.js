@@ -1,6 +1,7 @@
 import consts from '../../constants';
 import events from '../../events';
 import scripts from './scripts';
+import chat from '../../chat';
 
 let testingItems;
 let toolbarIdMapping;
@@ -23,7 +24,7 @@ export default {
       let {type, toolbar, code, item} = data;
 
       if(type == 'item') {
-        console.log(`Testing item at #${toolbar}`);
+        chat.debug(`Testing item at #${toolbar}`);
         await this.testCode(toolbar, code, item);
       }
     });
@@ -41,7 +42,7 @@ export default {
         let amount = Object.keys(testingItems).length;
 
         if(amount == 0) {
-          console.log('No testing items to clear.');
+          chat.debug('No testing items to clear.');
           return;
         }
 
@@ -51,7 +52,7 @@ export default {
             this.clearTestingCode(toolbar);
           }
 
-          console.log(`${amount} blocks with testing code reset to default`);
+          chat.debug(`${amount} blocks with testing code reset to default`);
         }
       }
     });
@@ -66,7 +67,7 @@ export default {
       toolbarIdMapping[toolbar] = item.id;
       localStorage.setItem(LOCAL_STORAGE_TOOLBAR_ID_MAPPING, JSON.stringify(toolbarIdMapping));
     } catch(err) {
-      console.log('Error executing code', err);
+      chat.error('Error executing code', err);
       this._storeTestingCode(toolbar, oldCode);
     }
   },

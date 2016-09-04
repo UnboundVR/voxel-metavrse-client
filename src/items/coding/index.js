@@ -4,6 +4,7 @@ import launchIde from './launchIde';
 import types from '../itemTypes';
 import testing from './testing';
 import scripts from './scripts';
+import chat from '../../chat';
 
 export default {
   async init() {
@@ -17,7 +18,7 @@ export default {
           scripts.deactivate();
           let item = types.getById(itemTypeId);
           scripts.activate(item, toolbar);
-          console.log(`Item at #${toolbar} reset!`);
+          chat.debug(`Item at #${toolbar} reset!`);
         }
       }
     });

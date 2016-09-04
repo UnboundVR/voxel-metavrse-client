@@ -2,6 +2,7 @@ import auth from '../auth';
 import coding from './coding';
 import requests from '../requests';
 import simpleBlockTypes from './simpleBlockTypes';
+import chat from '../chat';
 
 var types = {};
 
@@ -23,7 +24,7 @@ export default {
 
       if(!type.code) {
         simpleBlockTypes.store(type.material, type.id);
-        console.log(`Storing simple type mapping for material ${type.material} to type ${type.id}`);
+        chat.debug(`Storing simple type mapping for material ${type.material} to type ${type.id}`);
       }
     }
 

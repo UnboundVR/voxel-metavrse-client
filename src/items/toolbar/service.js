@@ -7,6 +7,7 @@ import requests from '../../requests';
 import itemCoding from '../coding';
 import extend from 'extend';
 import loading from '../../loading';
+import chat from '../../chat';
 
 import events from '../../events';
 
@@ -97,7 +98,7 @@ export default {
         type: data.type
       });
 
-      console.log(`Changed toolbar item at position ${data.position}`);
+      chat.debug(`Changed toolbar item at position ${data.position}`);
     });
 
     events.on(consts.events.CODE_UPDATED, async payload => {
@@ -121,7 +122,7 @@ export default {
 
         await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
 
-        console.log('Toolbar item modified!');
+        chat.debug(`Toolbar item at ${position} modified!`);
       }
     });
 
