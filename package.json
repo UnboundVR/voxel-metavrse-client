@@ -43,6 +43,7 @@
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
     "gulp-util": "^3.0.7",
+    "keen-ui": "^0.8.9",
     "localenvify": "^1.0.1",
     "lodash.assign": "^4.0.9",
     "npm-run-all": "^2.3.0",
