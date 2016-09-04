@@ -4,9 +4,10 @@ import world from '../../map';
 import Block from '../block';
 import ScriptExecutor from 'script-executor';
 import coding from '../../coding';
+import uuid from 'node-uuid';
 
-var classes = {};
-var scriptExecutor = new ScriptExecutor();
+let classes = {};
+let scriptExecutor = new ScriptExecutor();
 
 scriptExecutor.wireEvents(events, [
   consts.events.HOVER,
@@ -22,6 +23,25 @@ function getId(pos) {
 
 function getClassId(codeObj) {
   return `${codeObj.id}-${codeObj.revision.id}`;
+}
+
+function getTestClassId(position) {
+  let instanceId = getId(position);
+  return `temp-${instanceId}-${uuid.v4()}`;
+}
+
+async function loadTestClass(position, code) {
+  let id = getTestClassId(position);
+  await scriptExecutor.loadClass(id, code);
+
+  return id;
+}
+
+function testCode(classId, position, blockType) {
+  removeInstance(position);
+
+  let block = new Block(position, blockType);
+  scriptExecutor.createInstance(getId(position), classId, {metadata: block, api: world});
 }
 
 async function loadClass(blockType) {
@@ -71,6 +91,8 @@ function getCode(id) {
 }
 
 export default {
+  testCode,
+  loadTestClass,
   createInstance,
   removeInstance,
   getCode,

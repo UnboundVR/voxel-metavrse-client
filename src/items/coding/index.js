@@ -1,24 +1,27 @@
-import coding from '../../coding';
-import ScriptExecutor from 'script-executor';
 import events from '../../events';
 import consts from '../../constants';
-import extend from 'extend';
-import world from '../../map';
 import launchIde from './launchIde';
 import types from '../itemTypes';
-
-var scriptExecutor = new ScriptExecutor();
-
-scriptExecutor.wireEvents(events, [
-  consts.events.HOVER,
-  consts.events.LEAVE
-]);
-
-var classes = {};
-var activeItem = null;
+import testing from './testing';
+import scripts from './scripts';
 
 export default {
-  init() {
+  async init() {
+    await testing.init();
+
+    events.on(consts.events.RELOAD_CODE, payload => {
+      let {toolbar, type, itemTypeId} = payload;
+
+      if(type == 'item') {
+        if(scripts.getCurrentToolbar() == toolbar) {
+          scripts.deactivate();
+          let item = types.getById(itemTypeId);
+          scripts.activate(item, toolbar);
+          console.log(`Item at #${toolbar} reset!`);
+        }
+      }
+    });
+
     events.on(consts.events.EDIT_CODE, async payload => {
       if(payload.type == 'item') {
         let itemId = payload.id;
@@ -34,43 +37,25 @@ export default {
     });
   },
   async registerItemType(itemType) {
-    let codeObj = await coding.get(itemType.code.id, itemType.code.revision);
-    let classId = `${codeObj.id}-${codeObj.revision.id}`;
-    let code = codeObj.code;
-    let name = itemType.name;
-
-    console.log(`Loading code of item ${name} with ID ${classId}`);
-    await scriptExecutor.loadClass(classId, code);
-
-    classes[itemType.id] = {itemType, code: codeObj};
-    console.log(`Code of item ${name} loaded`);
+    await scripts.registerItemType(itemType);
+  },
+  activate(item, toolbarPosition) {
+    if(testing.hasTestingCode(toolbarPosition)) {
+      scripts.testCode(item, toolbarPosition);
+    } else {
+      scripts.activate(item, toolbarPosition);
+    }
   },
   get(id) {
-    return classes[id].code;
-  },
-  activate(item) {
-    let codeObj = classes[item.id].code;
-    let classId = `${codeObj.id}-${codeObj.revision.id}`;
-
-    let metadata = extend({}, item, {
-      matchesPosition: () => true
-    });
-
-    scriptExecutor.createInstance(item.id, classId, {api: world, metadata});
-    activeItem = item.id;
+    return scripts.get(id);
   },
   deactivate() {
-    if(activeItem) {
-      let item = scriptExecutor.getInstance(activeItem);
-      item.onDestroy && item.onDestroy();
-      scriptExecutor.removeInstance(activeItem);
-      activeItem = null;
-    }
+    scripts.deactivate();
   },
   execute(position) {
-    if(activeItem) {
-      let item = scriptExecutor.getInstance(activeItem);
-      item.onExecute && item.onExecute(position);
-    }
+    scripts.execute(position);
+  },
+  hasTestingCode(toolbarPosition) {
+    return testing.hasTestingCode(toolbarPosition);
   }
 };

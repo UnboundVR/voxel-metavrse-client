@@ -3,8 +3,8 @@ import classes from './classes';
 import events from '../../events';
 import consts from '../../constants';
 
-var openNew = function(data) {
-  var code =
+async function openNew(data) {
+  let code =
 `export default class SuchBlockBehavior {
   constructor(world, block) {
     this.world = world;
@@ -12,7 +12,7 @@ var openNew = function(data) {
   }
 
   onInteract() {
-    alert('such interact. wow.');
+    console.log('such interact. wow.');
   }
 
   onHover() {
@@ -25,56 +25,66 @@ var openNew = function(data) {
 }`; // TODO bring from server or something
 
   let material = data.material || 2; // default material for newly created items is "code"
-
-  return ide.open({position: data.position, code}).then(result => {
-    return classes.create(data.position, material, result.value, result.name).then(newBlockType => {
-      alert('New code was created correctly with ID: ' + newBlockType.code.id);
-      events.emit(consts.events.CODE_UPDATED, {
-        operation: consts.coding.OPERATIONS.CREATE,
-        newId: newBlockType.id,
-        map: data.position,
-        toolbar: data.toolbar,
-        type: 'block'
-      });
-    }, err => {
-      alert('Error storing code: ' + err);
+  try {
+    let result = await ide.open({
+      position: data.position,
+      toolbar: data.toolbar,
+      code: data.code || {code},
+      item: data.blockType,
+      type: 'block',
+      simpleBlock: true
     });
-  });
-};
 
-var openExisting = function(data) {
-  return ide.open({position: data.position, item: data.blockType, code: data.code}).then(result => {
-    if(result.name) {
-      return classes.fork(data.position, data.blockType, result.value, result.name).then(newBlockType => {
-        alert('Existing code was forked with ID: ' + newBlockType.code.id);
-        events.emit(consts.events.CODE_UPDATED, {
-          operation: consts.coding.OPERATIONS.FORK,
-          newId: newBlockType.id,
-          oldId: data.blockType.id,
-          map: data.position,
-          toolbar: data.toolbar,
-          type: 'block'
-        });
-      }, err => {
-        alert('Error storing code: ' + err);
-      });
-    } else {
-      return classes.modify(data.position, data.blockType, result.value).then((newBlockType) => {
-        alert('Existing code was updated correctly');
-        events.emit(consts.events.CODE_UPDATED, {
-          operation: consts.coding.OPERATIONS.UPDATE,
-          newId: newBlockType.id,
-          oldId: data.blockType.id,
-          map: data.position,
-          toolbar: data.toolbar,
-          type: 'block'
-        });
-      }, err => {
-        alert('Error storing code: ' + err);
-      });
-    }
+    let newBlockType = await classes.create(data.position, material, result.value, result.name);
+    console.log('New code was created correctly with ID: ' + newBlockType.code.id);
+
+    events.emit(consts.events.CODE_UPDATED, {
+      operation: consts.coding.OPERATIONS.CREATE,
+      newId: newBlockType.id,
+      map: data.position,
+      toolbar: data.toolbar,
+      type: 'block'
+    });
+  } catch(err) {
+    console.log('Error storing code: ' + err);
+  }
+}
+
+async function openExisting(data) {
+  let result = await ide.open({
+    position: data.position,
+    toolbar: data.toolbar,
+    item: data.blockType,
+    code: data.code,
+    type: 'block',
+    simpleBlock: false
   });
-};
+
+  try {
+    let operation, newBlockType;
+    if(result.name) {
+      operation = consts.coding.OPERATIONS.FORK;
+      newBlockType = await classes.fork(data.position, data.blockType, result.value, result.name);
+      console.log(`Existing code was forked with ID ${newBlockType.code.id}`);
+    } else {
+      operation = consts.coding.OPERATIONS.UPDATE;
+      newBlockType = await classes.modify(data.position, data.blockType, result.value);
+      console.log('Existing code was updated correctly');
+      data.blockType.newerVersion = newBlockType.id;
+    }
+
+    events.emit(consts.events.CODE_UPDATED, {
+      operation,
+      newId: newBlockType.id,
+      oldId: data.blockType.id,
+      map: data.position,
+      toolbar: data.toolbar,
+      type: 'block'
+    });
+  } catch(err) {
+    console.log('Error storing code: ' + err);
+  }
+}
 
 export default {
   openExisting,

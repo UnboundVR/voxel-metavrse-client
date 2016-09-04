@@ -3,60 +3,69 @@ import consts from '../constants';
 import EventEmitter2 from 'eventemitter2';
 import util from 'util';
 import pointerLock from '../pointerLock';
+import clone from 'clone';
 
 const CODING_WINDOW = 'coding';
 
-var dirty = false;
-var onSave;
+let dirty = false;
+let onSave;
 
-var doClose = function() {
+function test(type, position, toolbar, code, item) {
+  events.emit(consts.events.TEST_CODE, {type, position, toolbar, code, item});
+}
+
+function doClose() {
   pointerLock.request();
   events.emit(consts.events.FULLSCREEN_WINDOW_CLOSE, {name: CODING_WINDOW});
-};
+}
 
-var save = function(value) {
+function save(value) {
   onSave({value});
   doClose();
   onSave = undefined;
-};
+}
 
-var saveAs = function(value, name) {
+function saveAs(value, name) {
   if(!name) {
     name = 'Unnamed';
   }
   onSave({value, name});
   doClose();
   onSave = undefined;
-};
+}
 
-
-var close = function() {
+function close() {
   if(!dirty || confirm('Exit without saving?')) {
     doClose();
     return true;
   }
-};
+}
 
-var open = function(data) {
-  this.emit('open', data);
+function open(data) {
+  this.emit('open', clone(data));
   pointerLock.release();
   events.emit(consts.events.FULLSCREEN_WINDOW_OPEN, {name: CODING_WINDOW});
 
   return new Promise(resolve => {
     onSave = resolve;
   });
-};
+}
 
 function Editor() {
   this.save = save.bind(this);
   this.saveAs = saveAs.bind(this);
   this.close = close.bind(this);
   this.open = open.bind(this);
-  this.onChange = function() {
+  this.test = test.bind(this);
+  this.onChange = () => {
     dirty = true;
+    this.emit('markedDirty');
   };
-  this.markClean = function() {
+  this.markClean = () => {
     dirty = false;
+  };
+  this.markDirty = () => {
+    dirty = true;
   };
 }
 

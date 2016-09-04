@@ -91,6 +91,15 @@ export default {
       }
     });
 
+    events.on(consts.events.CHANGE_TOOLBAR_ITEM, async (data) => {
+      await this.setItem(data.position, {
+        id: data.item,
+        type: data.type
+      });
+
+      console.log(`Changed toolbar item at position ${data.position}`);
+    });
+
     events.on(consts.events.CODE_UPDATED, async payload => {
       let newId = payload.newId;
       let oldId = payload.oldId;
@@ -112,7 +121,7 @@ export default {
 
         await this.setItem(position, {id: idToFetch, type, forceReload: idToFetch == oldId});
 
-        alert('Toolbar item modified!');
+        console.log('Toolbar item modified!');
       }
     });
 
@@ -138,9 +147,10 @@ export default {
   },
   _refreshSelected() {
     itemCoding.deactivate();
+
     this.selectedItem = this.items[this.selectedPosition];
     if(this.selectedItem != interact && this.selectedItem != nothing && !this.selectedItem.isBlock) {
-      itemCoding.activate(this.selectedItem);
+      itemCoding.activate(this.selectedItem, this.selectedPosition - 1);
     }
   },
   isAdjacentActive() {
@@ -175,7 +185,7 @@ export default {
   },
   async editCode(item, position) {
     if(item == interact) {
-      alert('Interact cannot be edited');
+      console.log('Interact cannot be edited');
     } else {
       if(item == nothing) {
         item = undefined;

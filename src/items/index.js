@@ -7,7 +7,7 @@ import types from './itemTypes';
 
 export default {
   async init() {
-    coding.init();
+    await coding.init();
 
     await toolbar.init();
     highlight.init();
@@ -27,5 +27,6 @@ export default {
   getToolbarItems: toolbar.getItems.bind(toolbar),
   setToolbarItem: toolbar.setItem.bind(toolbar),
   removeToolbarItem: toolbar.removeItem.bind(toolbar),
-  load: types.load.bind(types)
+  load: types.load.bind(types),
+  hasTestingCode: coding.hasTestingCode.bind(coding)
 };

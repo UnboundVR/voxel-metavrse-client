@@ -3,10 +3,9 @@ import Vue from 'vue';
 import service from './service';
 
 export default {
-  init() {
-    return service.init().then(() => {
-      Vue.component('toolbar-component', ToolbarComponent);
-    });
+  async init() {
+    await service.init();
+    Vue.component('toolbar-component', ToolbarComponent);
   },
   getSelected() {
     return service.selectedItem;

@@ -40,7 +40,7 @@ export default {
 
     name = me.name;
     avatarUrl = me.avatar_url;
-    userId = me.id;
+    userId = me.login;
   },
   getAccessToken() {
     return accessToken;

@@ -3,9 +3,11 @@ import inventory from '../../inventory';
 import ide from '../../ide';
 import events from '../../events';
 import consts from '../../constants';
+import testing from './testing';
+import clone from 'clone';
 
 export default {
-  async create(position) {
+  async create(toolbar) {
     let code =
 `export default class NewItem {
   constructor(world, metadata) {
@@ -15,7 +17,7 @@ export default {
   }
 
   onExecute(position) {
-    alert(\`executing \${this.metadata.name} on \${position}\`);
+    console.log(\`executing \${this.metadata.name} on \${position}\`);
   }
 
   onHover(payload) {
@@ -28,7 +30,11 @@ export default {
   }
 }
 `;
-    let data = await ide.open({code});
+    let data = await ide.open({
+      code: {code},
+      toolbar,
+      type: 'item'
+    });
 
     let codeObj = await coding.create(data.value);
 
@@ -42,15 +48,27 @@ export default {
       events.emit(consts.events.CODE_UPDATED, {
         newId: newItemType.id,
         type: 'item',
-        toolbar: position,
+        toolbar,
         operation: consts.coding.OPERATIONS.CREATE
       });
     } catch(err) {
-      alert(`Error creating item code: ${err}`);
+      console.log(`Error creating item code: ${err}`);
+      throw err;
     }
   },
-  async edit(item, code, position) {
-    let data = await ide.open({item, code});
+  async edit(item, code, toolbar) {
+    if(testing.hasTestingCode(toolbar)) {
+      code = clone(code);
+      code.testingLocally = true;
+      code.code = testing.getTestingCode(toolbar);
+    }
+
+    let data = await ide.open({
+      item,
+      code,
+      toolbar,
+      type: 'item'
+    });
 
     let codingOperation = data.name ? coding.fork : coding.update;
     let newCode = data.value;
@@ -75,15 +93,24 @@ export default {
 
     try {
       let updatedItemType = await inventoryOperationResult;
+
+      if(operation == consts.coding.OPERATIONS.UPDATE) {
+        item.newerVersion = updatedItemType.id;
+        console.log('Existing code was updated correctly');
+      } else {
+        console.log('Existing code was forked correctly');
+      }
+
       events.emit(consts.events.CODE_UPDATED, {
         oldId: item.id,
         newId: updatedItemType.id,
         type: 'item',
-        toolbar: position,
+        toolbar,
         operation
       });
     } catch(err) {
-      alert(`Error updating code: ${err}`);
+      console.log(`Error updating code: ${err}`);
+      throw err;
     }
   }
 };

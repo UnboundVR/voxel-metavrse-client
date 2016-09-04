@@ -1,8 +1,19 @@
 <template>
   <div v-show="open" id="scripting">
     <div class="scripting-header">
-      <h1 v-if="item">Editing the code of {{item.name}} (#{{item.id}})<span v-if="!!position"> at ({{position}})</span> <img class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'"></src></h1>
-      <h1 v-else>Editing the code of new block/item<span v-if="!!position"> at ({{position}})</span></h1>
+
+      <h1>
+        <span v-if="item">Editing the code of {{type}} {{item.name}} (#{{item.id}})</span>
+        <span v-else>Editing the code of new {{type}}</span>
+
+        <span v-if="position"> at ({{position}})</span>
+        <span v-if="toolbar"> from toolbar #{{toolbar}}</span>
+
+        <img v-if="item" class="item-icon" :src="'assets/img/icons/' + item.icon + '.png'">
+
+        <span v-if="testingLocally">| This code is being tested locally</span>
+        <span v-if="item && simpleBlock && !testingLocally">| This block type had no code</span>
+      </h1>
 
       <div v-el:close class="closeButton" @click="close"></div>
     </div>
@@ -10,21 +21,27 @@
       <div class="scripting-sidebar">
         <div class="sidebar-content">
           <div class="actions">
-            <button v-if="item && mine" @click="save">Save</button>
-            <button v-if="item" @click="saveAs">Fork...</button>
-            <button v-if="!item" @click="saveAs">Save as...</button>
-            <a v-if="item" target="_blank" :href="code.url">Go to gist</a>
+            <button v-if="!simpleBlock && item && mine && !outdated" @click="save">Save</button>
+            <button v-if="!simpleBlock && item" @click="saveAs">Fork...</button>
+            <button v-if="simpleBlock || !item" @click="saveAs">Save as...</button>
+            <a v-if="item && !simpleBlock" target="_blank" :href="code.url">Gist</a>
+            <button v-if="(dirty || simpleBlock) && item && ((type == 'item' && toolbar) || (type == 'block' && position))" @click="test">Test</button>
+            <button v-if="testingLocally" @click="clearTestingCode">Clear testing</button>
           </div>
 
           <div v-if="item">
             <div class="author-info">
-              <h2>Item/block owner</h2>
-              <div>{{item.owner.name}} <span v-if="mine">(a.k.a. you)</span></div>
+              <h2>{{capitalizedType}} owner</h2>
+              <div>{{item.owner}} <span v-if="mine">(a.k.a. you)</span></div>
 
-              <h2>Gist Author</h2>
-              <div>{{code.author.login}} <img class="author-avatar" :src="code.author.avatar"></div>
+              <div v-if="!simpleBlock">
+                <h2>Gist Author</h2>
+                <div>{{code.author.id}} <img class="author-avatar" :src="code.author.avatar"></div>
+              </div>
+
             </div>
-            <div class="gist-info">
+            <div class="gist-info" v-if="!simpleBlock">
+
               <h2>Gist info</h2>
               <ul>
                 <li>ID: {{code.id}}</li>
@@ -33,7 +50,7 @@
                 <li v-if="outdated">
                   <span class="outdated">Newer version with ID {{item.newerVersion}}</span>
                   <div class="actions">
-                    <button @click="fetchUpdates()">Update</button>
+                    <button v-if="toolbar || position" @click="update()">Update</button>
                   </div>
                 </li>
                 <li v-if="!outdated && codeHasForks"><span class="outdated">Possibly external forks/updates at {{code.lastUpdateDate | moment "DD/MM/YYYY h:mm:ss A"}}</span></li>
@@ -50,6 +67,8 @@
 
 import editor from './editor';
 import auth from '../auth';
+import consts from '../constants';
+import events from '../events';
 import Vue from 'vue';
 
 var codemirror;
@@ -62,10 +81,15 @@ export default {
   name: 'CodingComponent',
   data() {
     return {
-      position: '',
+      position: null,
+      toolbar: null,
       item: null,
       code: null,
-      open: false
+      open: false,
+      dirty: false,
+      type: null,
+      simpleBlock: false,
+      testingLocally: false
     };
   },
   computed: {
@@ -76,16 +100,43 @@ export default {
       return this.code.revision.date != this.code.lastUpdateDate;
     },
     mine() {
-      return this.item.owner.id == auth.getUserId();
+      if(!this.item || !this.code.author) {
+        return false;
+      }
+
+      let currentUser = auth.getUserId();
+      return currentUser == this.item.owner && (!this.code || currentUser == this.code.author.id);
+    },
+    capitalizedType() {
+      return this.type.charAt(0).toUpperCase() + this.type.slice(1);
     }
   },
   methods: {
+    test() {
+      let position, toolbar;
+      if(this.type == 'item') {
+        toolbar = this.toolbar - 1;
+      } else {
+        position = this.position && this.position.split('|').map(coord => parseInt(coord));
+      }
+      editor.test(this.type, position, toolbar, codemirror.getValue(), this.item);
+      editor.markClean();
+      this.close();
+    },
+    clearTestingCode() {
+      events.emit(consts.events.WIPE_TESTING_CODE, {
+        position: this.position && this.position.split('|').map(coord => parseInt(coord)),
+        toolbar: this.toolbar - 1
+      });
+      editor.markClean();
+      this.close();
+    },
     save() {
       this.open = false;
       editor.save(codemirror.getValue());
     },
     saveAs() {
-      var name = prompt('Enter the name of the new block/item');
+      var name = prompt(`Enter the name of the new ${this.type}`);
       if(!name) {
         return;
       }
@@ -96,10 +147,26 @@ export default {
     close() {
       if(editor.close()) {
         this.open = false;
+        this.dirty = false;
+        this.item = null;
+        this.code = null;
+        this.type = null;
+        this.position = null;
+        this.toolbar = null;
+        this.simpleBlock = false;
+        this.testingLocally = false;
       }
     },
-    fetchUpdates() {
-      alert(`Would fetch item with version ${this.item.newerVersion}`);
+    update() {
+      if(this.position) {
+        let position = this.position.split('|').map(coord => parseInt(coord));
+        events.emit(consts.events.PLACE_BLOCK, {position, block: this.item.newerVersion});
+      } else {
+        let position = this.toolbar - 1;
+        events.emit(consts.events.CHANGE_TOOLBAR_ITEM, {position, item: this.item.newerVersion, type: this.type});
+      }
+
+      this.close();
     }
   },
   ready() {
@@ -125,15 +192,30 @@ export default {
     wrapper = codemirror.getWrapperElement();
     wrapper.addEventListener('keydown', stopPropagation);
 
+    editor.on('markedDirty', () => {
+      self.dirty = true;
+    });
+
     editor.on('open', data => {
       self.open = true;
       self.position = data.position && data.position.join('|');
+      self.toolbar = data.toolbar !== undefined && data.toolbar + 1;
       self.item = data.item;
       self.code = data.code;
+      self.type = data.type;
+      self.simpleBlock = data.simpleBlock;
 
       Vue.nextTick(() => {
-        codemirror.setValue(data.item ? data.code.code : data.code);
-        editor.markClean();
+        codemirror.setValue(data.code.code);
+        self.dirty = false;
+
+        if(data.code.testingLocally) {
+          editor.markDirty();
+          self.testingLocally = true;
+        } else {
+          editor.markClean();
+          self.testingLocally = false;
+        }
         codemirror.focus();
       });
     });

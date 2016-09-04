@@ -9,6 +9,8 @@
             <li><a href="#" @click="inventory">Inventory</a></li>
             <li><a href="#" @click="toggleCamera">Toggle camera</a></li>
             <li><a href="#" @click="shareLocation">Share location</a></li>
+            <li><a href="#" @click="chunkPermissions">Chunk permissions</a></li>
+            <li><a href="#" @click="clearTestingCode">Clear testing code</a></li>
             <li><a href="#" @click="logout">Logout</a></li>
           </ul>
         </li>
@@ -23,8 +25,8 @@
 <script>
 
 import service from './service';
-import inventory from '../inventory';
-import playerSync from '../playerSync';
+import consts from '../constants';
+import events from '../events';
 
 export default {
   name: 'AuthComponent',
@@ -38,11 +40,23 @@ export default {
   methods: {
     login: service.login,
     logout: service.logout,
-    inventory: inventory.open,
-    toggleCamera: playerSync.toggleCamera,
-    shareLocation: playerSync.displayShareLink,
+    inventory() {
+      events.emit(consts.events.OPEN_INVENTORY);
+    },
+    toggleCamera() {
+      events.emit(consts.events.TOGGLE_CAMERA);
+    },
+    shareLocation() {
+      events.emit(consts.events.SHARE_LOCATION);
+    },
+    chunkPermissions() {
+      events.emit(consts.events.OPEN_CHUNK_PERMISSIONS);
+    },
+    clearTestingCode() {
+      events.emit(consts.events.WIPE_TESTING_CODE, {all: true});
+    },
     goToProfile() {
-      alert('Profile page TBC');
+      console.log('Profile page TBC');
     }
   }
 };

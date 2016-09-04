@@ -11,7 +11,17 @@ module.exports = {
     FULLSCREEN_WINDOW_OPEN: 'fullScreenWindowOpen',
     FULLSCREEN_WINDOW_CLOSE: 'fullScreenWindowClose',
     CODE_UPDATED: 'codeUpdated',
-    EDIT_CODE: 'editCode'
+    EDIT_CODE: 'editCode',
+    OPEN_CHUNK_PERMISSIONS: 'openChunkPermissions',
+    SHARE_LOCATION: 'shareLocation',
+    OPEN_INVENTORY: 'openInventory',
+    TOGGLE_CAMERA: 'toggleCamera',
+    PLACE_BLOCK: 'placeBlock',
+    CHANGE_TOOLBAR_ITEM: 'changeToolbarItem',
+    TEST_CODE: 'testCode',
+    WIPE_TESTING_CODE: 'wipeTestingCode',
+    LOAD_TESTING_CODE: 'loadTestingCode',
+    RELOAD_CODE: 'reloadCode'
   },
   github: {
     REQUESTED_SCOPE: 'user,gist',

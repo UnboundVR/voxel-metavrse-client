@@ -3,6 +3,7 @@ import voxel from '../voxel';
 import skin from 'minecraft-skin';
 import io from 'socket.io-client';
 import consts from '../constants';
+import events from '../events';
 import location from './location';
 import loading from '../loading';
 
@@ -20,6 +21,9 @@ export default {
       console.log(`Got playerSync id ${socket.id} from server`);
       self.playerId = socket.id;
     });
+
+    events.on(consts.events.SHARE_LOCATION, this.displayShareLink.bind(this));
+    events.on(consts.events.TOGGLE_CAMERA, avatar.toggleCamera.bind(avatar));
 
     socket.on('settings', settings => {
       if(initialized) {
@@ -88,6 +92,9 @@ export default {
       loadingResource.finish('Initialized player sync');
     });
   },
+  getUserPosition() {
+    return avatar.getPosition();
+  },
   moveUser(position) {
     avatar.move(position);
   },
@@ -123,6 +130,5 @@ export default {
 
     playerMesh.children[0].rotation.y = update.rotation.y + (Math.PI / 2);
     playerSkin.head.rotation.z = scale(update.rotation.x, -1.5, 1.5, -0.75, 0.75);
-  },
-  toggleCamera: avatar.toggleCamera.bind(avatar)
+  }
 };

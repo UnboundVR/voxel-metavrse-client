@@ -8,6 +8,7 @@ import inventory from './inventory';
 import rootVue from './rootVue';
 import querystring from 'querystring';
 import loading from './loading';
+import map from './map';
 
 let qs = querystring.parse(location.search.substring(1));
 if(qs.server) {
@@ -34,7 +35,8 @@ async function init() {
       voxel.init().then(() => Promise.all([playerSync.init(), items.init()])),
       chat.init(),
       ide.init(),
-      inventory.init()
+      inventory.init(),
+      map.init()
     ]);
 
     appendToContainer(voxel.engine);

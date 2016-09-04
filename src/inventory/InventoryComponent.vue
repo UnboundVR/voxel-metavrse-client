@@ -64,10 +64,10 @@ export default {
     },
     launchCodeEdit($event, item, type, toolbar) {
       $event.preventDefault();
-      if(toolbar === undefined || toolbar > 0) {
+      if(toolbar === undefined || toolbar >= 0) {
         controller.editCode(item, type, toolbar);
       } else {
-        alert('Interact cannot be edited');
+        console.log('Interact cannot be edited');
       }
     }
   },

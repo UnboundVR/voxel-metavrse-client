@@ -8,8 +8,11 @@ import extend from 'extend';
 import Promise from 'bluebird';
 import consts from '../constants';
 import playerSync from '../playerSync';
-// import events from '../events';
 import loading from '../loading';
+import auth from '../auth';
+import clone from 'clone';
+import events from '../events';
+import coordsHelper from './voxelCoordsHelper';
 
 let initialized = false;
 
@@ -43,27 +46,15 @@ export default {
         return Object.keys(blockTypeIds).map(id => parseInt(id));
       }
 
-      function getCoords(pos, dims) { // FIXME this only works for cubic chunks (i.e. all dims are the same)
-        let d = dims[0];
-        let z = Math.floor(pos / (d * d));
-        let y = Math.floor((pos - d * d * z) / d);
-        let x = Math.floor(pos - d * d * z - d * y);
-
-        x += chunk.position[0] * d;
-        y += chunk.position[1] * d;
-        z += chunk.position[2] * d;
-
-        return [x, y, z];
-      }
-
       await types.loadMany(getUniqueIds(chunk.voxels));
       for (let pos of Object.keys(chunk.voxels)) {
         let block = chunk.voxels[pos];
         if(block) {
           var blockType = types.getById(block);
           voxels[pos] = (block == 1) ? 1 : blockType.material;
+
           if(block != 1 && blockType.code) {
-            let coords = getCoords(pos, chunk.dims);
+            let coords = coordsHelper.getAbsoluteCoords(chunk, pos);
             coding.storeCode(coords, blockType.id);
           }
         }
@@ -74,8 +65,12 @@ export default {
 
     async function processChunk(chunk) {
       chunk.voxels = compression.uncompress(chunk.voxels);
+      let originalChunk = clone(chunk);
       chunk.voxels = await extractChunkVoxels(chunk);
       self.engine.showChunk(chunk);
+
+      // We're doing this after the call to extractChunkVoxels because we need the calls to coding.storeCoed to be already made
+      events.emit(consts.events.LOAD_TESTING_CODE, originalChunk);
     }
 
     let promisifiedEmit = Promise.promisify(self.socket.emit).bind(self.socket);
@@ -96,10 +91,8 @@ export default {
       } catch(err) {
         if(initialChunksAmount > initialChunksLoadedAmount) {
           loadingResource.error(`Error getting chunk: ${err}`);
-        } else {
-          console.log('Error getting chunk', err);
-          alert('Error getting chunk');
         }
+        console.log('Error getting chunk', err);
       }
     }
 
@@ -121,7 +114,18 @@ export default {
       await Promise.all(initialPositions.map(requestAndLoadChunk));
     }
 
+    this.socket.on('newChunkOwner', (chunkId, ownerId) => {
+      let chunk = self.engine.voxels.chunks[chunkId];
+      chunk.owners.push(ownerId);
+    });
+
     this.socket.on('set', async (pos, val) => {
+      if(coding.hasTestingCode(pos)) {
+        let testingCode = coding.getTestingCode(pos);
+        console.log(`Another user has changed the block at ${pos}, which had locally testing code. We're thus removing that code. Here's a copy in case you wanna keep it:\n ${testingCode}`);
+        coding.clearTestingCode(pos);
+      }
+
       if(val == 0) {
         coding.removeCode(pos);
         self.engine.setBlock(pos, 0);
@@ -169,9 +173,13 @@ export default {
     });
   },
   setBlock(position, type) {
-    this.socket.emit('set', position, type);
+    this.socket.emit('set', auth.getAccessToken(), position, type);
   },
   clearBlock(position) {
     this.setBlock(position, 0);
+  },
+  getChunkAtPosition(position) {
+    let chunkPos = this.engine.voxels.chunkAtPosition(position);
+    return this.engine.voxels.chunks[chunkPos.join('|')];
   }
 };
