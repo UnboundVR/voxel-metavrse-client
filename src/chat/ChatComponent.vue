@@ -1,7 +1,11 @@
 <template>
   <div id="chat-component" v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
-    <ul id="chat-component-message-list">
-      <li class="chat-component-message-list-message" v-for='message in messageList'>[{{ message.date |  moment "dddd, h:mm:ss a" }}] [{{ message.user }}]: {{ message.text }}</li>
+    <ul id="chat-component-message-list" v-el:message-list>
+      <li class="chat-component-message-list-message" v-for='message in messageList'>
+        <span class="chat-component-message-list-message-user" v-el:messageuser>{{ [message.user] }}</span>:
+        <span class="chat-component-message-list-message-message">{{ message.text }}</span>
+        <ui-tooltip :trigger="$els.messageuser" :position="tooltipPosition" :content="message.date | moment 'dddd, h:mm:ss a'"></ui-tooltip>
+      </li>
     </ul>
     <div id="chat-component-messagebox-wrapper">
       <input
@@ -22,9 +26,13 @@ import events from '../events';
 import pointerLock from '../pointerLock';
 import consts from '../constants';
 import Vue from 'vue';
+import { UiTooltip } from 'keen-ui';
 
 export default {
   name: 'ChatComponent',
+  components: {
+    'ui-tooltip': UiTooltip,
+  },
   data() {
     return {
       messageList: [],
@@ -35,7 +43,8 @@ export default {
           chatNotFocused: 'chat-component-not-focus',
           chatFocused: 'chat-component-focus'
         }
-      }
+      },
+      tooltipPosition: 'top center',
     };
   },
   methods: {
@@ -61,7 +70,7 @@ export default {
         } else if (this.newMessage !== '' || el.value !== '') {
           var username = auth.getName() || 'Guest';
           var message = { date: Date.now(), user: username, text: this.newMessage };
-          this.addMessage(message);
+          //this.addMessage(message);
           service.sendMessage(message);
           this.newMessage = ''; // TODO: See why the hell this doesn't update the model and we have to use this thing below --v
           el.value = '';
@@ -73,11 +82,16 @@ export default {
     },
     addMessage(message) {
       this.messageList.push(message);
+      this.scrollToBottom();
+    },
+    scrollToBottom() {
+      // TODO: Scroll to the bottom of the list somehow.
     }
   },
   ready() {
     service.init();
     service.on('message', this.addMessage);
+    service.on('debugMessage', this.addMessage);
     this.enableEnterHandler();
 
     events.on(consts.events.FULLSCREEN_WINDOW_OPEN, this.disableEnterHandler);
@@ -93,25 +107,39 @@ export default {
 
 <style lang="scss">
 
+$chat-font-size: "12px";
+$chat-font-family: 'Open Sans', sans-serif;
+$chat-component-height: 290px;
+$chat-message-box-height: 30px;
+$chat-message-list-height: 290px - 30px;
+
 #chat-component {
-  padding: 10px;
-  height: 200px;
-  width: 30%;
   position: absolute;
-  bottom: 40px;
+  padding: 10px;
+  bottom: 50px;
   left: 10px;
+  width: 30%;
+  height: $chat-component-height;
 
-  #chat-component-message-list {
-    max-height: 153px;
-    overflow: auto;
+  ul#chat-component-message-list {
+    height: $chat-message-list-height;
+    overflow-y: auto;
+    list-style: none;
 
-    .chat-component-message-list-message {
+    li.chat-component-message-list-message {
       color: #FFFFFF;
+      font-family: $chat-font-family;
+      font-size: $chat-font-size;
+      overflow: none;
+
+      .chat-component-message-list-message-user {
+        text-decoration: underline;
+      }
     }
   }
 
   #chat-component-messagebox-wrapper {
-    height: 30px;
+    height: $chat-message-box-height;
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -125,6 +153,8 @@ export default {
       border: none;
       border-radius: 0;
       color: #FFFFFF;
+      font-family: $chat-font-family;
+      font-size: $chat-font-size;
 
       &:focus {
         outline: none;
