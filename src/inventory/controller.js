@@ -58,7 +58,7 @@ export default {
       self.allItemTypes.push(type);
     });
   },
-  addToToolbar(type, id) {
+  async addToToolbar(type, id) {
     var position = parseInt(prompt('Enter position (2-9)'));
     if(Number.isNaN(position) || position > 9 || position < 2) {
       console.log('Invalid position');
@@ -71,11 +71,10 @@ export default {
       return;
     }
 
-    items.setToolbarItem(position - 1, {type, id}).then(() => {
-      this.toolbarItems.$set(position, items.getToolbarItems()[position]);
-    });
+    await items.setToolbarItem(position - 1, {type, id});
+    this.toolbarItems.$set(position, items.getToolbarItems()[position]);
   },
-  removeFromToolbar(position) {
+  async removeFromToolbar(position) {
     if(position == 0) {
       console.log('Cannot remove interact from first position');
       return;
@@ -86,9 +85,8 @@ export default {
       return;
     }
 
-    items.removeToolbarItem(position - 1).then(() => {
-      this.toolbarItems.$set(position, items.getToolbarItems()[position]);
-    });
+    await items.removeToolbarItem(position - 1);
+    this.toolbarItems.$set(position, items.getToolbarItems()[position]);
   },
   async addBlockType(name, material, code) {
     return await requests.requestToServer('inventory/blockType', {
