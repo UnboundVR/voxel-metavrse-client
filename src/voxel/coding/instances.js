@@ -11,10 +11,15 @@ export default {
     events.on(consts.events.RELOAD_CODE, payload => {
       let {position, type} = payload;
 
-      if(type == 'block' && this.hasCode(position)) {
-        let blockTypeId = this.getBlockTypeId(position);
-        scripts.createInstance(position, blockTypeId);
-        console.log(`Code of block of type ${blockTypeId} at ${position} reset!`);
+      if(type == 'block') {
+
+        if(this.hasCode(position)) {
+          let blockTypeId = this.getBlockTypeId(position);
+          scripts.createInstance(position, blockTypeId);
+          console.log(`Code of block of type ${blockTypeId} at ${position} reset!`);
+        } else {
+          scripts.removeInstance(position);
+        }
       }
     });
   },
