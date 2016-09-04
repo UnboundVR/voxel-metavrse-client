@@ -96,6 +96,8 @@ export default {
 
     events.on(consts.events.FULLSCREEN_WINDOW_OPEN, this.disableEnterHandler);
     events.on(consts.events.FULLSCREEN_WINDOW_CLOSE, this.enableEnterHandler);
+
+    service.loadPendingMessages();
   },
   destroyed() {
     this.disableEnterHandler();

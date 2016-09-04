@@ -17,11 +17,11 @@ export default {
     positionIdMapping = JSON.parse(localStorage.getItem(LOCAL_STORAGE_POSITION_ID_MAPPING) || '{}');
 
     events.on(consts.events.LOAD_TESTING_CODE, chunk => {
-      chat.debug(`Loading testing code in chunk at ${chunk.position.join('|')}`);
+      // chat.debug(`Loading testing code in chunk at ${chunk.position.join('|')}`);
       for (let pos of Object.keys(positionIdMapping)) {
         let position = pos.split('|').map(coord => parseInt(coord));
         if(voxelCoordsHelper.isInside(chunk, position)) {
-          chat.debug(`${position.join('|')} is inside chunk at ${chunk.position.join('|')}`);
+          // chat.debug(`${position.join('|')} is inside chunk at ${chunk.position.join('|')}`);
           let flatLocalPosition = voxelCoordsHelper.getFlatLocalPosition(chunk, position);
           let id = chunk.voxels[flatLocalPosition];
           this._verifyPosition(position, id);
