@@ -70,7 +70,7 @@ export default {
         } else if (this.newMessage !== '' || el.value !== '') {
           var username = auth.getName() || 'Guest';
           var message = { date: Date.now(), user: username, text: this.newMessage };
-          //this.addMessage(message);
+          this.addMessage(message);
           service.sendMessage(message);
           this.newMessage = ''; // TODO: See why the hell this doesn't update the model and we have to use this thing below --v
           el.value = '';
