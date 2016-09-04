@@ -1,4 +1,5 @@
 import uuid from 'node-uuid';
+import chat from './chat';
 
 /* global Pace */
 let resources = {};
@@ -25,9 +26,7 @@ function refreshConsole() {
 
 export default {
   log(message) {
-    if(!loading) {
-      console.log(message);
-    }
+    chat.verbose(message);
 
     let resource = {
       id: uuid.v4(),
@@ -35,9 +34,7 @@ export default {
       update(text) {
         this.message = text;
 
-        if(!loading) {
-          console.log(text);
-        }
+        chat.verbose(text);
 
         refreshConsole();
       },
@@ -45,9 +42,7 @@ export default {
         this.message = text;
         this.finished = true;
 
-        if(!loading) {
-          console.log(text);
-        }
+        chat.verbose(text);
 
         refreshConsole();
       },
@@ -55,9 +50,7 @@ export default {
         this.message = text;
         this.hasErrors = true;
 
-        if(!loading) {
-          console.log(text);
-        }
+        chat.error(text);
 
         refreshConsole();
       }

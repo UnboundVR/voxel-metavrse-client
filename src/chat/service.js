@@ -38,6 +38,10 @@ function ChatService() {
     this._debugMessage(text, 'error');
   };
 
+  this.verboseMessage = function(text) {
+    this._debugMessage(text, 'verbose');
+  };
+
   this._debugMessage = function(text, type) {
     let message = {type: 'info', text, date: new Date(), user: 'System'};
     if(initialized) {

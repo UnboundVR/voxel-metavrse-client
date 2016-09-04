@@ -12,5 +12,8 @@ export default {
   error(message, error) {
     service.errorMessage(message);
     error && console.log(error);
+  },
+  verbose(message) {
+    service.verboseMessage(message);
   }
 };
