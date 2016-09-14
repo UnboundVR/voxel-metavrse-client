@@ -19,6 +19,7 @@
     "script-executor": "https://github.com/UnboundVR/script-executor.git",
     "socket.io-client": "^1.4.8",
     "toolbar": "0.0.5",
+    "uuid": "2.0.2",
     "voxel-engine": "~0.20.2",
     "voxel-fly": "~0.1.2",
     "voxel-highlight": "0.0.10",
