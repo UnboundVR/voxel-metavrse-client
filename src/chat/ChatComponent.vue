@@ -1,22 +1,25 @@
-<template>
-  <div id="chat-component" v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
-    <ul id="chat-component-message-list" v-el:message-list>
-      <li class="chat-component-message-list-message" v-for='message in messageList'>
-        <span class="chat-component-message-list-message-user" v-el:messageuser>{{ message.user }}</span><span>:
-        <span class="chat-component-message-list-message-message">{{ message.text }}</span>
-        <ui-tooltip :trigger="$els.messageuser" :position="tooltipPosition" :content="message.date | moment 'dddd, h:mm:ss a'"></ui-tooltip>
-      </li>
-    </ul>
-    <div id="chat-component-messagebox-wrapper">
-      <input
+<template lang="html">
+  <ui-tabs id="chat-component"  type="text" background-color="clear">
+    <ui-tab header="Chat">
+      <ul id="chat-component-message-list" v-el:message-list v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
+        <message v-for="message in messageList" track-by='uuid' :message="message"></message>
+      </ul>
+      <div id="chat-component-messagebox-wrapper">
+        <input
         type="text"
         :disabled="!css.chat.isChatFocused"
         id="chat-component-messagebox-input"
         v-model="newMessage"
         placeholder="Press <enter> to chat"
-        v-el:message-input />
-    </div>
-  </div>
+          v-el:message-input />
+      </div>
+    </ui-tab>
+    <ui-tab header="System">
+      <ul id="chat-component-message-list-debug" v-el:message-list-debug>
+        <debug-message v-for="debugMessage in messageListDebug" track-by="$index" :debug="debugMessage"></debug-message>
+      </ul>
+    </ui-tab>
+  </ui-tabs>
 </template>
 
 <script>
@@ -25,17 +28,24 @@ import service from './service';
 import events from '../events';
 import pointerLock from '../pointerLock';
 import consts from '../constants';
+import Message from './components/Message.vue';
+import DebugMessage from './components/DebugMessage.vue';
 import Vue from 'vue';
-import { UiTooltip } from 'keen-ui';
+import uuid from 'uuid';
+import { UiTabs, UiTab } from 'keen-ui';
 
 export default {
   name: 'ChatComponent',
   components: {
-    'ui-tooltip': UiTooltip,
+    Message,
+    DebugMessage,
+    UiTabs,
+    UiTab,
   },
   data() {
     return {
       messageList: [],
+      messageListDebug: [],
       newMessage: '',
       css: {
         chat: {
@@ -44,7 +54,6 @@ export default {
           chatFocused: 'chat-component-focus'
         }
       },
-      tooltipPosition: 'top center',
     };
   },
   methods: {
@@ -69,7 +78,7 @@ export default {
           pointerLock.request();
         } else if (this.newMessage !== '' || el.value !== '') {
           var username = auth.getName() || 'Guest';
-          var message = { date: Date.now(), user: username, text: this.newMessage };
+          var message = { uuid: uuid.v4(), date: Date.now(), user: username, text: this.newMessage };
           this.addMessage(message);
           service.sendMessage(message);
           this.newMessage = ''; // TODO: See why the hell this doesn't update the model and we have to use this thing below --v
@@ -82,16 +91,15 @@ export default {
     },
     addMessage(message) {
       this.messageList.push(message);
-      this.scrollToBottom();
     },
-    scrollToBottom() {
-      // TODO: Scroll to the bottom of the list somehow.
-    }
+    addDebugMessage(message) {
+      this.messageListDebug.push(message);
+    },
   },
   ready() {
     service.init();
     service.on('message', this.addMessage);
-    service.on('debugMessage', this.addMessage);
+    service.on('debugMessage', this.addDebugMessage);
     this.enableEnterHandler();
 
     events.on(consts.events.FULLSCREEN_WINDOW_OPEN, this.disableEnterHandler);
@@ -103,53 +111,53 @@ export default {
     this.disableEnterHandler();
     service.removeAllListeners('message');
     service.destroy();
+  },
+  watch: {
+    'messageList': function() {
+      this.$nextTick(() => {
+        this.$els.messageList.scrollTop = this.$els.messageList.scrollHeight;
+      })
+    },
+    'messageListDebug': function() {
+      this.$nextTick(() => {
+        this.$els.messageListDebug.scrollTop = this.$els.messageListDebug.scrollHeight;
+      })
+    }
   }
 };
 </script>
 
 <style lang="scss">
 
-$chat-font-size: "12px";
-$chat-font-family: 'Open Sans', sans-serif;
-$chat-component-height: 290px;
-$chat-message-box-height: 30px;
-$chat-message-list-height: 290px - 30px;
+$chat-font-size: "10px";
+$chat-font-family: "Open Sans", sans-serif;
 
 #chat-component {
   position: absolute;
   padding: 10px;
-  bottom: 50px;
+  bottom: 15px;
   left: 10px;
   width: 30%;
-  height: $chat-component-height;
+  height: 320px;
+  margin: 0;
+  padding: 0;
 
-  ul#chat-component-message-list {
-    height: $chat-message-list-height;
-    overflow-y: auto;
-    list-style: none;
-
-    li.chat-component-message-list-message {
-      color: #FFFFFF;
-      font-family: $chat-font-family;
-      font-size: $chat-font-size;
-      overflow: none;
-
-      .chat-component-message-list-message-user {
-        text-decoration: underline;
-      }
-    }
+  .ui-tabs-body {
+    border: none;
+    padding: 0px;
+    background-color: rgba(20, 20, 20, 0.2);
   }
 
   #chat-component-messagebox-wrapper {
-    height: $chat-message-box-height;
+    height: 20px;
     width: 100%;
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
 
     #chat-component-messagebox-input {
       height: 20px;
       box-shadow: none;
-      padding: 0px 10px;
+      padding: 0;
       margin: 0;
       background: none;
       border: none;
