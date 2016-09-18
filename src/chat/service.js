@@ -20,7 +20,7 @@ function ChatService() {
     for(let message of pendingMessages) {
       this.emit('debugMessage', message);
     }
-  }
+  };
 
   this.destroy = function() {
     this.socket.destroy();
