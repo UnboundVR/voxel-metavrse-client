@@ -85,7 +85,7 @@ export default {
       this.scrollToBottom();
     },
     scrollToBottom() {
-      // TODO: Scroll to the bottom of the list somehow.
+      this.$els.messageList.scrollTop = this.$els.messageList.scrollHeight;
     }
   },
   ready() {
@@ -98,6 +98,7 @@ export default {
     events.on(consts.events.FULLSCREEN_WINDOW_CLOSE, this.enableEnterHandler);
 
     service.loadPendingMessages();
+    setTimeout(() => this.scrollToBottom(), 100);
   },
   destroyed() {
     this.disableEnterHandler();
