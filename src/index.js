@@ -9,6 +9,7 @@ import rootVue from './rootVue';
 import querystring from 'querystring';
 import loading from './loading';
 import map from './map';
+import snackbar from './snackbar';
 
 let qs = querystring.parse(location.search.substring(1));
 if(qs.server) {
@@ -29,6 +30,7 @@ function appendToContainer(engine) {
 
 async function init() {
   try {
+    snackbar.init();
     await auth.init();
 
     await Promise.all([
