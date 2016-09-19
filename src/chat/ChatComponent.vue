@@ -1,25 +1,27 @@
 <template lang="html">
-  <ui-tabs id="chat-component"  type="text" background-color="clear">
-    <ui-tab header="Chat">
-      <ul id="chat-component-message-list" v-el:message-list v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
-        <message v-for="message in messageList" track-by='uuid' :message="message"></message>
-      </ul>
-      <div id="chat-component-messagebox-wrapper">
-        <input
-        type="text"
-        :disabled="!css.chat.isChatFocused"
-        id="chat-component-messagebox-input"
-        v-model="newMessage"
-        placeholder="Press <enter> to chat"
-          v-el:message-input />
-      </div>
-    </ui-tab>
-    <ui-tab header="System">
-      <ul id="chat-component-message-list-debug" v-el:message-list-debug>
-        <debug-message v-for="debugMessage in messageListDebug" track-by="$index" :debug="debugMessage"></debug-message>
-      </ul>
-    </ui-tab>
-  </ui-tabs>
+  <div id="chat-component">
+    <ui-tabs type="text" background-color="clear">
+      <ui-tab header="Chat">
+        <ul id="chat-component-message-list" v-el:message-list v-bind:class="[ css.chat.isChatFocused ? css.chat.chatFocused : css.chat.chatNotFocused ]">
+          <message v-for="message in messageList" track-by='uuid' :message="message"></message>
+        </ul>
+        <div id="chat-component-messagebox-wrapper">
+          <input
+          type="text"
+          :disabled="!css.chat.isChatFocused"
+          id="chat-component-messagebox-input"
+          v-model="newMessage"
+          placeholder="Press <enter> to chat"
+            v-el:message-input />
+        </div>
+      </ui-tab>
+      <ui-tab header="System">
+        <ul id="chat-component-message-list-debug" v-el:message-list-debug>
+          <debug-message v-for="debugMessage in messageListDebug" track-by="$index" :debug="debugMessage"></debug-message>
+        </ul>
+      </ui-tab>
+    </ui-tabs>
+  </div>
 </template>
 
 <script>
@@ -95,6 +97,9 @@ export default {
     addDebugMessage(message) {
       this.messageListDebug.push(message);
     },
+    scrollToBottom(element) {
+      element.scrollTop = element.scrollHeight;
+    }
   },
   ready() {
     service.init();
@@ -114,14 +119,10 @@ export default {
   },
   watch: {
     'messageList': function() {
-      this.$nextTick(() => {
-        this.$els.messageList.scrollTop = this.$els.messageList.scrollHeight;
-      })
+      this.$nextTick(() => this.scrollToBottom(this.$els.messageList));
     },
     'messageListDebug': function() {
-      this.$nextTick(() => {
-        this.$els.messageListDebug.scrollTop = this.$els.messageListDebug.scrollHeight;
-      })
+      this.$nextTick(() => this.scrollToBottom(this.$els.messageListDebug));
     }
   }
 };
