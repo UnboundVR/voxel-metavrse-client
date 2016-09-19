@@ -106,6 +106,7 @@ export default {
     events.on(consts.events.FULLSCREEN_WINDOW_CLOSE, this.enableEnterHandler);
 
     service.loadPendingMessages();
+    setTimeout(() => this.scrollToBottom(), 100);
   },
   destroyed() {
     this.disableEnterHandler();

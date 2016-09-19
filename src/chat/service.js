@@ -20,7 +20,7 @@ function ChatService() {
     for(let message of pendingMessages) {
       this.emit('debugMessage', message);
     }
-  }
+  };
 
   this.destroy = function() {
     this.socket.destroy();
@@ -43,7 +43,7 @@ function ChatService() {
   };
 
   this._debugMessage = function(text, type) {
-    let message = {type: 'info', text, date: new Date(), user: 'System'};
+    let message = {type, text, date: new Date(), user: 'System log'};
     if(initialized) {
       this.emit('debugMessage', message);
     } else {
